@@ -1,4 +1,5 @@
 import nurbswb
+from importlib import reload
 
 reload(nurbswb.nurbs_tools)
 from nurbswb.nurbs_tools import *
@@ -11,4 +12,3 @@ for u in range(11):
 
 for v in range(11):
 	showIsoparametricVCurve(bs,1.0/10*v)
-

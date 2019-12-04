@@ -15,12 +15,12 @@ def testRandomSphere():
 	a.base=False
 	#a.grid=False
 	a.gridCount=20
-	
+
 	ps=a.Proxy.getPoints()
-	print "points ps",len(ps)
+	print("points ps",len(ps))
 
 	if 0:
-		print "random .."
+		print("random ..")
 		ps=np.array(FreeCAD.ps).swapaxes(0,1)
 		temp,ct=ps.shape
 		ps[2] += 100*np.random.random(ct)
@@ -29,7 +29,7 @@ def testRandomSphere():
 
 	ps=np.array(ps)
 	ps.resize(na,b,3)
-	
+
 	for k0 in range(15):
 		k=random.randint(2,na-3)
 		l=random.randint(1,b-1)
@@ -60,7 +60,7 @@ def testRandomSphere():
 
 	a.Proxy.updatePoles()
 	a.Proxy.showGriduv()
-	
+
 	FreeCAD.a=a
 	FreeCAD.ps=ps
 

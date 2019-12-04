@@ -28,7 +28,7 @@ def showdialog(title="Fehler",text="Schau in den ReportView fuer mehr Details",d
 	msg.setIcon(QtGui.QMessageBox.Warning)
 	msg.setText(text)
 	msg.setWindowTitle(title)
-	if detail<>None:   msg.setDetailedText(detail)
+	if detail!=None:   msg.setDetailedText(detail)
 	msg.exec_()
 
 
@@ -53,11 +53,7 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 	for kshift in [0,1,2,4]:
 		pts=pts[kshift:]+pts[:kshift]
 
-
 		off=FreeCAD.Vector(0,0,offset)
-
-
-
 
 		bc=Part.BSplineCurve()
 		bc.approximate(pts,DegMax=3,Tolerance=0.5)
@@ -70,7 +66,7 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 			sp.Shape=sc
 		FreeCAD.sc=sc
 		FreeCAD.bc=bc
-		
+
 		# calculate the interpolation points
 		x=np.array(range(ct+1))
 		vps=np.array([bc.value(1.0/ct*i)+off for i in x])
@@ -82,7 +78,7 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 			v2=(bc.centerOfCurvature(jj)-bc.value(jj))
 			v1=FreeCAD.sc.tangentAt(jj)
 			v=v1.cross(v2)
-			if v.z>0: ff=1 
+			if v.z>0: ff=1
 			else: ff=-1
 			y.append(ff*sc.curvatureAt(jj))
 
@@ -103,9 +99,9 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 
 		zc=np.concatenate([z,z2,[0,ct]])
 		zc.sort()
-		
+
 	#
-	#   hier feinheiten regeln 
+	#   hier feinheiten regeln
 	#
 
 		th=0.013
@@ -114,7 +110,7 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 	#
 	# kleine aenderungen ueberspringen
 	#
-		if th<>0:
+		if th!=0:
 			nn=[zc[0]]
 			#for v in zc[1:-2]:
 			for v in range(len(zc)-2):
@@ -127,9 +123,8 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 		else: nn=zc
 
 		mm3=y[nn]
-		
-		exps=vps[nn]
 
+		exps=vps[nn]
 
 		#plotit=False
 		if plotit: # display for debugging
@@ -145,14 +140,11 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 
 	#	exps=vps[zc]
 
-
 		ps=[tuple(p) for p in exps]
-
-
 
 	#	Draft.makeBSpline(ps,closed=True,face=False)
 	#
-	#	App.ActiveDocument.ActiveObject.Label="simple " +str(ct) 
+	#	App.ActiveDocument.ActiveObject.Label="simple " +str(ct)
 	#	App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(random.random(),random.random(),random.random())
 	#	App.ActiveDocument.ActiveObject.ViewObject.LineColor=(1.0,1.0,0.0)
 	#	App.ActiveDocument.ActiveObject.ViewObject.LineWidth=6
@@ -166,7 +158,7 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 	#
 	#	if debug:
 			#sh=App.ActiveDocument.ActiveObject.Shape.Edge1.Curve.toShape()
-			
+
 		bc=Part.BSplineCurve()
 		bc.setPeriodic()
 		bc.interpolate(ps)
@@ -175,13 +167,10 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 
 		bc.setPeriodic()
 		sh=bc.toShape()
-		
+
 		sp=App.ActiveDocument.addObject("Part::Spline","Spline " +str(ct))
 		sp.Label=wire.Label
 		sp.Shape=sh
-
-
-
 
 	#	zc=np.concatenate([z,z2,[0,ct]])
 		zc=np.concatenate([z,[0,ct]])
@@ -193,19 +182,16 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 
 	#	Draft.makeBSpline(ps,closed=True,face=False)
 	#
-	#	App.ActiveDocument.ActiveObject.Label="simpleMax " +str(ct) 
+	#	App.ActiveDocument.ActiveObject.Label="simpleMax " +str(ct)
 	#	App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(random.random(),random.random(),random.random())
 	#	App.ActiveDocument.ActiveObject.ViewObject.LineColor=(1.0,1.0,0.0)
 	#	App.ActiveDocument.ActiveObject.ViewObject.LineWidth=6
 	#	App.activeDocument().recompute()
 	#	App.activeDocument().recompute()
 	#
-
-
-
 	#	if debug:
 			#sh=App.ActiveDocument.ActiveObject.Shape.Edge1.Curve.toShape()
-			
+
 		bc=Part.BSplineCurve()
 		bc.setPeriodic()
 		bc.interpolate(ps)
@@ -218,8 +204,6 @@ def simplecurve(wire,ct=20,plotit=False,offset=0,debug=False):
 
 
 		Gui.updateGui()
-
-
 
 def run():
 
@@ -258,7 +242,7 @@ def run():
 
 
 		plotit=True
-		
+
 		print (ct,splits,plotit)
 		splits=[8,16,32,64]
 		splits=[20]

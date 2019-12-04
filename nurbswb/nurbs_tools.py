@@ -24,12 +24,12 @@ def kruemmung(sf,u,v):
 	d=0.0001
 	t1,t2=sf.tangent(u,v)
 	if t1 == None or t2 == None:
-		print ("keine Tagenten fuer ",u,v) 
+		print ("keine Tagenten fuer ",u,v)
 		return -1,-1
 
 	t1=t1.multiply(d)
 	t2=t2.multiply(d)
-	
+
 	vf=sf.value(u,v)
 
 	vfw=vf+t1
@@ -64,8 +64,8 @@ def kruemmung(sf,u,v):
 
 	ru=None
 	rv=None
-	if ku<>0: ru=round(1/ku,3)
-	if kv<>0: rv=round(1/kv,3)
+	if ku!=0: ru=round(1/ku,3)
+	if kv!=0: rv=round(1/kv,3)
 
 	# print ("Krmmungen:",ku,kv,"Krmmungsradien:", ru,rv)
 
@@ -73,5 +73,3 @@ def kruemmung(sf,u,v):
 	return ku,kv
 
 #-------------------------------
-
-

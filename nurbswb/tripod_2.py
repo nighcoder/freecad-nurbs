@@ -40,7 +40,6 @@ class ViewProvider:
 		obj.Proxy = self
 		self.Object=obj
 
-
 class Tripod(PartFeature):
 	def __init__(self, obj):
 		PartFeature.__init__(self, obj)
@@ -54,7 +53,7 @@ class Tripod(PartFeature):
 		obj.addProperty("App::PropertyEnumeration","modeRef","Format").modeRef=["normal","vertical"]
 		obj.addProperty("App::PropertyFloat","u","UV","u position un uv space").u=50
 		obj.addProperty("App::PropertyFloat","v","UV","v position in uv space").v=50
-		
+
 		obj.addProperty("App::PropertyFloat","scale","Format","Size of the tripod legs").scale=100
 		obj.addProperty("App::PropertyFloat","maxRadius","Format","maximum curvature circle").maxRadius=1000
 		obj.addProperty("App::PropertyBool","directionNormal","Format","Auf dem Fuss oder auf dem Kopf stehen").directionNormal=True
@@ -73,7 +72,7 @@ class Tripod(PartFeature):
 		if fp.source==None: return
 		if prop in ['u','v'] and fp.mode in ["RefPoint","RefPointSketch","Circles1","Circles2"]: return
 		if prop in "Geometry": return
-		
+
 #		print "change",prop
 
 		u=fp.u/12*3.14
@@ -88,14 +87,13 @@ class Tripod(PartFeature):
 #		u=fp.u/12*3.14/100
 #		v=fp.v/12*3.14/100
 
-
 		if fp.mode=="Curvature2":
 			self.runmode2(fp,prop)
 			return
 
 		wiremode = len(fp.source.Shape.Faces)==0
 		wiremode=False
-		
+
 		if fp.wireMode:
 			wiremode=True
 
@@ -110,7 +108,7 @@ class Tripod(PartFeature):
 			try:
 				t2=nn.normalAt(u)
 			except:
-				print "Problem Erstellung Normale"
+				print("Problem Erstellung Normale")
 				t2=FreeCAD.Vector(t1.y,t1.z,t1.x)
 				t2=t1.cross(t2)
 			if fp.binormalMode:
@@ -143,9 +141,9 @@ class Tripod(PartFeature):
 			t1=t1.normalize()
 			t2=t2.normalize()
 
-		if fp.directionNormal: 
+		if fp.directionNormal:
 			n=t1.cross(t2).normalize()
-		else: 
+		else:
 			n=t2.cross(t1).normalize()
 
 		n=n.normalize()
@@ -159,7 +157,7 @@ class Tripod(PartFeature):
 			r=FreeCAD.Rotation(n,t1,t2)
 		else:
 			r=FreeCAD.Rotation(t1,t2,n)
-		
+
 		#print "Rotation",r.toEuler()
 		pm=FreeCAD.Placement(vf,r)
 		#pm=FreeCAD.Placement()
@@ -176,16 +174,13 @@ class Tripod(PartFeature):
 			fp.recompute()
 			return
 
-
-
-
 		t1 *= fp.scale
 		t2 *= fp.scale
 
 		l1=t1.add(vf)
 		#li1=Part.Line(vf,l1)
 #		print vf
-		
+
 		li1=Part.makePolygon([vf,l1])
 		l2=t2.add(vf)
 		#li2=Part.Line(vf,l2)
@@ -193,7 +188,7 @@ class Tripod(PartFeature):
 
 		# normal
 		if fp.directionNormal: n=t1.cross(t2).normalize()
-		else: 
+		else:
 			n=t2.cross(t1).normalize()
 
 		n *= fp.scale
@@ -205,7 +200,7 @@ class Tripod(PartFeature):
 		lins=[li1,li2,li3]
 		comp=Part.Compound([lu for lu in lins])
 		fp.Shape=comp
-		
+
 		#-------------------
 		# the placement
 		#vf=sf.value(u,v)
@@ -217,19 +212,15 @@ class Tripod(PartFeature):
 		#---------------------
 		if 0:
 			try:
-				
+
 				self.pts += [vf]
 				#pts=self.w.Points + [vf]
-				print "++++",self.pts
+				print("++++",self.pts)
 			except:
 				self.pts = [FreeCAD.Vector(),vf]
 			self.w.Shape=Part.makePolygon(self.pts)
 			#self.w.Closed=False
 			#App.ActiveDocument.recompute()
-
-
-
-
 
 	def runmode2(self, fp, prop):
 
@@ -254,12 +245,12 @@ class Tripod(PartFeature):
 		cmax=sf.curvature(u,v,"Max")
 		cmin=sf.curvature(u,v,"Min")
 
-		if cmax <>0:
+		if cmax !=0:
 			rmax=1.0/cmax
 		else:
-			rmax=0 
+			rmax=0
 
-		if cmin <>0:
+		if cmin !=0:
 			rmin=1.0/cmin
 		else:
 			rmin=0
@@ -279,8 +270,8 @@ class Tripod(PartFeature):
 			rmin=-fp.maxRadius
 			cmin=0
 
-		m2=p+n*rmin 
-		m1=p+n*rmax 
+		m2=p+n*rmin
+		m1=p+n*rmax
 
 		pts=[p,m2,p,m1]
 		print (rmin,rmax)
@@ -301,22 +292,21 @@ class Tripod(PartFeature):
 
 		if cmax==0:
 			c=Part.makePolygon([p-c1*k,p+c1*k])
-		else:	
+		else:
 			c=Part.makeCircle(abs(rmax),m1,c2)
 
 		comp += [c]
 
 		if cmin==0:
 			c=Part.makePolygon([p-c2*k,p+c2*k])
-		else:	
+		else:
 			c=Part.makeCircle(abs(rmin),m2,c1)
 
 		comp += [c]
 
-		print "done"
+		print("done")
 		fp.Shape=Part.Compound(comp)
 		# fp.Shape=Part.Compound(comp[:1])
-
 
 	def runmode3(self,fp):
 
@@ -335,8 +325,6 @@ class Tripod(PartFeature):
 				p=subobj.Point
 		else:
 			p=sob.Shape.CenterOfMass
-
-
 
 		if fp.modeRef=='vertical':
 
@@ -368,7 +356,7 @@ class Tripod(PartFeature):
 
 			aa=App.ActiveDocument.addObject("Part::Cylinder","Cylinder")
 
-			for i in range(10):	
+			for i in range(10):
 				aa.Height=10000
 				aa.Radius=0.2*i*100
 				aa.Placement.Base=p
@@ -390,8 +378,6 @@ class Tripod(PartFeature):
 		fp.v=(v-vmi)/(vma-vmi)*fp.scale
 
 
-
-
 	def execute(self,fp):
 
 		if fp.mode=="Sketch":
@@ -399,12 +385,8 @@ class Tripod(PartFeature):
 
 		self.onChanged(fp,"_execute_")
 
-
 #-----------------
 #----------------------------------------
-
-
-
 
 def createTripod():
 
@@ -426,7 +408,6 @@ def createTripod():
 		a.ref=(Gui.Selection.getSelectionEx()[1].Object,ss)
 		a.mode="RefPoint"
 		a.modeRef="vertical"
-
 
 def createTripodSketch(): #sketcher
 	'''creae a tripod sketch'''
@@ -464,7 +445,6 @@ def createTripodSketch(): #sketcher
 					a.source=s.Object
 					ViewProvider(a.ViewObject)
 
-
 	else:
 		#a=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","Tripod")
 		a=FreeCAD.ActiveDocument.addObject("Sketcher::SketchObjectPython","TripodSketch")
@@ -474,9 +454,6 @@ def createTripodSketch(): #sketcher
 		a.ViewObject.LineWidth = 2
 		a.source=Gui.Selection.getSelection()[0]
 		ViewProvider(a.ViewObject)
-
-
-
 
 
 def createSweep():
@@ -498,8 +475,6 @@ def createCompound():
 
 # createSweep()
 
-
-
 '''
 # Analyse Raender eines lochs
 pts=[]
@@ -519,9 +494,7 @@ for s in Gui.Selection.getSelectionEx():
 			print v.Point
 			pts +=[v.Point]
 		print
-
 '''
-
 
 '''
 
@@ -530,5 +503,4 @@ print len(fs)
 fs += App.ActiveDocument.Surface001.Shape.Faces
 print len(fs)
 Part.show(Part.makeShell(fs))
-
 '''

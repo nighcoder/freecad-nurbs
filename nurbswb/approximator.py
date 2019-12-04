@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''approximate  a point cloud by a bezier curve
 #-------------------------------------------------
-#-- 
+#--
 #--
 #-- microelly 2018  0.2
 #--
@@ -15,6 +15,7 @@ import nurbswb.say
 from nurbswb.say import *
 import random
 import time
+from importlib import reload
 
 import inspect
 reload (nurbswb.say)
@@ -22,7 +23,7 @@ reload (nurbswb.say)
 from nurbswb.miki_g import createMikiGui2, MikiApp
 reload( nurbswb.miki_g)
 
-from pyob import *
+from .pyob import *
 import nurbswb.pyob
 from nurbswb.pyob import  FeaturePython,ViewProvider
 
@@ -59,7 +60,7 @@ def runfilt(t,xn,degree=2,lowfilt=0.005):
 			elif x>mymax: xn2 += [mymax]
 			else: xn2 += [x]
 		xn=xn2
-	
+
 	b, a = signal.butter(degree, lowfilt)
 
 	zi = signal.lfilter_zi(b, a)
@@ -136,7 +137,7 @@ class PointCloudApprox(FeaturePython):
 						pts += [FreeCAD.Vector(p,(pb-pa).dot(n))]
 
 				except:
-					print "ignore",i
+					print("ignore",i)
 
 		hop=getPart(name+"_helper")
 		hop.Shape=Part.Compound(comps)
@@ -188,7 +189,7 @@ class PointCloudApprox(FeaturePython):
 			if smooth == None:
 				nurbswb.smooth.smoothWire(hop,"smooth"+"_"+name)
 			else:
-				print "setze smooth count ",dd
+				print("setze smooth count ",dd)
 				smooth.Wire=hop
 				smooth.discretizeCount=dd
 
@@ -288,18 +289,18 @@ def _smoothPointcloudGUI():
 
 		def run(self):
 			modus=self.root.ids['mode'].currentText()
-	
+
 			try:
-				print "part is ..",self.part
-			except: 
-				print "noch kein objekt zugewiesen"
+				print("part is ..",self.part)
+			except:
+				print("noch kein objekt zugewiesen")
 				return
 
 			try:
 				tb=self.root.ids['tbb'].value()
 				self.part.count=int(round(tb))
 
-			except: 
+			except:
 				return
 
 	mikigui = createMikiGui2(layout, myApp)
@@ -309,7 +310,7 @@ def _smoothPointcloudGUI():
 
 ##\endcond
 
-# laden der punkte aus einem bild - das bild muss 
+# laden der punkte aus einem bild - das bild muss
 # mit methoden der reconstruction wb nachbearbeitet werden
 
 class ImagePoints(FeaturePython):
@@ -375,20 +376,20 @@ class ImagePoints2(FeaturePython):
 			import PIL
 			img=PIL.Image.open(obj.image)
 			im_arr = np.fromstring(img.tobytes(), dtype=np.uint8)
-			print im_arr.shape
-			print img.size
+			print(im_arr.shape)
+			print(img.size)
 			zd=im_arr.shape[0]/img.size[0]/img.size[1]
-			im_arr = im_arr.reshape(img.size[1], img.size[0], zd)         
+			im_arr = im_arr.reshape(img.size[1], img.size[0], zd)
 			face=im_arr
 		else:
 			face=np.ones(20*20*3).reshape(20,20,3)
 
 		(uc,vc,_)=face.shape
-		print face.shape
+		print(face.shape)
 
 		#face=face[10:,-10:]
 		(uc,vc,_)=face.shape
-		print "Bildsize",face.shape
+		print("Bildsize",face.shape)
 
 		if obj.mode=='generic':
 			poles=[]
@@ -413,7 +414,7 @@ class ImagePoints2(FeaturePython):
 
 
 		if obj.mode=='face': # bump auf freiform-flaeche
-			
+
 			ff=obj.source.Shape.Faces[obj.faceNumber].toNurbs()
 			bs=ff.Face1.Surface.copy()
 			bs.increaseDegree(3,3)
@@ -421,9 +422,9 @@ class ImagePoints2(FeaturePython):
 			print ("vpuesl", bs.getVKnots())
 #			print bs
 			# mit rand
-			
+
 			mitrand=1
-			
+
 			if mitrand:
 				scu=uc
 				scv=vc
@@ -432,12 +433,9 @@ class ImagePoints2(FeaturePython):
 				scu=uc
 				scv=vc
 
-
-			print "grundfigur start"
+			print("grundfigur start")
 			poles=np.array(bs.getPoles())
-			print poles.shape
-
-
+			print(poles.shape)
 
 			c=bs.uIso(0)
 			c=bs.vIso(0)
@@ -449,7 +447,7 @@ class ImagePoints2(FeaturePython):
 				ups=[0]
 				for i in range(1,scu):
 					p=c.parameterAtDistance(l/scu*i)
-					
+
 					try:
 						bs.insertUKnot(p,1,0)
 						ups += [p]
@@ -470,13 +468,12 @@ class ImagePoints2(FeaturePython):
 
 
 #			print ("ups",ups)
-			print "---------------"
-			print "len bs knots" ,len(bs.getUKnots())
-			print
-			yinterp = np.interp(bs.getUKnots(), ups, range(len(ups)))
+			print("---------------")
+			print("len bs knots" ,len(bs.getUKnots()))
+			print()
+			yinterp = np.interp(bs.getUKnots(), ups, list(range(len(ups))))
 #			print yinterp
-			print
-
+			print()
 
 
 			c=bs.vIso(0)
@@ -490,7 +487,7 @@ class ImagePoints2(FeaturePython):
 			if mitrand:
 				vps=[0]
 	#			print bs.getVKnots()
-				
+
 				for i in range(1,scv):
 					p=c.parameterAtDistance(l/scv*i)
 					try:
@@ -505,24 +502,24 @@ class ImagePoints2(FeaturePython):
 				vps=[]
 				for i in range(scv):
 					p=c.parameterAtDistance(l/scv*i)
-					
+
 					try:
 						bs.insertVKnot(p,1,0)
 						vps += [p]
 					except:
 						pass
-					if vps[-1]!=p: 
-						
+					if vps[-1]!=p:
+
 						vps += [p]
 
 
 
 			poles=np.array(bs.getPoles())
-			
-			
-			
+
+
+
 			#-------------------------------------
-			print "Figur shape",poles.shape
+			print("Figur shape",poles.shape)
 			print ("upuesl", bs.getUKnots())
 			print ("vpuesl", bs.getVKnots())
 
@@ -530,16 +527,16 @@ class ImagePoints2(FeaturePython):
 
 			#Part.show(bs.toShape())
 
-			
+
 
 			uc,vc,_=poles.shape
-			
+
 
 			uc2,vc2=scu,scv
-			print "Grundfigur", poles2.shape
-			
+			print("Grundfigur", poles2.shape)
+
 			print ("uc2,vc2",uc2,vc2)
-			print len(vps)
+			print(len(vps))
 #			print vps
 
 #			for u in range(2,uc2-2):
@@ -561,10 +558,10 @@ class ImagePoints2(FeaturePython):
 					for v in range(vc2-1):
 						ssa += [(face[u,v,0]*obj.params[0]+face[u,v,1]*obj.params[1]+face[u,v,2]*obj.params[2])*obj.params[3]+obj.params[4]]
 					ssa +=[0]
-					print len(ups[:-1])
-					print len(ups)
-					print len(ssa)
-					print "huhu"
+					print(len(ups[:-1]))
+					print(len(ups))
+					print(len(ssa))
+					print("huhu")
 					yinterp = np.interp(bs.getUKnots(), ups, ssa)
 	#				print u
 	#				print yinterp
@@ -577,31 +574,30 @@ class ImagePoints2(FeaturePython):
 	#			print bs.getVKnots()
 
 				ssab=np.array(ssab).swapaxes(0,1)
-				print "ssab.shape ",ssab.shape
-				print "--------------"
+				print("ssab.shape ",ssab.shape)
+				print("--------------")
 				ssba=[[0]*len(bs.getVKnots())]
 				#vps += [0]
-		
-				
+
+
 				for ui,u in enumerate(bs.getUKnots()):
 					ssa=[0]
-					print "-------------"
-					print len(vps[:-1])
-					print len(ssab[ui])
+					print("-------------")
+					print(len(vps[:-1]))
+					print(len(ssab[ui]))
 					yinterp = np.interp(bs.getVKnots(), vps[:-2], ssab[ui])
 	#				print u
 	#				print yinterp
 					ssba += [yinterp]
 
 				ssba += [[0]*len(bs.getVKnots())]
-				print "zweites shape"
-				print np.array(ssba).shape
+				print("zweites shape")
+				print(np.array(ssba).shape)
 	#			print "u ",len(bs.getUKnots())
 	#			print "v ", len(bs.getVKnots())
-				
-				ssba=np.array(ssba)
 
-				print "Zielarray poles2 shape ", poles2.shape
+				ssba=np.array(ssba)
+				print("Zielarray poles2 shape ", poles2.shape)
 				print ("belegugn",len(bs.getUKnots()),len(bs.getVKnots()))
 
 				for u in range(len(bs.getUKnots())):
@@ -625,27 +621,27 @@ class ImagePoints2(FeaturePython):
 #					print bs.getUKnots()
 #					print
 #					print ups
-#					print 
+#					print
 #					print ssa
 #					if u==4: return
 					yinterp = np.interp(bs.getUKnots(), ups, ssa)
 	#				print u
 	#				print yinterp
 					ssab += [yinterp]
-				print "erstes shape"
+				print("erstes shape")
 	#			print np.array(ssab).shape
-				print len(bs.getUKnots())
+				print(len(bs.getUKnots()))
 	#			print bs.getUKnots()
-				print len(bs.getVKnots())
+				print(len(bs.getVKnots()))
 	#			print bs.getVKnots()
 
 				ssab=np.array(ssab).swapaxes(0,1)
-				print "ssab.shape ",ssab.shape
+				print("ssab.shape ",ssab.shape)
 	#			print "--------------"
 				ssba=[]
 				#vps += [0]
-		
-				
+
+
 				for ui,u in enumerate(bs.getUKnots()):
 					ssa=[0]
 #					print ("-------gg------",ui,u)
@@ -661,14 +657,14 @@ class ImagePoints2(FeaturePython):
 					ssba += [yinterp]
 
 #				ssba += [[0]*len(bs.getVKnots())]
-				print "zweites shape"
-				print np.array(ssba).shape
+				print("zweites shape")
+				print(np.array(ssba).shape)
 	#			print "u ",len(bs.getUKnots())
 	#			print "v ", len(bs.getVKnots())
-				
+
 				ssba=np.array(ssba)
 
-				print "Zielarray poles2 shape ", poles2.shape
+				print("Zielarray poles2 shape ", poles2.shape)
 				print ("belegugn",len(bs.getUKnots()),len(bs.getVKnots()))
 
 				for u in range(len(bs.getUKnots())):
@@ -677,13 +673,13 @@ class ImagePoints2(FeaturePython):
 						n=bs.normal(ui,vi)
 						poles2[u,v] +=100
 						#poles2[u,v] +=  0.001*obj.factor*(ssba[u,v])*n
-				
+
 
 			#return
 			um=bs.getUMultiplicities()
 			vm=bs.getVMultiplicities()
-			bs.buildFromPolesMultsKnots(poles2, 
-								um,vm,range(len(um)),range(len(vm)),False,False,bs.UDegree,bs.VDegree)
+			bs.buildFromPolesMultsKnots(poles2,
+			 					um,vm,list(range(len(um))),list(range(len(vm))),False,False,bs.UDegree,bs.VDegree)
 #			Part.show(bs.toShape())
 			poles=poles2
 #			return
@@ -702,8 +698,8 @@ class ImagePoints2(FeaturePython):
 			ya=[degree+1]+[1]*(uc-degree-1)+[degree+1]
 			yb=[degree+1]+[1]*(vc-degree-1)+[degree+1]
 
-			bc.buildFromPolesMultsKnots(poles, 
-				ya,yb,range(len(ya)),range(len(yb)),
+			bc.buildFromPolesMultsKnots(poles,
+				ya,yb,list(range(len(ya))),list(range(len(yb))),
 				False,False,degree,degree)
 
 			obj.Shape=bc.toShape()
@@ -758,7 +754,7 @@ class MinLengthBezier(FeaturePython):
 		obj.addProperty("App::PropertyBool","betaOff","config")
 
 		obj.addProperty("App::PropertyBool","reuseAlphas")
-		
+
 		obj.addProperty("App::PropertyFloat","tol","approx").tol=0.1
 		obj.addProperty("App::PropertyBool","closed").closed=True
 		obj.addProperty("App::PropertyBool","useStart","config").useStart=True
@@ -774,7 +770,7 @@ class MinLengthBezier(FeaturePython):
 
 		obj.addProperty("App::PropertyEnumeration","mode","approx")
 		obj.mode=['minimal Lenght','Length','curvature','myMinA','myMinSoft']
-		
+
 
 		obj.addProperty("App::PropertyFloat","length","result")
 
@@ -793,7 +789,7 @@ class MinLengthBezier(FeaturePython):
 			'CG' ,
 			'BFGS' ,
 #*			'Newton-CG',
-			'L-BFGS-B', 
+			'L-BFGS-B',
 			'TNC',
 			'COBYLA',
 			'SLSQP',
@@ -821,7 +817,7 @@ class MinLengthBezier(FeaturePython):
 
 	def runMinLength(self,fp,ptsa,f=0.5):
 
-		if fp.start<>0 or fp.end<>0:
+		if fp.start!=0 or fp.end!=0:
 			ptsa=ptsa[fp.start:fp.end]
 
 		if fp.closed:
@@ -842,7 +838,7 @@ class MinLengthBezier(FeaturePython):
 #			print (i,alphas[i]*180/np.pi)
 			#alphas[i]=np.pi*0.5
 			alphasKK[i]=np.arctan2(v.y,v.x)
-		
+
 		fp.Proxy.loops=0
 		fp.Proxy.time=time.time()
 
@@ -877,7 +873,7 @@ class MinLengthBezier(FeaturePython):
 
 			fp.Proxy.loops += 1
 
-			if alpha <> None:
+			if alpha != None:
 
 				if fp.Proxy.loops == 1 :
 					if fp.useStart:
@@ -908,12 +904,12 @@ class MinLengthBezier(FeaturePython):
 						else:
 							k1=min((ptsa[i+1]-ptsa[i]).Length*kk,k)
 
-						if i <> 0:
+						if i != 0:
 							pts += [ ptsa[i]-FreeCAD.Vector(np.cos(alpha[la+i])*np.cos(alpha[i])*k2,
 								np.cos(alpha[la+i])*np.sin(alpha[i])*k2,np.sin(alpha[la+i])*k2) ]
 
 						pts += [ptsa[i]]
-						if i <>len(ptsa)-1:
+						if i !=len(ptsa)-1:
 							pts += [ ptsa[i]+FreeCAD.Vector(np.cos(alpha[la+i])*np.cos(alpha[i])*k1,
 								np.cos(alpha[la+i])*np.sin(alpha[i])*k1,np.sin(alpha[la+i])*k1) ]
 
@@ -923,11 +919,11 @@ class MinLengthBezier(FeaturePython):
 					for i in range(0,len(ptsa)):
 						k=fp.factorList[i]*0.01*fp.factor
 						#k=30
-						if i <> 0:
+						if i != 0:
 							pts += [ ptsa[i]-FreeCAD.Vector(np.cos(alpha[la+i])*np.cos(alpha[i])*k,
 									np.cos(alpha[la+i])*np.sin(alpha[i])*k,np.sin(alpha[la+i])*k) ]
 						pts += [ptsa[i]]
-						if i <>len(ptsa)-1:
+						if i !=len(ptsa)-1:
 							pts += [ ptsa[i]+FreeCAD.Vector(np.cos(alpha[la+i])*np.cos(alpha[i])*k,
 									np.cos(alpha[la+i])*np.sin(alpha[i])*k,np.sin(alpha[la+i])*k) ]
 
@@ -936,7 +932,7 @@ class MinLengthBezier(FeaturePython):
 			n=la-2
 			ms=[4]+[3]*n+[4]
 
-			bc.buildFromPolesMultsKnots(pts, ms, range(len(ms)), False,3)
+			bc.buildFromPolesMultsKnots(pts, ms, list(range(len(ms))), False,3)
 			if show:
 				fp.Shape=bc.toShape()
 				if fp._showaux:
@@ -949,23 +945,23 @@ class MinLengthBezier(FeaturePython):
 #			if fp.Proxy.loops %100 ==0 :
 #				Plot.removeSerie(1)
 #				Plot.plot(range(la*2), alpha ,'results')
-	
+
 			return bc.length()
 
-		# main method 
+		# main method
 
 		if fp.method=='Default':
 			rc=minimize(lengthMin,alphas,tol=1.)
 		elif fp.method=='simple':
-			print "simple structure - no optimize"
+			print("simple structure - no optimize")
 			_ = lengthMin(alphas)
-			
+
 			return
 		else:
 			rc=minimize(lengthMin,alphas,method=fp.method,tol=fp.tol)
 
 		print (fp.method,rc.success,rc.message,fp.Proxy.loops)
-		print "Length ",round(fp.Shape.Edge1.Length,1)
+		print("Length ",round(fp.Shape.Edge1.Length,1))
 		fp.length=fp.Shape.Edge1.Length
 		fp.alphaList=list(rc.x)
 		e=fp.Shape.Edge1
@@ -974,10 +970,9 @@ class MinLengthBezier(FeaturePython):
 		size=bc.NbKnots+1
 		anz=1000
 		cc=np.array([bc.curvature(size*u/anz)**2 for u in range(anz+1)])
+		print("Curvature mean ",round(cc.mean()*10**6,1))
+		print("Curvature max ",round(cc.max()*10**6,1))
 
-		print "Curvature mean ",round(cc.mean()*10**6,1)
-		print "Curvature max ",round(cc.max()*10**6,1)
-		
 		print ("Radius",round(1/cc.mean(),1),round(1/cc.max(),1),round(1/cc.min(),1))
 
 #----------------------------
@@ -1038,15 +1033,15 @@ class MinLengthBezier(FeaturePython):
 			a=len(ptsa)
 			af=Part.BSplineCurve()
 			ya=[4]+[1]*3 +[4]
-			af.buildFromPolesMultsKnots(ptsb,ya,range(len(ya)),False,3)
+			af.buildFromPolesMultsKnots(ptsb,ya,list(range(len(ya))),False,3)
 			pp=af.discretize(nn)
 
 			#vorgabe
 			bc=Part.BSplineCurve()
 			ms=[4]+[3]+[4]
-			bc.buildFromPolesMultsKnots(ptsa, ms, range(len(ms)), False,3)
+			bc.buildFromPolesMultsKnots(ptsa, ms, list(range(len(ms))), False,3)
 			pp2=bc.discretize(nn)
-			
+
 			dd=sum([(p-p2).Length**2 for p,p2 in zip(pp,pp2)])
 			fp.Shape=af.toShape()
 
@@ -1054,11 +1049,11 @@ class MinLengthBezier(FeaturePython):
 #			print ("ergebnis", dd,fp.Proxy.loops)
 			return dd
 
-		# main method 
+		# main method
 
 		rc=minimize(minSoft,alphas,method=fp.method,tol=fp.tol)
 		print (fp.method,rc.success,rc.message,fp.Proxy.loops)
-		print rc.fun
+		print(rc.fun)
 		fp.alphaList=list(rc.x)
 
 
@@ -1119,16 +1114,16 @@ class MinLengthBezier(FeaturePython):
 			a=len(ptsa)
 			af=Part.BSplineCurve()
 			ya=[4]+[1]*3*zz +[4]
-			af.buildFromPolesMultsKnots(ptsb,ya,range(len(ya)),False,3)
+			af.buildFromPolesMultsKnots(ptsb,ya,list(range(len(ya))),False,3)
 			pp=af.discretize(nn)
 
 			#vorgabe
 			#print ("MyMin Soft",zz)
 			bc=Part.BSplineCurve()
 			ms=[4]+[3]*zz+[4]
-			bc.buildFromPolesMultsKnots(ptsa, ms, range(len(ms)), False,3)
+			bc.buildFromPolesMultsKnots(ptsa, ms, list(range(len(ms))), False,3)
 			pp2=bc.discretize(nn)
-			
+
 			dd=sum([(p-p2).Length**2 for p,p2 in zip(pp,pp2)])
 			fp.Shape=af.toShape()
 
@@ -1139,16 +1134,16 @@ class MinLengthBezier(FeaturePython):
 #				dd2 += (bc.value(bc.parameter(ptsa[3*z]))-ptsa[3*z]).Length**2*kk
 
 
-			if fp.Proxy.loops %20 ==0: 
+			if fp.Proxy.loops %20 ==0:
 				Gui.updateGui()
 #				print ("ergebnis", dd2,fp.Proxy.loops)
 			return (dd/nn)**0.5
 
-		# main method 
+		# main method
 
 		rc=minimize(minSoft,alphas,method=fp.method,tol=fp.tol)
 		print (fp.method,rc.success,rc.message,fp.Proxy.loops)
-		print rc.fun
+		print(rc.fun)
 		fp.alphaList=list(rc.x)
 		minSoft(rc.x)
 
@@ -1162,7 +1157,7 @@ class MinLengthBezier(FeaturePython):
 		xtras=[]
 		bc=fp.Shape.Edge1.Curve
 		for i in fp.extraKnots:
-				print "extra knot ",i
+				print("extra knot ",i)
 				bc.insertKnot(i,3)
 				pt=bc.value(i)
 				xtras += [Part.makeSphere(1,pt)]
@@ -1170,7 +1165,7 @@ class MinLengthBezier(FeaturePython):
 		af=Part.BSplineCurve()
 		poles=bc.getPoles()
 		ya=bc.getMultiplicities()
-		af.buildFromPolesMultsKnots(poles,ya,range(len(ya)),False,3)
+		af.buildFromPolesMultsKnots(poles,ya,list(range(len(ya))),False,3)
 		fp.Shape=Part.Compound([af.toShape()]+xtras)
 
 	def onChanged(self,fp,prop):
@@ -1198,7 +1193,7 @@ class MinLengthBezier(FeaturePython):
 
 			if fp.Wire> -1:
 				pts=[v.Point for v in fp.path.Shape.Wires[fp.Wire].Vertexes]
-			
+
 			if fp.factor == 0:
 				try:
 					fp.factor=fp.path.Shape.BoundBox.DiagonalLength/len(pts)/4
@@ -1257,9 +1252,9 @@ def _createMyMinAGUI():
 		s=App.ActiveDocument.addObject('Sketcher::SketchObject','Sketch_forMyMinA')
 		s.addGeometry(Part.LineSegment(App.Vector(-20,0,0),App.Vector(-10,10,0)),False)
 		s.addGeometry(Part.LineSegment(App.Vector(-10,10,0),App.Vector(10,10,0)),False)
-		s.addConstraint(Sketcher.Constraint('Coincident',0,2,1,1)) 
+		s.addConstraint(Sketcher.Constraint('Coincident',0,2,1,1))
 		s.addGeometry(Part.LineSegment(App.Vector(10,10,0),App.Vector(20,-10,0)),False)
-		s.addConstraint(Sketcher.Constraint('Coincident',1,2,2,1)) 
+		s.addConstraint(Sketcher.Constraint('Coincident',1,2,2,1))
 		App.ActiveDocument.recompute()
 		ss=[s]
 
@@ -1277,7 +1272,7 @@ def _createMyMinSoftGUI():
 		yy=App.ActiveDocument.addObject("Part::FeaturePython","MyMinSoft")
 		MinLengthBezier(yy,mode='myMinSoft',method='Nelder-Mead')
 		ViewProvider(yy.ViewObject)
-		yy.path=s 
+		yy.path=s
 		yy.ViewObject.LineColor=(.3,1.,0.0)
 
 
@@ -1318,7 +1313,7 @@ class ConstantCurvatureBezier(FeaturePython):
 #		obj.addProperty("App::PropertyEnumeration","mode")
 #		obj.mode=['minimal Lenght','Length','curvature']
 		obj.addProperty("App::PropertyFloat","length","~calculated")
-		
+
 #		obj.addProperty("App::PropertyFloat","_a")._a=10
 #		obj.addProperty("App::PropertyFloat","_b")._b=10
 #		obj.addProperty("App::PropertyFloat","_c")._c=10
@@ -1333,7 +1328,7 @@ class ConstantCurvatureBezier(FeaturePython):
 			'CG' ,
 			'BFGS' ,
 #*			'Newton-CG',
-			'L-BFGS-B', 
+			'L-BFGS-B',
 			'TNC',
 			'COBYLA',
 			'SLSQP',
@@ -1366,8 +1361,7 @@ class ConstantCurvatureBezier(FeaturePython):
 
 			bc=Part.BSplineCurve()
 			ms=[4]+[4]
-
-			bc.buildFromPolesMultsKnots(pts, ms, range(len(ms)), False,3)
+			bc.buildFromPolesMultsKnots(pts, ms, list(range(len(ms))), False,3)
 			if show:
 				fp.Shape=bc.toShape()
 
@@ -1384,18 +1378,18 @@ class ConstantCurvatureBezier(FeaturePython):
 #			print (cc2.max(),cc2.min())
 #			print (abs(cc2.max()-cc2.min()),cc2.mean())
 #			print bc.length()
-#			
 #
-#			
+#
+#
 #			rc=abs(cc2.max()-cc2.min())*(1+cc2.mean())**np.pi#*bc.length()
 #			print rc
 
 			rc=abs(cc2.max()-cc2.min())*(1+cc2.mean())**np.pi*bc.length()
 
 #			print rc
-#			if fp.Proxy.loops>3000: 	
+#			if fp.Proxy.loops>3000:
 #				print "loops ende"
-#				return 0 
+#				return 0
 
 			return rc *10**4
 
@@ -1434,7 +1428,7 @@ class ConstantCurvatureBezier(FeaturePython):
 			except:
 				pass
 
-			if fp.start<>0 or fp.end<>0:
+			if fp.start!=0 or fp.end!=0:
 				pts=pts[3*fp.start:3*fp.end+1]
 
 			ll=len(pts)/3
@@ -1449,7 +1443,7 @@ class ConstantCurvatureBezier(FeaturePython):
 
 			poles=[]
 			for i,s in enumerate(shapes):
-				if i==0: 
+				if i==0:
 					poles= s.Edge1.Curve.getPoles()
 				else:
 					poles += s.Edge1.Curve.getPoles()[1:4]
@@ -1459,7 +1453,7 @@ class ConstantCurvatureBezier(FeaturePython):
 			abc=Part.BSplineCurve()
 			ms=[4]+[3]*i+[4]
 
-			abc.buildFromPolesMultsKnots(poles, ms, range(len(ms)), False,3)
+			abc.buildFromPolesMultsKnots(poles, ms, list(range(len(ms))), False,3)
 			fp.Shape=abc.toShape()
 			fp.Placement=oldpm
 
@@ -1523,8 +1517,8 @@ def myMinA(pts):
 
 	ptr=[]
 	n=10
-	ta=range(0,n+1)
-	tb=range(0,n+1)
+	ta=list(range(0,n+1))
+	tb=list(range(0,n+1))
 	for ia in ta:
 		for ib in tb:
 			iar=1.0*ia/(n+1)
@@ -1577,7 +1571,7 @@ def runMyMinA(fp, pts):
 #		pts=[v.Point for v in s.Shape.Wires[0].Vertexes]
 		s=fp
 
-		if fp.start<>0 or fp.end<>0:
+		if fp.start!=0 or fp.end!=0:
 			pts=pts[fp.start:fp.end]
 
 		if fp.closed:
@@ -1593,9 +1587,9 @@ def runMyMinA(fp, pts):
 
 		def schnittpunkt(pts):
 
-			a = np.array ( ( (pts[0].x-pts[1].x, pts[3].x-pts[2].x), 
-								(pts[0].y-pts[1].y, pts[3].y-pts[2].y))) 
-								
+			a = np.array ( ( (pts[0].x-pts[1].x, pts[3].x-pts[2].x),
+								(pts[0].y-pts[1].y, pts[3].y-pts[2].y)))
+
 			b = np.array ( (pts[3].x-pts[1].x, pts[3].y-pts[1].y) )
 			t, s = np.linalg.solve(a,b)
 		#	print pts
@@ -1607,8 +1601,8 @@ def runMyMinA(fp, pts):
 
 
 		def makeSimpleCurve(pts):
-			
-			print "makeSimpleCurve"
+
+			print("makeSimpleCurve")
 #			print pts
 
 			pr=[]
@@ -1624,7 +1618,7 @@ def runMyMinA(fp, pts):
 				except:
 					print ("Problem Schnittpuinkt",i)
 					for pui in [pts[i+1],pts[i+1]+pts[i]-pts[i+2],pts[i+2],pts[i+2]+pts[i+3]-pts[i+1]]:
-						print pui
+						print(pui)
 					sp=pts[i+1]
 				k=0.9
 				k=0.5
@@ -1637,15 +1631,15 @@ def runMyMinA(fp, pts):
 			a=len(pr)
 			af=Part.BSplineCurve()
 			ya=[4]+[3]*((a-4)/3)+[4]
-			af.buildFromPolesMultsKnots(pr,ya,range(len(ya)),False,3)
+			af.buildFromPolesMultsKnots(pr,ya,list(range(len(ya))),False,3)
 			if debug:
-				
+
 				Part.show(af.toShape())
 			# Draft.makeWire(pr)
 			return pr
 
 		def makeLineCurve(pts,mode='',fp=None):
-			
+
 #			print ("Make Line",mode)
 #			print pts
 
@@ -1689,17 +1683,16 @@ def runMyMinA(fp, pts):
 			a=len(pr)
 			af=Part.BSplineCurve()
 			ya=[4]+[3]*((a-4)/3)+[4]
-			af.buildFromPolesMultsKnots(pr,ya,range(len(ya)),False,3)
+			af.buildFromPolesMultsKnots(pr,ya,list(range(len(ya))),False,3)
 			if debug:
 				Part.show(af.toShape())
 			return pr
 
-
-		print "Loop---------------------------"
+		print("Loop---------------------------")
 		ll=len(pts)
 		if ll<3:
-			print "brauche wenigstens 3 punkte"
-			print "ABBRuch"
+			print("brauche wenigstens 3 punkte")
+			print("ABBRuch")
 			return
 
 		j=0
@@ -1707,7 +1700,7 @@ def runMyMinA(fp, pts):
 		direct=np.arctan2(d.x,d.y)
 		d2=pts[j+2]-pts[j+1]
 		direct2=np.arctan2(d2.x,d2.y)
-		
+
 
 		start= -1 if  direct-direct2>0 else  1
 		anfang=0
@@ -1723,20 +1716,20 @@ def runMyMinA(fp, pts):
 			d2=pts[j+2]-pts[j+1]
 			direct2=np.arctan2(d2.x,d2.y)
 			dd=direct-direct2
-#			print ("Richtung Punkt           ",pts[j+1]) 
+#			print ("Richtung Punkt           ",pts[j+1])
 #			print "start ",start
 			if direct>0:
-				if direct2<direct and direct2>direct-np.pi: 
+				if direct2<direct and direct2>direct-np.pi:
 					dd=-1
 #					print ("A",j,direct,direct2,dd)
-				else: 
+				else:
 					dd=1
 #					print ("B",j,direct,direct2,dd)
 			else:
 				if (direct2>direct and direct2<np.pi+direct) :
 					dd=1
 #					print ("C",j,direct,direct2,dd)
-				else: 
+				else:
 					dd=-1
 #					print ("D",j,direct,direct2,dd)
 
@@ -1761,7 +1754,7 @@ def runMyMinA(fp, pts):
 		a=len(pr)
 		af=Part.BSplineCurve()
 		ya=[4]+[3]*((a-4)/3)+[4]
-		af.buildFromPolesMultsKnots(pr,ya,range(len(ya)),False,3)
+		af.buildFromPolesMultsKnots(pr,ya,list(range(len(ya))),False,3)
 		fp.Shape=af.toShape()
 		#App.ActiveDocument.ActiveObject.Label=label
 
@@ -1776,11 +1769,11 @@ class PolesFrame(FeaturePython):
 
 	def onChanged(self,fp,prop):
 
-		if prop<>'ribs':  return
+		if prop!='ribs':  return
 #		try: self.restored
 #		except: return
 
-#		try: fp.Shape 
+#		try: fp.Shape
 #		except: return
 		fp.Shape=Part.Shape()
 
@@ -1790,7 +1783,7 @@ class PolesFrame(FeaturePython):
 
 		ptsa=[]
 		lmin=10**3
-		
+
 		for rc,s in enumerate(ss):
 
 			pols=s.Shape.Edge1.Curve.getPoles()
@@ -1811,7 +1804,7 @@ class PolesFrame(FeaturePython):
 
 
 	def execute(self,obj):
-		print "execute"
+		print("execute")
 		self.onChanged(obj,"ribs")
 		pass
 
@@ -1882,16 +1875,16 @@ def curvestoFace(polsarr=None,mode="Bezier Face"):
 				polsarr += [pols]
 
 	poles=np.array(polsarr)
-	print "curves to shape ",poles.shape
+	print("curves to shape ",poles.shape)
 	try:
 		b,a,_=poles.shape
 	except:
-		print "Probleme mit Punktematrix- Segemente nicht leich lang -- Abbruch"
+		print("Probleme mit Punktematrix- Segemente nicht leich lang -- Abbruch")
 		return
-	print "huhuhu"
+	print("huhuhu")
 #	a,b=b,a
 	af=Part.BSplineSurface()
-	
+
 	# bezier
 	if mode=="Bezier Face" or  mode=="Both":
 		ya=[4]+[3]*((a-4)/3)+[4]
@@ -1903,12 +1896,12 @@ def curvestoFace(polsarr=None,mode="Bezier Face"):
 	db=3
 #	print (a,ya)
 #	print (b,yb)
-	af.buildFromPolesMultsKnots(poles, 
+	af.buildFromPolesMultsKnots(poles,
 				yb,ya,
-				range(len(yb)),range(len(ya)),
+				list(range(len(yb))),list(range(len(ya))),
 				False,False,db,3)
 	#Part.show(af.toShape())
-	print af
+	print(af)
 	return af
 
 
@@ -1924,7 +1917,7 @@ def B():
 	for l in Gui.Selection.getSelection():
 	#	pols=l.Shape.Edge1.Curve.getPoles()
 		pols=[v.Point for v in l.Shape.Wires[0].Vertexes]
-		
+
 		polsn=[pols[0]]
 		kf= 30
 		for i,p in enumerate(pols[1:-1]):
@@ -1936,16 +1929,13 @@ def B():
 		polsn += [p+t,pols[-1]]
 #		Part.show(Part.makePolygon(polsn))
 #		print polsn
-	
+
 		bc=Part.BSplineCurve()
 		n=(len(polsn)-4)/3
 		ms=[4]+[3]*n+[4]
 
-		bc.buildFromPolesMultsKnots(polsn, ms, range(len(ms)), False,3)
+		bc.buildFromPolesMultsKnots(polsn, ms, list(range(len(ms))), False,3)
 		Part.show(bc.toShape())
-
-
-
 
 #
 # wenn knoten fehlen, wo sollen sie hinkommen
@@ -2002,8 +1992,7 @@ def extraKnots():
 
 	for k in  kkk:
 		if k not in k2sa:
-			print k
-
+			print(k)
 
 
 class Ribface(FeaturePython):
@@ -2055,7 +2044,7 @@ class Ribface(FeaturePython):
 			bc=Part.BSplineCurve()
 			n=(len(polsn)-4)/3
 			ms=[4]+[3]*n+[4]
-			bc.buildFromPolesMultsKnots(polsn, ms, range(len(ms)), False,3)
+			bc.buildFromPolesMultsKnots(polsn, ms, list(range(len(ms))), False,3)
 		#	Part.show(bc.toShape())
 
 			polesarrN += [polsn]
@@ -2098,7 +2087,7 @@ def RibstoFace():
 #
 
 def findrib():
-	# finde punkt auf kurve mit gegebenem x und mache dorhin einen pol 
+	# finde punkt auf kurve mit gegebenem x und mache dorhin einen pol
 	a=App.activeDocument().BeringSketch.Shape.Edge1.Curve
 
 
@@ -2129,8 +2118,8 @@ def usage(msg=""):
 
 
 def AA():
-	'''Erzeuge zu drei hart kodierten Laengen und Winkeln 
-eine Abwicklung. Idee ist eine Flaeche zu erzeugen, die 
+	'''Erzeuge zu drei hart kodierten Laengen und Winkeln
+eine Abwicklung. Idee ist eine Flaeche zu erzeugen, die
 man auf eine Freiformfläche aufkleben ann.
 	'''
 
@@ -2173,7 +2162,7 @@ man auf eine Freiformfläche aufkleben ann.
 	tts=[170,-40,pts[1].x,pts[1].y]
 	tts=[170,-40,pts[1].x,pts[1].y,pts[2].x,pts[2].y]
 
-	def minFun(tts): 
+	def minFun(tts):
 			tf=100
 			tf=min(lens)/3
 
@@ -2204,12 +2193,12 @@ man auf eine Freiformfläche aufkleben ann.
 			Gui.updateGui()
 			return minf
 
-	methods=[ 
+	methods=[
 		'Nelder-Mead' ,
 		'Powell' ,
 		'CG' ,
 		'BFGS' ,
-		'L-BFGS-B', 
+		'L-BFGS-B',
 		'TNC',
 		'COBYLA',
 		'SLSQP',
@@ -2218,14 +2207,14 @@ man auf eine Freiformfläche aufkleben ann.
 	rc=minimize(minFun,tts,tol=3)
 	for ob in [oba,obb,obc]: grp.addObject(ob)
 	_=Part.makeFilledFace(Part.__sortEdges__([oba.Shape.Edge1, obb.Shape.Edge1, obc.Shape.Edge1, ]))
-	try: 
+	try:
 		_.check()
 		f=App.ActiveDocument.addObject('Part::Feature','Face')
 		f.Shape=_
 		grp.addObject(f)
 		if rc.success:
 			print (round(rc.fun),round(f.Shape.Area),np.round(rc.x,1))
-	except: 
+	except:
 			for ob in [oba,obb,obc]: App.ActiveDocument.removeObject(ob.Name)
 			App.ActiveDocument.removeObject(grp.Name)
 
@@ -2237,7 +2226,7 @@ man auf eine Freiformfläche aufkleben ann.
 		for ob in [oba,obb,obc]: grp.addObject(ob)
 		rc=minimize(minFun,tts,method=m,tol=10.0)
 
-		try: 
+		try:
 			_=Part.makeFilledFace(Part.__sortEdges__([oba.Shape.Edge1, obb.Shape.Edge1, obc.Shape.Edge1, ]))
 			_.check()
 			f=App.ActiveDocument.addObject('Part::Feature','Face')
@@ -2246,19 +2235,18 @@ man auf eine Freiformfläche aufkleben ann.
 			if rc.success:
 				print (round(rc.fun),round(f.Shape.Area),m,np.round(rc.x,1))
 			print ("diff lens",[round(e.Length-l,1) for e,l in zip(f.Shape.Edges,lens)])
-		except: 
+		except:
 			for ob in [oba,obb,obc]: App.ActiveDocument.removeObject(ob.Name)
 			App.ActiveDocument.removeObject(grp.Name)
 
 		#break
-	print "FERTIG"
-
+	print("FERTIG")
 
 
 def AA():
 	'''kegel durch punkte finden'''
-	
-	
+
+
 	pts=[v.Point for v in App.ActiveDocument.Wedge001.Shape.Vertexes]
 	params=[0.]*6
 	params=[5,21,5,np.pi/2,0,0.1]
@@ -2266,7 +2254,7 @@ def AA():
 	paramsA=[21,0.1]
 
 	def minFun(paramsB,show=False):
-		
+
 		if 0:
 		#	print "paramsb",paramsB
 			#params[0]=5
@@ -2278,7 +2266,7 @@ def AA():
 			params[4]=0
 
 		params=paramsB
-		
+
 		#params[5]=0.4
 		S=FreeCAD.Vector(params[0:3])
 		R=FreeCAD.Vector(
@@ -2287,9 +2275,9 @@ def AA():
 			np.sin(params[4]))
 		#alpha=params[5]
 		alpha=paramsB[1]
-		
+
 #		print ("S",S)
-#		print ("R",R) 
+#		print ("R",R)
 		fval=0.
 		ptsa=[]
 		#fval += (S-FreeCAD.Vector(5,20,5)).Length**2*100
@@ -2313,14 +2301,14 @@ def AA():
 				#print("lens",alpha, (p-S).dot(r2),(p-S).Length)
 				#print (abs((p-S).dot(r2))-(p-S).Length)**2
 #				print("l-",alpha, (p-S).dot(r2))
-				
+
 				ptsa += [S,p,S+(p-S).dot(r2)*r2,p,S]
 			#fval += (abs((p-S).dot(r2))-(p-S).Length)**2
-			
+
 			a=r2*(p-S).dot(r2)-(p-S)
 			b=r2*(p-S).dot(r2)+(p-S)
 			ab= a if a.Length<b.Length else b
-			
+
 #			if pi==0:
 #				print ab.Length
 #				print r2*(p-S).dot(r2)
@@ -2329,7 +2317,7 @@ def AA():
 
 #		print ("fval",fval,"alp",alpha,"S:",S)
 #		print (fval,paramsB)
-			
+
 		#	v2=n2*np.tan(alpha)*a+R*a
 		#	if show: print a
 			#fval +=((S+R*a-p).Length - a*np.tan(alpha))**2
@@ -2339,7 +2327,7 @@ def AA():
 				#print (a,(S+R*a-p).Length,a*np.tan(alpha))
 #				print (S+R*a-p).Length #- a*np.tan(alpha)
 				pass
-		
+
 #		if show:
 #			print "fval", fval
 #			Draft.makeWire(ptsa)
@@ -2351,12 +2339,12 @@ def AA():
 
 
 
-	methods=[ 
+	methods=[
 		'Nelder-Mead' ,
 		'Powell' ,
 		'CG' ,
 		'BFGS' ,
-		'L-BFGS-B', 
+		'L-BFGS-B',
 		'TNC',
 		'COBYLA',
 		'SLSQP',
@@ -2368,13 +2356,13 @@ def AA():
 		break
 		params[5]=0.001*alpha
 		minFun(params,True)
-		print
+		print()
 #	return
 
 	# bounds fuer 4,5,7
 	methods=[methods[i] for i in [5]]
 
-	print "auswertung------------"
+	print("auswertung------------")
 	for m in methods:
 		minv=10**10
 		for a in range(10,30):
@@ -2391,7 +2379,7 @@ def AA():
 				if rc.success:
 #					print ("-----------",round(rc.fun,8),rc.x,a,b)
 					if minv>rc.fun:
-						print "*"
+						print("*")
 						minv=rc.fun
 						result=rc.x
 #				else:
@@ -2399,20 +2387,20 @@ def AA():
 
 		#print ("minv ",minv, result)
 
-		if 1: 
+		if 1:
 
 			params2=params
 			params2[1]=result[0]
 			params2[5]=result[1]
-			
+
 			params2=result
-			
+
 			S=FreeCAD.Vector(params2[0:3])
 			R=FreeCAD.Vector(
 					np.cos(params2[3])*np.cos(params2[4]),
 					np.sin(params2[3])*np.cos(params2[4]),
 					np.sin(params2[4]))
-			
+
 			R *= -1
 			t=S.cross(R).normalize()
 			t2=t.cross(R).normalize()
@@ -2422,10 +2410,10 @@ def AA():
 			T3=S+R*k-t*k*np.tan(params[5])
 			T4=S+R*k-t2*k*np.tan(params[5])
 			TT=S+R*2*k
-			
+
 			w=Draft.makeWire([S,T,S,T2,S,T3,S,T4,S,TT])
 			print ("minv ",minv, result, str(w.Label))
-			print
+			print()
 
 			#minFun(rc.x,True)
 
@@ -2438,8 +2426,8 @@ def AA():
 
 def AA():
 	'''kegel durch punkte finden'''
-	
-	
+
+
 	pts=[v.Point for v in App.ActiveDocument.Wedge001.Shape.Vertexes]
 	params=[0.]*6
 	params=[5,25,5,np.pi/2,0]
@@ -2449,7 +2437,7 @@ def AA():
 	bb=[0.,0.]
 
 	def minFun(paramsB,show=False):
-		
+
 		if 0:
 		#	print "paramsb",paramsB
 			params[0]=5
@@ -2462,7 +2450,7 @@ def AA():
 			pass
 
 		params[3:5]=paramsB
-		
+
 		#params[5]=0.4
 		S=FreeCAD.Vector(params[0:3])
 		R=FreeCAD.Vector(
@@ -2471,13 +2459,13 @@ def AA():
 			np.sin(params[4]))
 
 #		print ("S",S)
-#		print ("R",R) 
+#		print ("R",R)
 		fval=0.
 		ptsa=[]
 
 		lx=[0,1,4,5]
 		#lx=[2,3,6,7]
-		lx=range(8)
+		lx=list(range(8))
 		#lx=[0]
 		#lx=[0,1,2]
 
@@ -2501,12 +2489,12 @@ def AA():
 
 
 
-	methods=[ 
+	methods=[
 		'Nelder-Mead' ,
 		'Powell' ,
 		'CG' ,
 		'BFGS' ,
-		'L-BFGS-B', 
+		'L-BFGS-B',
 		'TNC',
 		'COBYLA',
 		'SLSQP',
@@ -2517,14 +2505,13 @@ def AA():
 	for alpha in range(275,276):
 		break
 		minFun(params,True)
-		print
+		print()
 #	return
 
 	# bounds fuer 4,5,7
 	methods=[methods[i] for i in [1]]
+	print("auswertung------------")
 
-	print "auswertung------------"
-	
 	for m in methods:
 		minv=10**10
 		for x in range(3,8):
@@ -2540,26 +2527,26 @@ def AA():
 							#params[1]=25
 							#params[0]=b
 
-							
+
 							#rc=minimize(minFun,paramsA,method=m,tol=.0001,bounds=[(5,5),(25,25),(5,5),(-2,2),(-2,2)])
-							rc=minimize(minFun,paramsA,method=m,tol=.1) 
+							rc=minimize(minFun,paramsA,method=m,tol=.1)
 							if rc.success:
 			#					print ("-----------",round(rc.fun,8),rc.x,a,b)
 								if minv>rc.fun:
-									print "*"
+									print("*")
 									minv=rc.fun
 									result=rc.x
 									pos=[x,z,p]
 									print ("!minv ",round(minv*10**5,2), [round(r,3) for r in result],a,b,p)
-									print "pos ",pos
+									print("pos ",pos)
 							else:
 								print (m,rc.success,rc.message)
 						if  minv< 0.1:
 							print ("!minv ",minv, [round(r,3) for r in result],a,b,p)
 							print (bb,round(minv*10**5,2),x,z,p)
-							print "pos ",pos
-								
-							
+							print("pos ",pos)
+
+
 							params2=params
 							params2[3:5]=result
 
@@ -2568,7 +2555,7 @@ def AA():
 									np.cos(params2[3])*np.cos(params2[4]),
 									np.sin(params2[3])*np.cos(params2[4]),
 									np.sin(params2[4]))
-							
+
 							R *= -1
 							t=S.cross(R).normalize()
 							t2=t.cross(R).normalize()
@@ -2579,20 +2566,20 @@ def AA():
 							T3=S+R*k-t*k*np.tan(alpha)
 							T4=S+R*k-t2*k*np.tan(alpha)
 							TT=S+R*2*k
-							
+
 			#				print S
-			#				print R 
+			#				print R
 							w=Draft.makeWire([S,TT])
 							w=Draft.makeWire([S,T,S,T2,S,T3,S,T4,S,TT])
 			#				print ("minv ",minv, result, str(w.Label))
-							print
+							print()
 							return
 
 
 		return
 
-def huhu():	
-		
+def huhu():
+
 	if 0:
 		minv=10**10
 		for a in range(10,30):
@@ -2609,7 +2596,7 @@ def huhu():
 				if rc.success:
 #					print ("-----------",round(rc.fun,8),rc.x,a,b)
 					if minv>rc.fun:
-						print "*"
+						print("*")
 						minv=rc.fun
 						result=rc.x
 #				else:
@@ -2617,20 +2604,20 @@ def huhu():
 
 		#print ("minv ",minv, result)
 
-		if 1: 
+		if 1:
 
 			params2=params
 			params2[1]=result[0]
 			params2[5]=result[1]
-			
+
 			params2=result
-			
+
 			S=FreeCAD.Vector(params2[0:3])
 			R=FreeCAD.Vector(
 					np.cos(params2[3])*np.cos(params2[4]),
 					np.sin(params2[3])*np.cos(params2[4]),
 					np.sin(params2[4]))
-			
+
 			R *= -1
 			t=S.cross(R).normalize()
 			t2=t.cross(R).normalize()
@@ -2640,12 +2627,9 @@ def huhu():
 			T3=S+R*k-t*k*np.tan(params[5])
 			T4=S+R*k-t2*k*np.tan(params[5])
 			TT=S+R*2*k
-			
+
 			w=Draft.makeWire([S,T,S,T2,S,T3,S,T4,S,TT])
 			print ("minv ",minv, result, str(w.Label))
-			print
+			print()
 
 			#minFun(rc.x,True)
-
-
-

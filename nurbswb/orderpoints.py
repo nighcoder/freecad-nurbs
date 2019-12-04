@@ -29,7 +29,7 @@ def showdialog(title="Fehler",text="Schau in den ReportView fuer mehr Details",d
 	msg.setIcon(QtGui.QMessageBox.Warning)
 	msg.setText(text)
 	msg.setWindowTitle(title)
-	if detail<>None:   msg.setDetailedText(detail)
+	if detail!=None:   msg.setDetailedText(detail)
 	msg.exec_()
 
 
@@ -50,10 +50,10 @@ def orderdata(obj,inner=False,plotit=False,medianfil=0,cf=True):
 	pts=None
 	try:
 		pts=obj.Points.Points
-		print "Points"
+		print("Points")
 	except:
 		pts=obj.Points
-		print "Draft"
+		print("Draft")
 
 	npts=np.array(pts).swapaxes(0,1)
 	mp=(npts[0].mean(),npts[1].mean(),npts[2].mean())
@@ -92,15 +92,15 @@ def orderdata(obj,inner=False,plotit=False,medianfil=0,cf=True):
 		vn=v-vm
 		#	print np.arctan2(vm.x,vm.y)
 		try:
-			if aps[np.arctan2(vn.x,vn.y)] <> vn:
-				print "Fehler 2 punkte gleiche richtung"
-				print v
-				print aps[np.arctan2(vn.x,vn.y)]
+			if aps[np.arctan2(vn.x,vn.y)] != vn:
+				print("Fehler 2 punkte gleiche richtung")
+				print(v)
+				print(aps[np.arctan2(vn.x,vn.y)])
 		except:
 			aps[np.arctan2(vn.x,vn.y)]=vn
 			rads[np.arctan2(vn.x,vn.y)]=vn.Length
 
-	kaps=aps.keys()
+	kaps=list(aps.keys())
 	kaps.sort()
 
 	ptss=[aps[k] for k in kaps]
@@ -232,5 +232,3 @@ def run():
 			App.ActiveDocument.ActiveObject.Label="Outer Approx for " + obj.Label
 			App.ActiveDocument.ActiveObject.ViewObject.LineColor=(1.,0.,0.)
 			Gui.updateGui()
-
-

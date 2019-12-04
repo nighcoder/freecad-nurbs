@@ -5,7 +5,7 @@ filename is 'User parameter:Plugins/shoe').GetString("width profile")
 there must be one sketch in it with constraints  l1-l12, r1-r12
 '''
 
-
+from importlib import reload
 import FreeCAD
 import FreeCADGui
 
@@ -26,7 +26,7 @@ from nurbswb.say import *
 
 def runa():
 	''' load the data from the first sketch in file fn
-	writes the data into the spreadsheet 
+	writes the data into the spreadsheet
 	and recomputes the sole
 	'''
 

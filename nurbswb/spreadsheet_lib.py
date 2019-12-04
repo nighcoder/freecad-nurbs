@@ -6,11 +6,10 @@
 #--
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
-# 
-# daten ins spreadsheet und zurueck 
+#
+# daten ins spreadsheet und zurueck
 #
 #
-
 
 import FreeCAD,Part,Draft
 
@@ -29,7 +28,6 @@ def cellname(col,row):
 
 assert cellname(1,2)=='A2'
 assert cellname(3,4)=='C4'
-
 
 def createSpreadsheet(label='Spreadsheet'):
 	ss=App.ActiveDocument.getObject(label)
@@ -98,7 +96,6 @@ def gendata(spreadsheet,spheremode=False):
 
 		App.activeDocument().recompute()
 
-
 def table2array(spreadsheet):
 	''' create array from table'''
 
@@ -121,19 +118,18 @@ def table2array(spreadsheet):
 	for v in range(NbVPoles):
 		for u in range(NbUPoles):
 			cn=cellname(u+2,10+v+1)
-			print cn
+			print(cn)
 			z.append(ss.get(cn))
 
 	ps=[]
 	for v in range(NbVPoles):
 		for u in range(NbUPoles):
 			p=[x[u],y[v],z[v*NbUPoles+u]]
-			print p
+			print(p)
 			ps.append(p)
 
 	ps=np.array(ps).reshape(NbVPoles,NbUPoles,3)
 	return ps
-
 
 def tabletop(spreadsheet):
 	''' the first dimension data'''
@@ -150,7 +146,6 @@ def tabletop(spreadsheet):
 
 	return np.array(x)
 
-
 def tableleft(spreadsheet):
 	''' the 2nd dimension data'''
 
@@ -165,7 +160,6 @@ def tableleft(spreadsheet):
 		y.append(ss.get(cn))
 
 	return np.array(y)
-
 
 def setSpreadsheet(ss,x,y,z):
 
@@ -250,7 +244,6 @@ def table2Nurbs(ss,label="MyNurbs"):
 	sp.ViewObject.ControlPoints = True
 	sp.ViewObject.ShapeColor = (random.random(),random.random(),random.random())
 
-
 def array2Nurbs(arr,a,b,c,d,label="MyArrayNurbs",borderPoles=False):
 	''' create nurbs from array'''
 
@@ -264,7 +257,7 @@ def array2Nurbs(arr,a,b,c,d,label="MyArrayNurbs",borderPoles=False):
 		ku=[1.0/(NbUPoles-1)*i for i in range(NbUPoles)]
 		mv=[3] +[1]*(NbVPoles-2) +[3]
 		mu=[3]+[1]*(NbUPoles-2)+[3]
-		
+
 		kv=[1.0/(NbVPoles-3)*i for i in range(NbVPoles-2)]
 		ku=[1.0/(NbUPoles-3)*i for i in range(NbUPoles-2)]
 		mv=[4] +[1]*(NbVPoles-4) +[4]
@@ -280,14 +273,11 @@ def array2Nurbs(arr,a,b,c,d,label="MyArrayNurbs",borderPoles=False):
 	print (ps.shape,ku,kv)
 	bs.buildFromPolesMultsKnots(ps, mv, mu, kv, ku, False,False ,3,3)
 
-
 #	bs.insertVKnot(0.51,1,0.0)
 #	print "B4xxx5"
 # fehler,wenn tolerance kleiner #+# warum bei u=0.2 ??
 #	bs.insertUKnot(0.2,1,0.0)
 #	bs.insertVKnot(0.2,1,0.0)
-
-
 
 	sha=bs.toShape()
 	sp=App.ActiveDocument.addObject("Part::Spline",label)
@@ -305,8 +295,6 @@ def cellname(col,row):
 	char=chr(col+64)
 	cn=char+str(row)
 	return cn
-
-
 
 def npa2ssa(arr,spreadsheet,c1,r1,color=None):
 	''' write 2s array into spreadsheet '''
@@ -327,7 +315,7 @@ def npa2ssa(arr,spreadsheet,c1,r1,color=None):
 		for r in range(r1,r2):
 			cn=cellname(c1,r)
 			ss.set(cn,str(arr[r-r1]))
-			if color<>None: ss.setBackground(cn,color)
+			if color!=None: ss.setBackground(cn,color)
 	else:
 		for r in range(r1,r2):
 			for c in range(c1,c2):
@@ -335,9 +323,7 @@ def npa2ssa(arr,spreadsheet,c1,r1,color=None):
 				#print (cn,c,r,arr[r-r1,c-c1])
 				ss.set(cn,str(arr[r-r1,c-c1]))
 				#print ("!!",cn,c,r,arr[r-r1,c-c1],ss.get(cn))
-				if color<>None: ss.setBackground(cn,color)
-
-
+				if color!=None: ss.setBackground(cn,color)
 
 def ssa2npa(spreadsheet,c1,r1,c2,r2,default=None):
 	''' create array from table'''
@@ -362,7 +348,6 @@ def ssa2npa(spreadsheet,c1,r1,c2,r2,default=None):
 #	print z
 	ps=np.array(z).reshape(r2-r1,c2-c1)
 	return ps
-
 
 #-----------------------------------
 #
@@ -402,19 +387,13 @@ if 0 and __name__=='__main__':
 	pps[3,6,2]=-2000
 	array2Nurbs(pps,0,11,3,11)
 
-
-
-
 	xs=tabletop(ss1)
 	xs
 
 	ys=tableleft(ss1)
 	ys
 
-
-
-
-	# example from numpy 
+	# example from numpy
 	x = np.arange(-5.00, 5.00, 0.5)
 	y = np.arange(-5.00, 5.00, 0.5)
 	xx, yy = np.meshgrid(x, y)
@@ -443,17 +422,12 @@ if 0 and __name__=='__main__':
 	setSpreadsheet(ss1,x,y,z)
 	table2Nurbs(ss1,"sum of sin and square")
 
-
-
 '''
-
-
 
 '''
 ss1=createSpreadsheet(label='MySpreadsheet')
 gendata(ss1)
 table2Nurbs(ss1,"simpe gen data")
-
 
 pps=table2array(ss1)
 pps.shape

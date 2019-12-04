@@ -39,9 +39,9 @@ raise Exception("getmap, get,map3 moverd to isodraw")
 def run_fulltest(obj, mpv=0.5, mpu=0.5, fx=-1, fy=-1, vc=30, uc=30 ):
 	'''testmethode'''
 
-	'''  Hilfsobjekte zeichnen   
+	'''  Hilfsobjekte zeichnen
 	mittelpunkt in uv: mpv, mpu
-	skalierung/lage der xy-Ebene: fx,fy 
+	skalierung/lage der xy-Ebene: fx,fy
 	anzahl der gitterlinien: vc,uc
 	'''
 
@@ -126,7 +126,7 @@ def run_fulltest(obj, mpv=0.5, mpu=0.5, fx=-1, fy=-1, vc=30, uc=30 ):
 		run_test2_2(obj,bs,xy2u,xy2v,fx,fy,refpos)
 
 	if 0:
-		#display grid of circles 
+		#display grid of circles
 		bs=obj.Shape.Face1.Surface
 		run_test_circle(bs,xy2u,xy2v)
 
@@ -135,7 +135,7 @@ def run_fulltest(obj, mpv=0.5, mpu=0.5, fx=-1, fy=-1, vc=30, uc=30 ):
 
 def run_test_1(obj,bs,uv2x,uv2y,fx,fy,refpos):
 	'''testmethode'''
-	
+
 	ptss=[]
 	ptsk=[]
 
@@ -199,7 +199,7 @@ def run_test_2(obj,bs,xy2u,xy2v,fx,fy,refpos):
 			ym=-130+10*n
 			u=xy2u(xm,ym)
 			v=xy2v(xm,ym)
-			
+
 			zp=bs.value(u,v)
 
 			#ost
@@ -228,7 +228,7 @@ def run_test_2(obj,bs,xy2u,xy2v,fx,fy,refpos):
 			zs=bs.value(u,v)
 
 			d=np.array([(zp-ze).Length,(zp-zn).Length,(zp-zw).Length,(zp-zs).Length])
-			
+
 			d *= 100/r
 			d -= 100
 			try:
@@ -238,7 +238,7 @@ def run_test_2(obj,bs,xy2u,xy2v,fx,fy,refpos):
 				else:
 					col += [Part.makePolygon([ze,zn,zw,zs,ze])]
 			except:
-				print "error polxygon"
+				print("error polxygon")
 
 
 #			print(m-10,n-13,"!", np.round(d,1))
@@ -282,11 +282,11 @@ def run_test_circle(bs,xy2u,xy2v,RM=15,uc=10,vc=10):
 					l=(pa-pm).Length
 					pss.append(pa)
 				except:
-					print "error circle2 line near 408"
+					print("error circle2 line near 408")
 			try:
 				col +=[Part.makePolygon(pss+[pm])]
 			except:
-				print "error 412"
+				print("error 412")
 
 	Part.show(Part.Compound(col))
 	App.ActiveDocument.ActiveObject.ViewObject.LineColor=(1.,1.,0.)
@@ -300,7 +300,7 @@ def run():
 
 	mapa=App.ActiveDocument.MAP
 	[uv2x,uv2y,xy2u,xy2v]=getmap(mapa,source)
-	
+
 	bs=source.Shape.Face1.Surface
 
 	run_test_circle(bs,xy2u,xy2v,RM=5,uc=10,vc=10)

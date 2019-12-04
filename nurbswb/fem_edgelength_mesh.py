@@ -16,14 +16,14 @@ import Part,Points
 
 import networkx as nx
 import random
-import os 
+import os
 import nurbswb
 
 
 if 0:
 	# load a testfile
 	try:
-		FreeCAD.open(u"/home/thomas/Schreibtisch/netz_test_data.fcstd")
+		FreeCAD.open("/home/thomas/Schreibtisch/netz_test_data.fcstd")
 		App.setActiveDocument("netz_test_data")
 		App.ActiveDocument=App.getDocument("netz_test_data")
 		Gui.ActiveDocument=Gui.getDocument("netz_test_data")
@@ -75,8 +75,8 @@ def findnode(conix,n):
 	for k in conix:
 		if n in conix[k]:
 			return k
-	print "findnode fehler bei ",n
-	print 
+	print("findnode fehler bei ",n)
+	print()
 	return -1
 
 
@@ -89,7 +89,7 @@ def getGraph(sk):
 
 	for i,geo in enumerate(sk.Geometry):
 #		print geo.__class__.__name__
-		if geo.__class__.__name__ <>  'LineSegment': continue
+		if geo.__class__.__name__ !=  'LineSegment': continue
 #		print (i,geo.StartPoint,geo.EndPoint)
 		g.add_node((i,1))
 		g.add_node((i,2))
@@ -97,14 +97,14 @@ def getGraph(sk):
 	for c in sk.Constraints:
 	#	print c.Content
 		tt=c.Content.split(' ')
-		if  tt[2]<>'Type="1"': continue
+		if  tt[2]!='Type="1"': continue
 
 		First=get_sval(tt[4])
 		FirstPos=get_sval(tt[5])
 		Second=get_sval(tt[6])
 		SecondPos=get_sval(tt[7])
 
-		if First=='-1' or Second=='-1': 
+		if First=='-1' or Second=='-1':
 			continue
 
 		g.add_edge(
@@ -121,21 +121,21 @@ def getGraph(sk):
 		g2.add_node(i)
 
 	for i in conix:
-		print i,conix[i]
+		print(i,conix[i])
 
 
 		for i,geo in enumerate(sk.Geometry):
 
 			# circle radius as 2D height
-			if geo.__class__.__name__ ==  'Circle': 
+			if geo.__class__.__name__ ==  'Circle':
 				n1=findnode(conix,(i,3))
 				g2.node[n1]['vector']= sk.getPoint(i,3)
 				g2.node[n1]['radius']= 1.0*geo.Radius
 				print ("circle found",geo.Radius,n1)
 				continue
 
-			# process only lines 
-			if geo.__class__.__name__ <>  'LineSegment': continue
+			# process only lines
+			if geo.__class__.__name__ !=  'LineSegment': continue
 
 			n1=findnode(conix,(i,1))
 			g2.node[n1]['vector']= sk.getPoint(i,1)
@@ -153,11 +153,11 @@ def add_zdim(g2):
 	''' add the 3D dimension to sketcher 2D data'''
 	for n2 in g2.nodes():
 		try: z=g2.node[n2]['radius']
-		except: 
+		except:
 			g2.node[n2]['radius']=0
 			z=0
 
-		if g2.node[n2]['radius']==0: 
+		if g2.node[n2]['radius']==0:
 			# gravitation
 			z=-1
 
@@ -177,7 +177,7 @@ def calculateForce(g2,n):
 		#model A
 		if 1:
 			mk=2
-			tf=g2.node[nb]['vector'] -v0 
+			tf=g2.node[nb]['vector'] -v0
 			if tf.Length > mk:
 				fac= 1.0*(tf.Length-mk)/mk
 				tf=tf * fac
@@ -186,7 +186,7 @@ def calculateForce(g2,n):
 
 		#model B
 		if 0:
-			tf=g2.node[nb]['vector'] -v0 
+			tf=g2.node[nb]['vector'] -v0
 
 		r += tf
 
@@ -232,7 +232,7 @@ def run(animate=True,itercount=101):
 					g2.node[n]['vector2'].z=newpos.z
 
 				# if a height is given by a circle preserve this value
-				if g2.node[n]['radius']<>0:
+				if g2.node[n]['radius']!=0:
 					g2.node[n]['vector2'].z=g2.node[n]['radius']
 
 				if force.Length> 0.1:

@@ -16,7 +16,7 @@ from nurbswb.say import *
 import FreeCAD
 import sys,time
 import random
-
+from importlib import reload
 
 
 import nurbswb.isodraw
@@ -38,11 +38,11 @@ import Mesh,Points
 import time
 
 def check(pp,mode,updateNurbs=False,widget=None):
-	print "check B ",mode
+	print("check B ",mode)
 	if mode=='marker':
 		createMarker(pp)
 		return
-		
+
 	a=time.time()
 
 	pc=App.ActiveDocument.getObject("MyGrid")
@@ -66,7 +66,7 @@ def check(pp,mode,updateNurbs=False,widget=None):
 		ff=-1
 		for i,p in enumerate(ptsk):
 			#if i <2: print (i,(p-pp).Length)
-			if (p-pp).Length <10 : 
+			if (p-pp).Length <10 :
 #				print ("found ",i,(p-pp).Length)
 				ff=i
 				break
@@ -98,7 +98,7 @@ def check(pp,mode,updateNurbs=False,widget=None):
 					ptskarr[vi-r:vi+r+1,ui-r:ui+r+1,2] = 0
 
 				ptsk=[FreeCAD.Vector(p) for p in ptskarr.reshape((uc+1)*(vc+1),3)]
-				print ptskarr[:,:,2].max()
+				print(ptskarr[:,:,2].max())
 
 			else:
 				if mode=='up':
@@ -112,11 +112,10 @@ def check(pp,mode,updateNurbs=False,widget=None):
 		mm.Mesh=Mesh.Mesh((ptsk,faces))
 
 	b=time.time()
-	print "update time ",b-a
-
+	print("update time ",b-a)
 
 	if updateNurbs:
-			print "upd Nurbs"
+			print("upd Nurbs")
 #			nu=App.ActiveDocument.getObject("Nurbs")
 			nu.ViewObject.show()
 #			mm=App.ActiveDocument.getObject("Mesh")
@@ -136,26 +135,24 @@ def check(pp,mode,updateNurbs=False,widget=None):
 
 				ptskarr=np.array(ptsk).reshape(uc+1,vc+1,3)
 				bs.buildFromPolesMultsKnots(ptskarr, mv, mu, kv, ku, False, False ,3,3)
-				
-				
-				
+
 			nu.Shape=bs.toShape()
 
 			c=time.time()
-			print "nurbs time",c-b
+			print("nurbs time",c-b)
 
 def createMarker(self):
-	print "create Marker"
+	print("create Marker")
 	import nurbswb
 	import nurbswb.geodesic_lines
 	reload(nurbswb.geodesic_lines)
-	
-	
+
+
 	l = nurbswb.geodesic_lines.makeLabel(direction='Horizontal',labeltype='Position')
 	l.obj=self.nu #Gui.Selection.getSelection()[0]
-	l.LabelType = u"Custom"
+	l.LabelType = "Custom"
 	l.Label="MyMarker"
-	l.ViewObject.DisplayMode = u"2D text"
+	l.ViewObject.DisplayMode = "2D text"
 	l.ViewObject.TextSize = '15 mm'
 	App.activeDocument().recompute()
 #	l.TargetPoint=l.obj.Shape.Faces[0].Surface.value(l.u*0.01,l.v*0.01)
@@ -167,7 +164,7 @@ def createMarker(self):
 	l.v=v*100
 	l.TargetPoint=self.pos
 	l.Label=str((round(self.pos.x,1),round(self.pos.y,1),round(self.pos.z,1)))
-	
+
 
 
 ##\endcond
@@ -212,7 +209,7 @@ class EventFilter(QtCore.QObject):
 				z == 'PySide.QtCore.QEvent.Type.User'  or \
 				z == 'PySide.QtCore.QEvent.Type.Paint' or \
 				z == 'PySide.QtCore.QEvent.Type.LayoutRequest' or\
-				z == 'PySide.QtCore.QEvent.Type.UpdateRequest'  : 
+				z == 'PySide.QtCore.QEvent.Type.UpdateRequest'  :
 			return QtGui.QWidget.eventFilter(self, o, e)
 
 
@@ -264,7 +261,7 @@ class EventFilter(QtCore.QObject):
 						self.mode='zero'
 						return False
 					elif e.key()== QtCore.Qt.Key_F6 :
-						
+
 						say("------------F6 none-----------------")
 						self.dialog.modl.setText("Mode: none")
 						self.mode='none'
@@ -277,17 +274,17 @@ class EventFilter(QtCore.QObject):
 #						self.update()
 
 					elif e.key() == QtCore.Qt.Key_Right :
-						print "Go right"
+						print("Go right")
 						return True
 					elif e.key() == QtCore.Qt.Key_Left :
-						print "Go Left"
+						print("Go Left")
 						return True
 					elif e.key() == QtCore.Qt.Key_Up :
 #						self.mouseWheel += FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetFloat("MoveCursorStep",10)
-						print "go up"
+						print("go up")
 						return True
 					elif e.key() == QtCore.Qt.Key_Down :
-						print "Go Down"
+						print("Go Down")
 						return True
 					elif e.key() == QtCore.Qt.Key_PageUp :
 						self.mouseWheel += FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetFloat("MovePageStep",50)
@@ -299,10 +296,10 @@ class EventFilter(QtCore.QObject):
 						return True
 
 					if e.key()== QtCore.Qt.Key_Enter or e.key()== QtCore.Qt.Key_Return:
-						print "Enter Action-----------------------------"
+						print("Enter Action-----------------------------")
 						# enter creates a new point ...
 						# vf=FreeCAD.Vector(self.x,self.y,self.z)
-						print self.pos
+						print(self.pos)
 						if self.mode=='marker':
 							createMarker(self)
 						return True
@@ -335,42 +332,37 @@ class EventFilter(QtCore.QObject):
 
 								print ("KEY pressed ----------------------",r)
 
-
-
 				except:
 					sayexc()
-
-
-
 
 		if event.type() == QtCore.QEvent.MouseMove:
 				(x,y)=Gui.ActiveDocument.ActiveView.getCursorPos()
 				t=Gui.ActiveDocument.ActiveView.getObjectsInfo((x,y))
-				
+
 				#---------------------
 
 				cursor=QtGui.QCursor()
 				p = cursor.pos()
-#				if p.x()<100 or p.y()<100: 
+#				if p.x()<100 or p.y()<100:
 #					print "jump cursor facedraw 92"
 #					cursor.setPos(p.x()+100, p.y()+100)
 				#-----------------------------------
 
-				if t<>None: # if objects are under the mouse
+				if t!=None: # if objects are under the mouse
 					#pts=App.ActiveDocument.shoe_last_scanned.Points.Points
 #					print "-----!"
 					for tt in t:
-						if tt['Object']=="MyGrid_N": 
+						if tt['Object']=="MyGrid_N":
 							pp=FreeCAD.Vector(tt['x'],tt['y'],tt['z'])
-							
+
 							sp=App.ActiveDocument.getObject("Sphere")
 							if sp==None:
 								sp=App.ActiveDocument.addObject("Part::Sphere","Sphere")
 							sp.Placement.Base=pp
-							
-							
+
+
 							sf=self.nu.Shape.Face1.Surface
-							print "Position on nurbs:",sf.parameter(pp)
+							print("Position on nurbs:",sf.parameter(pp))
 							self.pos=pp
 							sf.parameter(pp)
 							if event.buttons()==QtCore.Qt.LeftButton:
@@ -378,7 +370,7 @@ class EventFilter(QtCore.QObject):
 								check(pp,self.mode,False,self)
 							break
 					for tt in t:
-						if tt['Object']=="MyGrid_M": 
+						if tt['Object']=="MyGrid_M":
 #							print (tt['Object'],tt['Component'])
 #							print (tt['x'])
 #							print (tt['y'])
@@ -432,7 +424,7 @@ class EventFilter(QtCore.QObject):
 def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 	'''draw a curve on a face and create the two subfaces defined by the curve'''
 
-	print "drawcurve"
+	print("drawcurve")
 
 	#startposition
 	wplace=wire.Placement
@@ -440,18 +432,17 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 	wpos=wplace.Base
 #	print "facepos ",facepos
 
-
 	w=wire.Shape
 	t=face
 
 	#pts=[p.Point for p in w.Vertexes]
 	pts=[p.Point- wpos for p in w.Vertexes]
-	
+
 	sf=t.Surface
 
 	bs=sf
 
-	print "hacks SSetze uv, sv auf 1"
+	print("hacks SSetze uv, sv auf 1")
 	su=face.ParameterRange[1]
 	sv=face.ParameterRange[3]
 
@@ -472,7 +463,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 	bs2d = Part.Geom2d.BSplineCurve2d()
 	pts2da=[sf.parameter(p) for p in pts]
 	pts2d=[FreeCAD.Base.Vector2d(p[0],p[1]) for p in pts2da]
-	bs2d.buildFromPolesMultsKnots(pts2d,[1]*(len(pts2d)+1),range(len(pts2d)+1),True,1)
+	bs2d.buildFromPolesMultsKnots(pts2d,[1]*(len(pts2d)+1),list(range(len(pts2d)+1)),True,1)
 	e1 = bs2d.toShape(t)
 
 	sp=App.ActiveDocument.getObject(wire.Label+"_Spline")
@@ -490,10 +481,10 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 	ee.reverse()
 	splitb=[(ee,face)]
 	r2=Part.makeSplitShape(face, splitb)
-	
+
 	if hasattr(wire,"drawFace"):
 
-			try: 
+			try:
 				rc=r2[0][0]
 				rc=r[0][0]
 			except: return
@@ -511,7 +502,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 
 			#wire.ViewObject.LineColor=sp.ViewObject.ShapeColor
 			#wire.ViewObject.ShapeColor=sp.ViewObject.ShapeColor
-			print "HHHHHHHHHHHHHHHHH"
+			print("HHHHHHHHHHHHHHHHH")
 
 ## 	new wire for next drawing
 
@@ -520,7 +511,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 	'''draw a curve on a face and create the two subfaces defined by the curve'''
 
-	print "drawring"
+	print("drawring")
 
 	es=[]
 	for wireA in wires:
@@ -538,7 +529,7 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 		#pts=[p.Point for p in w.Vertexes]
 		pts=[p.Point- wpos for p in w.Vertexes]
-		
+
 		sf=t.Surface
 
 		bs=sf
@@ -548,7 +539,7 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 		pts2da=[sf.parameter(p) for p in pts[1:]]
 		pts2d=[FreeCAD.Base.Vector2d(p[0],p[1]) for p in pts2da]
-		
+
 
 		bs2d = Part.Geom2d.BSplineCurve2d()
 		bs2d.setPeriodic()
@@ -558,12 +549,11 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 		e1_1 = bs2d.toShape(t)
 
-
-		print "huhuhu22"
+		print("huhuhu22")
 
 		sp=App.ActiveDocument.getObject(wireA.Label+"_ASpline")
-		print  sp
-		print wireA.Label
+		print(sp)
+		print(wireA.Label)
 		if sp==None:
 			sp=App.ActiveDocument.addObject("Part::Spline",wireA.Label+"_Spline")
 		sp.Shape=e1_1
@@ -580,14 +570,14 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 			#pts=[p.Point for p in w.Vertexes]
 			pts=[p.Point- wpos for p in w.Vertexes]
-			
+
 			sf=t.Surface
 
 			bs=sf
 			su=bs.UPeriod()
 			sv=bs.VPeriod()
 
-			print "hacks etze uv, sv auf 1"
+			print("hacks etze uv, sv auf 1")
 			su=face.ParameterRange[1]
 			sv=face.ParameterRange[3]
 
@@ -642,7 +632,7 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 					sp=App.ActiveDocument.addObject("Part::Spline",name)
 
 				#if wire.reverseFace: sp.Shape=r2[0][0]
-				#else: 
+				#else:
 
 				sp.Shape=r[0][0]
 
@@ -652,8 +642,7 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 				#wire.ViewObject.LineColor=sp.ViewObject.ShapeColor
 				#wire.ViewObject.ShapeColor=sp.ViewObject.ShapeColor
-				print "RRRRRRRRRRRRRRRRR"
-
+				print("RRRRRRRRRRRRRRRRR")
 
 
 def drawring(name,wires,dirs,faceobj,facepos=FreeCAD.Vector()):
@@ -711,7 +700,7 @@ class MyWidget(QtGui.QWidget):
 		h=int(self.height.value())
 		sp.Radius=(1+r)*10
 		App.activeDocument().recompute()
-		return 
+		return
 
 	def ef_action(self,*args):
 		''' dummy method'''
@@ -747,7 +736,7 @@ def dialog(source=None):
 
 	btn2=QtGui.QPushButton("Update Nurbs")
 	btn2.clicked.connect(w.updateNurbs)
-	
+
 
 	btn=QtGui.QPushButton("Apply and close")
 	btn.clicked.connect(w.apply)
@@ -760,7 +749,7 @@ def dialog(source=None):
 
 	poll=QtGui.QLabel("Area:")
 
-	ar=QtGui.QDial() 
+	ar=QtGui.QDial()
 	ar.setMaximum(10)
 	ar.setNotchesVisible(True)
 	ar.valueChanged.connect(w.update)
@@ -768,7 +757,7 @@ def dialog(source=None):
 
 	poll2=QtGui.QLabel("height:")
 
-	he=QtGui.QDial() 
+	he=QtGui.QDial()
 	he.setMaximum(10)
 	he.setNotchesVisible(True)
 #	he.valueChanged.connect(w.setcursor2)
@@ -777,15 +766,11 @@ def dialog(source=None):
 
 	box = QtGui.QVBoxLayout()
 	w.setLayout(box)
-	
+
 	for ww in [modl,btn2,btn,cobtn,poll,ar,poll2,he] :
 		box.addWidget(ww)
 
 	return w
-
-
-
-
 
 
 ## create and initialize the event filter
@@ -795,7 +780,7 @@ def start():
 
 	ef=EventFilter()
 	ef.mouseWheel=0
-	
+
 	ef.subelement='SUBELE'
 	ef.mode='up'
 	ef.pc=App.ActiveDocument.MyGrid
@@ -878,9 +863,7 @@ def run():
 
 
 
-
-
-from say import *
+from .say import *
 
 
 layout='''
@@ -912,11 +895,11 @@ VerticalLayoutTab:
 
 
 #	VerticalLayout:
-		setVerticalStrech:  10	
+		setVerticalStrech:  10
 
 		QtGui.QLabel:
 			setText: "    C O N F I G U R E"
-			
+
 
 		HorizontalLayout:
 			addSpacing: 0
@@ -992,18 +975,18 @@ VerticalLayoutTab:
 		HorizontalLayout:
 
 			QtGui.QCheckBox:
-				id: 'polegrid' 
+				id: 'polegrid'
 				setText: 'calculate PoleGrid'
 #				stateChanged.connect: app.calculatePoleGrid
 				visibility: False
 
 			QtGui.QCheckBox:
-				id: 'setmode' 
+				id: 'setmode'
 				setText: 'Pole only'
 				setVisible: False
 
 			QtGui.QCheckBox:
-				id: 'relativemode' 
+				id: 'relativemode'
 				setText: 'Height relative'
 #				stateChanged.connect: app.relativeMode
 				setChecked: True
@@ -1049,7 +1032,7 @@ VerticalLayoutTab:
 
 			QtGui.QLabel:
 				setText: "u"
-				
+
 
 			QtGui.QLineEdit:
 				setText: "1"
@@ -1129,13 +1112,13 @@ VerticalLayoutTab:
 #				clicked.connect: app.setPole2
 
 		QtGui.QCheckBox:
-			id: 'pole1active' 
+			id: 'pole1active'
 			setText: 'Pole 1 in change'
 #			stateChanged.connect: app.relativeMode
 			setChecked: True
 
 		QtGui.QCheckBox:
-			id: 'singlepole' 
+			id: 'singlepole'
 			setText: 'Single Pole mode'
 #			stateChanged.connect: app.relativeMode
 			setChecked: True
@@ -1153,7 +1136,7 @@ VerticalLayoutTab:
 
 
 class MyApp(object):
-	
+
 	def __init__(self):
 		self.lock=False
 
@@ -1175,7 +1158,7 @@ class MyApp(object):
 			rc=self.root.ids['focusmode'].currentText()
 			v=self.root.ids['vd'].value()
 			self.root.ids['pole1'].setText("Pole 1:" + str([u+1,v+1]))
-			if self.root.ids['singlepole'].isChecked(): 
+			if self.root.ids['singlepole'].isChecked():
 			self.root.ids['runbutton'].hide()
 			self.root.ids['runbutton'].show()
 
@@ -1216,11 +1199,10 @@ class MyApp(object):
 		check(FreeCAD.Vector(),'no',updateNurbs=True)
 
 	def update(self):
-		print "update"
-		print self.dialog.ef.mode
-		print self.dialog.ef.h
-		print self.dialog.ef.r
-
+		print("update")
+		print(self.dialog.ef.mode)
+		print(self.dialog.ef.h)
+		print(self.dialog.ef.r)
 
 
 def mydialog(obj):
@@ -1244,10 +1226,8 @@ def mydialog(obj):
 
 	miki.ids['heightc'].addItems([str(n) for n in range(1,11)])
 	miki.ids['heightc'].setCurrentIndex(1)
-	
+
 	return miki
-
-
 
 
 #------------------

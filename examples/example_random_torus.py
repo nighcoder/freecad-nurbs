@@ -16,16 +16,15 @@ def testRandomTorus():
 	a.base=False
 	#a.grid=False
 	a.gridCount=20
-	
-	ps=a.Proxy.getPoints()
-	print "points ps",len(ps)
 
 	ps=a.Proxy.getPoints()
-	print "A"
+	print("points ps",len(ps))
+	ps=a.Proxy.getPoints()
+	print("A")
 	a.Proxy.togrid(ps)
-	print "B"
+	print("B")
 	a.Proxy.updatePoles()
-	print "C"
+	print("C")
 	a.Proxy.showGriduv()
 
 	'''
@@ -36,11 +35,11 @@ def testRandomTorus():
 		ps[2] += 100*np.random.random(ct)
 		ps=ps.swapaxes(0,1)
 	#	ps[0:3]
-	
+
 	ps=np.array(ps)
 	ps.resize(na,b,3)
 
-	
+
 	for k0 in range(15):
 		k=random.randint(2,na-3)
 		l=random.randint(1,b-1)
@@ -61,7 +60,7 @@ def testRandomTorus():
 		print (k,rj)
 		for j in range(rj):
 			ps[k+j][l][2] += 200*random.random()
-	
+
 
 	ps.resize(na*b,3)
 

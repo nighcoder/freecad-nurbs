@@ -17,7 +17,6 @@ import random
 
 #-------------------------
 
-
 def getpols(obj):
 	c1=obj.Geometry[0]
 	pl1=obj.Placement
@@ -54,10 +53,6 @@ def createShape(obj):
 			[[0,0,z],[x,0,z],[x,0,z],[x,0,0]],
 		]
 
-
-
-
-
 	color=(random.random(),random.random(),random.random())
 
 	ps=np.array(ps)
@@ -67,7 +62,7 @@ def createShape(obj):
 	# create the hood
 	bs=Part.BSplineSurface()
 	bs.buildFromPolesMultsKnots(ps, mv, mu, kv, ku, False,False ,3,3)
-	
+
 	# ellipsoid  weights
 	if 1:
 		for u in [2,3]:
@@ -127,9 +122,6 @@ def createShape(obj):
 		bs.setWeight(4,3,0.2)
 		bs.setWeight(4,2,0.003)
 
-
-
-
 	sh=bs.toShape()
 
 	try:
@@ -148,11 +140,9 @@ def createShape(obj):
 	obj.ViewObject.LineWidth=10
 	obj.ViewObject.LineColor=(1.0,1.0,0.0)
 	obj.ViewObject.ShapeColor=color
-	
-	print "Weights .."
-	print bs.getWeights()
 
-
+	print("Weights ..")
+	print(bs.getWeights())
 
 if 0:
 	# border curves
@@ -185,7 +175,7 @@ def makeEdge(pts,dim,step,w):
 	bc.buildFromPolesMultsKnots(k3, mv, kv, False,3,w)
 	Part.show(bc.toShape())
 	App.ActiveDocument.ActiveObject.ViewObject.LineColor=color
-	
+
 	bs=Part.BSplineSurface()
 	bs.buildFromPolesMultsKnots([pts,k,k2,k3], mv, mu, kv, ku, False,False ,3,3,[w]*4)
 	sh=bs.toShape()
@@ -271,5 +261,3 @@ class SimpleHood(PartFeature):
 def run():
 	b=FreeCAD.activeDocument().addObject("Part::FeaturePython","MySimpleHood")
 	bn=SimpleHood(b)
-
-

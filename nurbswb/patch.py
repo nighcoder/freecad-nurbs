@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 '''
 #-------------------------------------------------
-#-- methods for drawing on faces 
+#-- methods for drawing on faces
 #--
 #-- microelly 2017 v 0.1
 #--
@@ -29,7 +29,7 @@ def machkurve(pss):
 		bc.buildFromPoles(ps)
 		res=App.ActiveDocument.addObject("Part::Spline","kurve")
 		res.Shape=bc.toShape()
-		
+
 		return bc
 
 
@@ -166,17 +166,17 @@ def run():
 
 	pl3.reverse()
 
-	# tangent constraint 
+	# tangent constraint
 	pl1x=[ p+FreeCAD.Vector(10,0,-10) for p in pl2]
 	pl1xa=[ p+FreeCAD.Vector(20,0,-20) for p in pl2]
 	pl1xb=[ p+FreeCAD.Vector(30,0,-30) for p in pl2]
 
-	# bergruecken 
+	# bergruecken
 	pl3x=[]
 	for i in range(len(pl2)):
 		pl3x += [pl2[i]*0.7+pl3[i]*0.3+FreeCAD.Vector(0,0,500*random.random())]
 
-	pl2x=[]	
+	pl2x=[]
 	for i in range(len(pl2)):
 		pl2x += [pl2[i]*0.2+pl3[i]*0.8+FreeCAD.Vector(0,0,500*random.random())]
 
@@ -197,7 +197,7 @@ def runB():
 	''' testcase for a expression baes mountain profile '''
 
 	import numpy as np
-	print "WARNING:this is a testcase only"
+	print("WARNING:this is a testcase only")
 	# hard coded test data
 	kl=App.ActiveDocument.subedge
 	kr=App.ActiveDocument.subedge001
@@ -214,7 +214,7 @@ def runB():
 
 
 	rots=[0.0] + [
-			(kali[i]-kare[i]).normalize().cross((kali[0]-kare[0]).normalize()).dot(FreeCAD.Vector(0,0,1)) 
+			(kali[i]-kare[i]).normalize().cross((kali[0]-kare[0]).normalize()).dot(FreeCAD.Vector(0,0,1))
 			for i in range(1,lena)
 		]
 	rots=np.arcsin(rots)
@@ -257,4 +257,3 @@ def runB():
 	# display the controlpoint curves
 	bpts=np.array(apts).swapaxes(0,1)
 	for l in bpts: machkurve(l)
-

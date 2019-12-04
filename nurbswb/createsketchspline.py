@@ -5,7 +5,7 @@
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
 
-from say import *
+from .say import *
 from scipy.signal import argrelextrema
 import Sketcher
 
@@ -30,11 +30,11 @@ def createSketchSpline(pts=None,label="BSpline Sketch",periodic=True):
 
 	for i,p in enumerate(pts):
 		sk.addGeometry(Part.Circle(App.Vector(int(round(p.x)),int(round(p.y)),0),App.Vector(0,0,1),10),True)
-		#if i == 1: sk.addConstraint(Sketcher.Constraint('Radius',0,10.000000)) 
-		#if i>0: sk.addConstraint(Sketcher.Constraint('Equal',0,i)) 
+		#if i == 1: sk.addConstraint(Sketcher.Constraint('Radius',0,10.000000))
+		#if i>0: sk.addConstraint(Sketcher.Constraint('Equal',0,i))
 
 		radius=2.0
-		sk.addConstraint(Sketcher.Constraint('Radius',i,radius)) 
+		sk.addConstraint(Sketcher.Constraint('Radius',i,radius))
 		sk.renameConstraint(i, 'Weight ' +str(i+1))
 
 		#i=5; App.ActiveDocument.Sketch016.setDatum(i,40))
@@ -82,24 +82,24 @@ def mergeSketchSpline(pts=None,label="BSpline Sketch",periodic=True,name="Sketch
 	for i,p in enumerate(pts):
 		j=sk.addGeometry(Part.Circle(App.Vector(int(round(p.x)),int(round(p.y)),0),App.Vector(0,0,1),10),True)
 		sk
-		
+
 		# wenn schon was da ist,verbinden
 		if i==0 and int(sk.GeometryCount)>=2:
-			sk.addConstraint(Sketcher.Constraint('Coincident',j-2,3,j,3)) 
-		
+			sk.addConstraint(Sketcher.Constraint('Coincident',j-2,3,j,3))
+
 		j=int(sk.GeometryCount)-1
 		js.append(j)
-		#if i == 1: sk.addConstraint(Sketcher.Constraint('Radius',0,10.000000)) 
-		#if i>0: sk.addConstraint(Sketcher.Constraint('Equal',0,i)) 
+		#if i == 1: sk.addConstraint(Sketcher.Constraint('Radius',0,10.000000))
+		#if i>0: sk.addConstraint(Sketcher.Constraint('Equal',0,i))
 
 		radius=2.0
-		cj=sk.addConstraint(Sketcher.Constraint('Radius',j,radius)) 
-		print "Constraint ",cj
+		cj=sk.addConstraint(Sketcher.Constraint('Radius',j,radius))
+		print("Constraint ",cj)
 		sk.renameConstraint(cj, 'Weight ' +str(cj+1))
 
 		#i=5; App.ActiveDocument.Sketch016.setDatum(i,40))
 
-	
+
 
 	l=[App.Vector(int(round(p.x)),int(round(p.y))) for p in pts]
 
@@ -115,7 +115,7 @@ def mergeSketchSpline(pts=None,label="BSpline Sketch",periodic=True,name="Sketch
 	for i,j in enumerate(js):
 
 		conList.append(Sketcher.Constraint('InternalAlignment:Sketcher::BSplineControlPoint',j,3,k,i))
-		print "okay"
+		print("okay")
 
 	sk.addConstraint(conList)
 
@@ -129,17 +129,17 @@ def mergeSketchSpline(pts=None,label="BSpline Sketch",periodic=True,name="Sketch
 
 def closecurve(sk):
 	j=int(sk.GeometryCount)-2
-	sk.addConstraint(Sketcher.Constraint('Coincident',0,3,j,3)) 
+	sk.addConstraint(Sketcher.Constraint('Coincident',0,3,j,3))
 
 def runobj(obj,label=None):
 	''' erzeugt fuer ein objekt den SketchSpline'''
 
 	sk=createSketchSpline(obj.Shape.Edge1.Curve.getPoles(),str(obj.Label) + " Sketch" )
-	if label <>None: sk.Label=label
+	if label !=None: sk.Label=label
 	return sk
 
 def runsubs():
-	''' erzeugt sketche fuer mehrere subkanten''' 
+	''' erzeugt sketche fuer mehrere subkanten'''
 	sx=Gui.Selection.getSelectionEx()
 	s=sx[0]
 	for so in s.SubObjects:
@@ -154,19 +154,19 @@ def runsubs():
 			sayexc2(title='Error',mess='somethinq wrong with ' + obj.Label)
 
 def runall():
-	''' erzeugt sketche fuer mehrere subkanten''' 
+	''' erzeugt sketche fuer mehrere subkanten'''
 	sx=Gui.Selection.getSelection()
 	s=sx[0]
 	name="mergeS_"+s.Name
 	for so in s.Shape.Edges:
-		print so
+		print(so)
 		try:
 			bc=so.Curve
-			print bc
+			print(bc)
 			pts=bc.getPoles()
-			print pts
+			print(pts)
 			l=s.Label
-			print  l
+			print(l)
 			print (l,len(pts))
 			periodic=bc.isPeriodic()
 			# createSketchSpline(pts,str(l) + " Sketch" ,periodic)

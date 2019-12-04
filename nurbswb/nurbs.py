@@ -14,11 +14,12 @@ __version__='0.3'
 # http://www.opencascade.com/doc/occt-6.9.0/refman/html/class_geom___b_spline_surface.html
 
 import numpy as np
-from say import *
+from .say import *
 
 from pivy import coin
+from importlib import reload
 
-if 0: # change render to show triangulations 
+if 0: # change render to show triangulations
 
 	view = Gui.ActiveDocument.ActiveView
 	viewer=view.getViewer()
@@ -30,7 +31,7 @@ if 0: # change render to show triangulations
 
 
 
-def setNice(flag=True): 
+def setNice(flag=True):
 	''' make smooth skins '''
 	p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Part")
 	w=p.GetFloat("MeshDeviation")
@@ -119,7 +120,7 @@ class Nurbs(PartFeature):
 
 
 	def attach(self,vobj):
-		print "attach -------------------------------------"
+		print("attach -------------------------------------")
 		self.Object = vobj.Object
 		self.obj2 = vobj.Object
 
@@ -137,7 +138,7 @@ class Nurbs(PartFeature):
 		if prop=="expertMode":
 			if not fp.expertMode:
 				v=2
-			else: 
+			else:
 				v=0
 			for a in ['degree_u','degree_v','poles','knot_u','knot_v','nNodes_u','nNodes_v','weights']:
 				try: fp.setEditorMode(a, v)
@@ -169,9 +170,9 @@ class Nurbs(PartFeature):
 
 	def update(self, fp):
 		if hasattr(fp,"polobj"):
-			if fp.polobj<>None: App.ActiveDocument.removeObject(fp.polobj.Name) 
+			if fp.polobj!=None: App.ActiveDocument.removeObject(fp.polobj.Name)
 			fp.polobj=self.createSurface(fp,fp.poles)
-			if fp.polobj<>None:
+			if fp.polobj!=None:
 				fp.polobj.ViewObject.PointSize=4
 				fp.polobj.ViewObject.PointColor=(1.0,0.0,0.0)
 
@@ -229,14 +230,14 @@ class Nurbs(PartFeature):
 		for iv in range(1,ct+1):
 			pps=[]
 			for iu in range(0,ct+1):
-				
+
 				p=bs.value(st*iu,st*iv)
 				# print (iv,iu,st*iu,st*iv)
 				pps.append(p)
 			tt=Part.BSplineCurve()
 			tt.interpolate(pps)
 			ss=tt.toShape()
-			
+
 			# Hack
 			ss=Part.makePolygon(pps)
 			sss.append(ss)
@@ -265,7 +266,7 @@ class Nurbs(PartFeature):
 		nNodes_u=self.obj2.nNodes_u
 		nNodes_v=self.obj2.nNodes_v
 
-		print "poles and knots"
+		print("poles and knots")
 		print(nNodes_u,nNodes_v)
 		print (bs.NbUPoles,bs.NbVPoles)
 		nNodes_u=bs.NbUPoles
@@ -315,7 +316,7 @@ class Nurbs(PartFeature):
 				#if iv<>1:
 				sss.append(ss)
 			except:
-				print "kein polygon fuer",pps2
+				print("kein polygon fuer",pps2)
 
 		comp=Part.Compound(sss)
 		return comp
@@ -323,7 +324,7 @@ class Nurbs(PartFeature):
 
 
 	def create_uv_grid(self):
-		
+
 		comp=self.create_uv_grid_shape()
 		Part.show(comp)
 		App.ActiveDocument.ActiveObject.ViewObject.LineColor=(1.0,0.0,1.0)
@@ -381,7 +382,7 @@ class Nurbs(PartFeature):
 		''' calculate coord for cylinder '''
 
 		coor=np.array(coor)
-		print coor
+		print(coor)
 		l,d=coor.shape
 		xs=coor[:,0]
 		ys=coor[:,1]
@@ -390,7 +391,7 @@ class Nurbs(PartFeature):
 		xs -= xs.min()
 		xs /= xs.max()
 		xs *= (2*3.14)
-		print xs
+		print(xs)
 
 		ys -= ys.min()
 		ys /= ys.max()
@@ -398,7 +399,7 @@ class Nurbs(PartFeature):
 		zs -= zs.min()
 		zs /= zs.max()
 
-		print ys
+		print(ys)
 		coor=[]
 		h=2000
 		for i in range(l):
@@ -500,8 +501,7 @@ class Nurbs(PartFeature):
 			   [0,3,1],[1,3,0],[2,3,1],[3,3,-3],[4,3,1],\
 			   [0,4,1],[1,4,1],[2,4,1],[3,4,1],[4,4,1]]
 
-
-		if poles<>None:
+		if poles!=None:
 			cc=""
 			for l in poles: cc += str(l)
 			coor=eval(cc)
@@ -527,7 +527,7 @@ class Nurbs(PartFeature):
 
 
 #----------------------------------------------------------------------------------
-		print "len A coor " ,len(coor)
+		print("len A coor " ,len(coor))
 
 #		knot_u=[0,0,0.2,0.4,0.6,0.8,1,1]
 #		knot_u=[0,0,0.2, 0.4,0.4, 0.6,0.8,1,1]
@@ -548,7 +548,7 @@ class Nurbs(PartFeature):
 
 
 		if obj.model=="NurbsCylinder":
-			# cylinder - experimental  play with periodic nurbs 
+			# cylinder - experimental  play with periodic nurbs
 			pass
 			bs.setUPeriodic()
 
@@ -574,7 +574,7 @@ class Nurbs(PartFeature):
 						 bs.insertVKnot(knot_v[i],1,0.0000001)
 
 		print ("dim nodes",nNodes_v,nNodes_u)
-		print "len coor " ,len(coor)
+		print("len coor " ,len(coor))
 #		print ("knot_u",knot_u)
 #		print ("knot_v",knot_v)
 		print ("poles u count", bs.NbUPoles)
@@ -584,7 +584,7 @@ class Nurbs(PartFeature):
 #		print bs.getUMultiplicities()
 #		print bs.getVMultiplicities()
 
-		
+
 		t=bs.getPoles()
 		print("shape poles", len(t),len(t[0]))
 		#return
@@ -592,20 +592,19 @@ class Nurbs(PartFeature):
 		# nNodes_v,nNodes_u=nNodes_u,nNodes_v
 
 		if obj.model=="NurbsSuface":
-			print "Nurbs surface !!!"
+			print("Nurbs surface !!!")
 			poles2=np.array(coor).reshape(nNodes_v,nNodes_u,3)
-			print poles2.shape
+			print(poles2.shape)
 
 			vc=nNodes_v
 			kv=[1.0/(nNodes_v-1)*i for i in range(nNodes_v)]
 			ku=[1.0/(nNodes_u-1)*i for i in range(nNodes_u)]
-			
-			print ku
-			print kv
-			print len(ku)
-			print len(kv)
-			print nNodes_u
-			print nNodes_v
+			print(ku)
+			print(kv)
+			print(len(ku))
+			print(len(kv))
+			print(nNodes_u)
+			print(nNodes_v)
 
 			bs.buildFromPolesMultsKnots(poles2,[3] +[1]*(nNodes_v-2) +[3],[3]+[1]*(nNodes_u-2)+[3],
 				kv,
@@ -615,12 +614,12 @@ class Nurbs(PartFeature):
 
 		if obj.model=="NurbsSphere" or  obj.model=="NurbsCylinder" :
 			poles2=np.array(coor).reshape(nNodes_v,nNodes_u,3)
-			print poles2.shape
+			print(poles2.shape)
 
 			vc=nNodes_v
 			kv=[1.0/(nNodes_v-1)*i for i in range(nNodes_v)]
 			ku=[1.0/(nNodes_u-1)*i for i in range(nNodes_u)]
-			
+
 			bs.buildFromPolesMultsKnots(poles2,[3] +[1]*(nNodes_v-2) +[3],[2]+[1]*(nNodes_u-2)+[2],
 				kv,
 				ku,
@@ -648,7 +647,7 @@ class Nurbs(PartFeature):
 			i=0
 			for jj in range(0,nNodes_v):
 				for ii in range(0,nNodes_u):
-					
+
 					try:
 						#print("getpole",bs.getPole(jj+1,ii+1))
 						bs.setPole(jj+1,ii+1,FreeCAD.Vector((coor[i][0],coor[i][1],coor[i][2])),weights[jj,ii])
@@ -657,7 +656,7 @@ class Nurbs(PartFeature):
 						print([ii+1,jj+1,FreeCAD.Vector((coor[i][0],coor[i][1],coor[i][2])),weights[jj,ii]])
 					except:
 							print([ii+1,jj+1,FreeCAD.Vector((coor[i][0],coor[i][1],coor[i][2])),weights[jj,ii]])
-							
+
 							sayexc("error setPols ii,jj:"+str([ii+1,jj+1]))
 							print("getpole exc reverse --",bs.getPole(jj+1,ii+1))
 							print("getpole exc --",bs.getPole(ii+1,jj+1))
@@ -666,14 +665,14 @@ class Nurbs(PartFeature):
 
 		# create aux parts
 		if obj.solid: obj.Shape=self.create_solid(bs)
-		else: 
+		else:
 			if FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetBool("createNurbsShape",True):
 				obj.Shape=bs.toShape()
 
 		vis=False
 		vis=True
 		if obj.grid:
-			if obj.gridobj<>None: 
+			if obj.gridobj!=None:
 				vis=obj.gridobj.ViewObject.Visibility
 				App.ActiveDocument.removeObject(obj.gridobj.Name)
 			obj.gridobj=self.create_grid(bs,obj.gridCount)
@@ -681,10 +680,9 @@ class Nurbs(PartFeature):
 			obj.gridobj.ViewObject.Visibility=vis
 
 		if 0 and obj.base:
-			# create the socket box 
+			# create the socket box
 			mx=np.array(coor).reshape(nNodes_v,nNodes_u,3)
-			print "create box"
-
+			print("create box")
 			print (mx.shape)
 			a0=tuple(mx[0,0])
 			b0=tuple(mx[0,-1])
@@ -697,7 +695,7 @@ class Nurbs(PartFeature):
 			c=tuple(mx[-1,-1]+[0,0,-bh])
 			d=tuple(mx[-1,0]+[0,0,-bh])
 			print (a,b,c,d)
-			
+
 			lls=[Part.makeLine(a0,b0),Part.makeLine(b0,b),Part.makeLine(b,a),Part.makeLine(a,a0)]
 			fab=Part.makeFilledFace(lls)
 			lls=[Part.makeLine(b0,c0),Part.makeLine(c0,c),Part.makeLine(c,b),Part.makeLine(b,b0)]
@@ -734,7 +732,7 @@ class Nurbs(PartFeature):
 
 
 		# create a pole grid with spines
-		
+
 		#--- hack
 		#print "ABBRUCH Zeile 661"
 		#return None
@@ -742,7 +740,7 @@ class Nurbs(PartFeature):
 
 		vis=True
 		vis=False
-		try: 
+		try:
 			vis=obj.polgrid.ViewObject.Visibility
 			App.ActiveDocument.removeObject(obj.polgrid.Name)
 		except: pass
@@ -752,11 +750,10 @@ class Nurbs(PartFeature):
 
 		nurbstime=time.time()
 
-		print "XB"
-		
+		print("XB")
 		polesobj=None
 		comptime=time.time()
-		
+
 		if  obj.polpoints:
 			#create the poles for visualization
 			#the pole point cloud
@@ -773,7 +770,7 @@ class Nurbs(PartFeature):
 
 			yy.Shape=comp
 			polesobj=App.ActiveDocument.ActiveObject
-		
+
 
 		endtime=time.time()
 
@@ -845,7 +842,7 @@ class Nurbs(PartFeature):
 
 
 		comp=Part.makeCompound(ls)
-		if self.grid <> None:
+		if self.grid != None:
 			self.grid.Shape=comp
 		else:
 			Part.show(comp)
@@ -881,7 +878,7 @@ class Nurbs(PartFeature):
 		# unrestricted
 		self.g[v][u][2] = self.gBase[v][u][2] + 100* np.tan(0.5*np.pi*h/101)
 		sayW(("set  rel h, height",h,self.g[v][u][2]))
-				
+
 		if update:
 			self.gBase=self.g.copy()
 
@@ -970,7 +967,7 @@ class Nurbs(PartFeature):
 		for iv in range(vc):
 			for iu in range(uc):
 				try:
-					if (g[iu][iv][0]-g[u][v][0])**2 + (g[iu][iv][1]-g[u][v][1])**2 <= radius**2: 
+					if (g[iu][iv][0]-g[u][v][0])**2 + (g[iu][iv][1]-g[u][v][1])**2 <= radius**2:
 						g[iu][iv][2]=height
 				except:
 					pass
@@ -1013,7 +1010,7 @@ class Nurbs(PartFeature):
 
 		for iv in range(1,vc-1):
 			for iu in range(1,uc-1):
-				
+
 				if (iv+iu)%2 == 0:
 					self.g[iu][iv][2]=height
 				else:
@@ -1027,7 +1024,7 @@ class Nurbs(PartFeature):
 	def addUline(self,vp,pos=0.5):
 		''' insert a line of poles after vp, pos is relative to the next Uline'''
 
-		FreeCAD.ActiveDocument.openTransaction("add ULine " +str((vp,pos))) 
+		FreeCAD.ActiveDocument.openTransaction("add ULine " +str((vp,pos)))
 
 		uc=self.obj2.nNodes_u
 		vc=self.obj2.nNodes_v
@@ -1050,7 +1047,7 @@ class Nurbs(PartFeature):
 
 		gg=np.concatenate((g[:vp],[vline],g[vp:]))
 		self.g=gg
-		
+
 		self.obj2.nNodes_v += 1
 
 		self.updatePoles()
@@ -1069,7 +1066,7 @@ class Nurbs(PartFeature):
 		if pos<=0: pos=0.00001
 		if pos>=1: pos=1-0.00001
 		pos=1-pos
-		
+
 		g=self.g
 		g=g.swapaxes(0,1)
 
@@ -1091,7 +1088,7 @@ class Nurbs(PartFeature):
 
 
 	def addS(self,vp):
-		''' harte kante links, weicher uebergang, harte kante rechts ''' 
+		''' harte kante links, weicher uebergang, harte kante rechts '''
 
 		FreeCAD.ActiveDocument.openTransaction("add vertical S " + str(vp))
 
@@ -1129,7 +1126,7 @@ class Nurbs(PartFeature):
 
 		ll=""
 		gf=self.g.reshape(uc*vc,3)
-		for i in gf: 
+		for i in gf:
 			ll += str( list(i)) +","
 		ll ="[" + ll + "]"
 
@@ -1249,7 +1246,7 @@ class ViewProviderNurbs:
 		return None
 
 	def edit(self):
-		import nurbs_dialog
+		from . import nurbs_dialog
 		reload (nurbs_dialog)
 		FreeCAD.tt=self
 		self.Object.Object.generatePoles=False
@@ -1288,25 +1285,25 @@ def createnurbs():
 	a.base=False
 	#a.grid=False
 
-	
+
 	polestring='''[
-	[0.0, 0.0, 0.0], [40.0, 0.0, 0.0], [80.0, 0.0, 0.0], [120.0, 0.0, 0.0], [160.0, 0.0, 0.0], [200.0, 0.0, 0.0], 
-	[0.0, 30.0, 0.0], [40.0, 30.0, 0.0], [80.0, 30.0, 0.0], [120.0, 30.0, 0.0], [160.0, 30.0, -60.0], [200.0, 30.0, 0.0], 
-	[0.0, 60.0, 0.0], [40.0, 60.0, 0.0], [80.0, 60.0, 0.0], [120.0, 60.0, -60.0], [160.0, 60.0, -60.0], [200.0, 60.0, 0.0], 
-	[0.0, 90.0, 0.0], [40.0, 90.0, 0.0], [80.0, 90.0, 0.0], [120.0, 90.0, 0.0], [160.0, 90.0, 0.0], [200.0, 90.0, 0.0], 
-	[0.0, 120.0, 0.0], [40.0, 120.0, 0.0], [80.0, 120.0, 0.0], [120.0, 120.0, 0.0], [160.0, 120.0, 0.0], [200.0, 120.0, 0.0], 
-	[0.0, 150.0, 0.0], [40.0, 150.0, 0.0], [80.0, 150.0, 100.0], [120.0, 150.0, 100.0], [160.0, 150.0, 80.0], [200.0, 150.0, 0.0], 
+	[0.0, 0.0, 0.0], [40.0, 0.0, 0.0], [80.0, 0.0, 0.0], [120.0, 0.0, 0.0], [160.0, 0.0, 0.0], [200.0, 0.0, 0.0],
+	[0.0, 30.0, 0.0], [40.0, 30.0, 0.0], [80.0, 30.0, 0.0], [120.0, 30.0, 0.0], [160.0, 30.0, -60.0], [200.0, 30.0, 0.0],
+	[0.0, 60.0, 0.0], [40.0, 60.0, 0.0], [80.0, 60.0, 0.0], [120.0, 60.0, -60.0], [160.0, 60.0, -60.0], [200.0, 60.0, 0.0],
+	[0.0, 90.0, 0.0], [40.0, 90.0, 0.0], [80.0, 90.0, 0.0], [120.0, 90.0, 0.0], [160.0, 90.0, 0.0], [200.0, 90.0, 0.0],
+	[0.0, 120.0, 0.0], [40.0, 120.0, 0.0], [80.0, 120.0, 0.0], [120.0, 120.0, 0.0], [160.0, 120.0, 0.0], [200.0, 120.0, 0.0],
+	[0.0, 150.0, 0.0], [40.0, 150.0, 0.0], [80.0, 150.0, 100.0], [120.0, 150.0, 100.0], [160.0, 150.0, 80.0], [200.0, 150.0, 0.0],
 	[0.0, 180.0, 0.0], [40.0, 180.0, 0.0], [80.0, 180.0, 0.0], [120.0, 180.0, 100.0], [160.0, 180.0, 80.0], [200.0, 180.0, 0.0], [
-	0.0, 210.0, 0.0], [40.0, 210.0, 100.0], [80.0, 210.0, 0.0], [120.0, 210.0, 0.0], [160.0, 210.0, 0.0], [200.0, 210.0, 0.0], 
-	[0.0, 240.0, 0.0], [40.0, 240.0,0.0], [80.0, 240.0, 0.0], [120.0, 240.0, 0.0], [160.0, 240.0, 0.0], [200.0, 240.0, 0.0], 
+	0.0, 210.0, 0.0], [40.0, 210.0, 100.0], [80.0, 210.0, 0.0], [120.0, 210.0, 0.0], [160.0, 210.0, 0.0], [200.0, 210.0, 0.0],
+	[0.0, 240.0, 0.0], [40.0, 240.0,0.0], [80.0, 240.0, 0.0], [120.0, 240.0, 0.0], [160.0, 240.0, 0.0], [200.0, 240.0, 0.0],
 	[0.0, 270.0, 0.0], [40.0, 270.0, 0.0], [80.0, 270.0, 0.0], [120.0, 270.0, 0.0], [160.0, 270.0, 0.0], [200.0, 270.0, 0.0]]'''
 
 	polarr=eval(polestring)
 	ps=[FreeCAD.Vector(tuple(v)) for v in polarr]
-	
+
 	a.poles=polestring
 	#ps=a.Proxy.getPoints()
-	
+
 	a.Proxy.togrid(ps)
 	a.Proxy.updatePoles()
 	a.Proxy.showGriduv()
@@ -1343,11 +1340,11 @@ def testRandomB():
 	a.base=False
 	#a.grid=False
 	a.gridCount=6
-	
+
 	ps=a.Proxy.getPoints()
 
 	if 0:
-		print "random .."
+		print("random ..")
 		ps=np.array(FreeCAD.ps).swapaxes(0,1)
 		temp,ct=ps.shape
 		ps[2] += 100*np.random.random(ct)
@@ -1356,7 +1353,7 @@ def testRandomB():
 
 	ps=np.array(ps)
 	ps.resize(na,b,3)
-	
+
 	for k0 in range(10):
 		k=random.randint(0,na-6)
 		l=random.randint(1,b-1)
@@ -1387,7 +1384,7 @@ def testRandomB():
 
 	a.Proxy.updatePoles()
 	a.Proxy.showGriduv()
-	
+
 	FreeCAD.a=a
 	FreeCAD.ps=ps
 
@@ -1413,12 +1410,12 @@ def testRandomCylinder():
 	a.base=False
 	#a.grid=False
 	a.gridCount=20
-	
+
 	ps=a.Proxy.getPoints()
-	print "points ps",len(ps)
+	print("points ps",len(ps))
 
 	if 0:
-		print "random .."
+		print("random ..")
 		ps=np.array(FreeCAD.ps).swapaxes(0,1)
 		temp,ct=ps.shape
 		ps[2] += 100*np.random.random(ct)
@@ -1427,7 +1424,7 @@ def testRandomCylinder():
 
 	ps=np.array(ps)
 	ps.resize(na,b,3)
-	
+
 	for k0 in range(25):
 		k=random.randint(0,na-3)
 		l=random.randint(1,b-1)
@@ -1458,7 +1455,7 @@ def testRandomCylinder():
 
 	a.Proxy.updatePoles()
 	a.Proxy.showGriduv()
-	
+
 	FreeCAD.a=a
 	FreeCAD.ps=ps
 
@@ -1496,7 +1493,7 @@ def testRandomSphere():
 	b=FreeCAD.ParamGet('User parameter:Plugins/nurbs/randomSphere').GetInt("countLongitude",100)
 	pass1=FreeCAD.ParamGet('User parameter:Plugins/nurbs/randomSphere').GetInt("countRandom1",100)
 	pass2=FreeCAD.ParamGet('User parameter:Plugins/nurbs/randomSphere').GetInt("countRandom2",100)
-	
+
 
 
 	if 0:
@@ -1526,16 +1523,14 @@ def testRandomSphere():
 	a.solid=False
 	a.base=False
 	#a.grid=False
-	
+
 	# a.gridCount=1000
-	
-	
 
 	ps=a.Proxy.getPoints()
-	print "points ps",len(ps)
+	print("points ps",len(ps))
 
 	if 0:
-		print "random .."
+		print("random ..")
 		ps=np.array(FreeCAD.ps).swapaxes(0,1)
 		temp,ct=ps.shape
 		ps[2] += 100*np.random.random(ct)
@@ -1544,7 +1539,7 @@ def testRandomSphere():
 
 	ps=np.array(ps)
 	ps.resize(na,b,3)
-	
+
 	for k0 in range(pass1):
 		k=random.randint(2,na-3)
 		l=random.randint(1,b-1)
@@ -1570,32 +1565,29 @@ def testRandomSphere():
 		for j in range(rj):
 			ps[k+j][l][2] += 2*random.random()
 		if k0%1000==0:
-			print k0
+			print(k0)
 			Gui.updateGui()
 
-
-
 	ps.resize(na*b,3)
-	print "A"
-	print time.time()
+	print("A")
+	print(time.time())
 	Gui.updateGui()
 
-	
 	a.Proxy.togrid(ps)
-	print "B"
-	print time.time()
+	print("B")
+	print(time.time())
 	Gui.updateGui()
 
 #	a.Proxy.elevateVline(2,0)
 
 	a.Proxy.updatePoles()
-	
-	print "c"
-	print time.time()
+
+	print("c")
+	print(time.time())
 	Gui.updateGui()
 	a.Proxy.showGriduv()
-	print "d"
-	print time.time()
+	print("d")
+	print(time.time())
 	Gui.updateGui()
 
 	FreeCAD.ActiveDocument.recompute()
@@ -1628,14 +1620,14 @@ def testRandomTorus():
 	a.gridCount=20
 	
 	ps=a.Proxy.getPoints()
-	print "points ps",len(ps)
+	print("points ps",len(ps))
 
 	ps=a.Proxy.getPoints()
-	print "A"
+	print("A")
 	a.Proxy.togrid(ps)
-	print "B"
+	print("B")
 	a.Proxy.updatePoles()
-	print "C"
+	print("C")
 	a.Proxy.showGriduv()
 
 
@@ -1647,11 +1639,11 @@ def testRandomTorus():
 		ps[2] += 100*np.random.random(ct)
 		ps=ps.swapaxes(0,1)
 	#	ps[0:3]
-	
+
 	ps=np.array(ps)
 	ps.resize(na,b,3)
 
-	
+
 	for k0 in range(15):
 		k=random.randint(2,na-3)
 		l=random.randint(1,b-1)
@@ -1672,7 +1664,7 @@ def testRandomTorus():
 		print (k,rj)
 		for j in range(rj):
 			ps[k+j][l][2] += 200*random.random()
-	
+
 
 	ps.resize(na*b,3)
 

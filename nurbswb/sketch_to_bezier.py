@@ -8,6 +8,7 @@
 #-------------------------------------------------
 
 import FreeCAD,FreeCADGui,Sketcher,Part
+from importlib import reload
 
 App = FreeCAD
 Gui = FreeCADGui
@@ -25,7 +26,6 @@ reload (nurbswb.pyob)
 class _VP(ViewProvider):
 	''' basic defs '''
 
-
 	def setupContextMenu(self, obj, menu):
 		menu.clear()
 		action = menu.addAction("MyMethod #1")
@@ -36,7 +36,6 @@ class _VP(ViewProvider):
 		action = menu.addAction("Edit Sketch")
 		action.triggered.connect(lambda:self.myedit(obj.Object))
 
-
 	def myedit(self,obj):
 		self.methodB(None)
 		Gui.activeDocument().setEdit(obj.Name)
@@ -44,26 +43,24 @@ class _VP(ViewProvider):
 		self.methodA(None)
 
 	def methodA(self,obj):
-		print "my Method A"
+		print("my Method A")
 		FreeCAD.activeDocument().recompute()
 
 	def methodB(self,obj):
-		print "my method B"
+		print("my method B")
 		FreeCAD.activeDocument().recompute()
 
 	def methodC(self,obj):
-		print "my method C"
+		print("my method C")
 		FreeCAD.activeDocument().recompute()
 
 	def unsetEdit(self,vobj,mode=0):
 		self.methodC(None)
 
-
 	def doubleClicked(self,vobj):
-		print "double clicked"
+		print("double clicked")
 		self.myedit(vobj.Object)
-
-		print "Ende double clicked"
+		print("Ende double clicked")
 
 
 def getNamedConstraint(sketch,name):
@@ -72,8 +69,6 @@ def getNamedConstraint(sketch,name):
 		if c.Name==name: return i
 	print ('Constraint name "'+name+'" not in ' +sketch.Label)
 	raise Exception ('Constraint name "'+name+'" not in ' + sketch.Label)
-
-
 
 def clearReportView(name):
 	from PySide import QtGui
@@ -139,7 +134,7 @@ def run(sk):
 			jj=sk.addConstraint(Sketcher.Constraint('Distance',20,10))
 			sk.setDriving(jj,False)
 			sk.setVirtualSpace(jj, True)
-			print "done"
+			print("done")
 
 	except: pass
 
@@ -167,8 +162,7 @@ def run(sk):
 
 def init_bezierring(sk,count=5,source=None):
 
-
-	if source <> None:
+	if source != None:
 		ptsa=source.Shape.Wires[0].discretize(count*2*10)
 		ptsb=[]
 
@@ -200,7 +194,7 @@ def init_bezierring(sk,count=5,source=None):
 			pts +=[p,pm,p2]
 
 	for i in range(count):
-			if i <> 0: # connect to the last segment with a connector line
+			if i != 0: # connect to the last segment with a connector line
 				lc=sk.addGeometry(Part.LineSegment(pts[3*i-1],pts[3*i]),False)
 				sk.addConstraint(Sketcher.Constraint('Coincident',lb,2,lc,1))
 
@@ -211,17 +205,17 @@ def init_bezierring(sk,count=5,source=None):
 				p2=sk.getPoint(lb,1)
 				cc=sk.addConstraint(Sketcher.Constraint('DistanceX',lb,1,p2.x))
 				sk.addConstraint(Sketcher.Constraint('DistanceY',lb,1,p2.y))
-				sk.renameConstraint(cc, u'aa ' + str(i))
+				sk.renameConstraint(cc, 'aa ' + str(i))
 				p2=sk.getPoint(la,1)
 				cc=sk.addConstraint(Sketcher.Constraint('DistanceX',la,1,p2.x))
 				sk.addConstraint(Sketcher.Constraint('DistanceY',la,1,p2.y))
-				sk.renameConstraint(cc, u'bb ' + str(i))
+				sk.renameConstraint(cc, 'bb ' + str(i))
 
 			# blocking does not work (unsolvable by sketcher) why?
 #			sk.addConstraint(Sketcher.Constraint('Block',lb))
 			sk.addConstraint(Sketcher.Constraint('Coincident',la,2,lb,1))
 
-			if i <> 0: # connect connector line to the new created segment
+			if i != 0: # connect connector line to the new created segment
 				sk.addConstraint(Sketcher.Constraint('Coincident',lc,2,la,1))
 
 	# close the figure
@@ -230,7 +224,7 @@ def init_bezierring(sk,count=5,source=None):
 	p2=sk.getPoint(la,1)
 	cc=sk.addConstraint(Sketcher.Constraint('DistanceX',la,1,p2.x))
 	sk.addConstraint(Sketcher.Constraint('DistanceY',la,1,p2.y))
-	sk.renameConstraint(cc, u'cc ' + str(i))
+	sk.renameConstraint(cc, 'cc ' + str(i))
 
 	# connect head and foot
 	sk.addConstraint(Sketcher.Constraint('Coincident',lb,2,la,1))
@@ -239,7 +233,7 @@ def init_bezierring(sk,count=5,source=None):
 
 def createBezierSketch(name="BezierRing",source=None):
 
-	if source <> None:
+	if source != None:
 		name="Sk_"+source.Label+'_'
 
 	obj = FreeCAD.ActiveDocument.addObject("Sketcher::SketchObjectPython",name)
@@ -251,8 +245,6 @@ def createBezierSketch(name="BezierRing",source=None):
 
 def createBezierRingSketch(name="BezierRing",source=None):
 	return createBezierSketch(name,source)
-
-
 
 
 import time
@@ -271,35 +263,34 @@ class FollowerSketch(FeaturePython):
 		self.timestamp=time.time()
 	##\endcond
 
-
 	def onChanged(self, obj, prop):
 		print ("onChange", prop)
 		if len(obj.Geometry)==0: return
 		if not obj.init:return
 
-		if time.time()-self.timestamp<0.1 and prop<>"force":
+		if time.time()-self.timestamp<0.1 and prop!="force":
 			return
 		self.timestamp=time.time()
 
 
 		if prop=='Geometry' or prop=="force":
-			print "Anpassen"
+			print("Anpassen")
 			try:
-				print obj.getPoint(0,1)
+				print(obj.getPoint(0,1))
 			except:
-				print "noch nix da"
+				print("noch nix da")
 
 				return
 			p=obj.getPoint(0,1)
 			c=App.ActiveDocument.BSpline.Shape.Curve
 			u=c.parameter(p)
-			print "versuche zu setzen"
+			print("versuche zu setzen")
 
 			p2=c.value(u)
 
-			print p
-			print p2
-			print "##"
+			print(p)
+			print(p2)
+			print("##")
 			obj.movePoint(0,1,p2)
 			# constraints einschalten hier haRD CODED
 			ax=getNamedConstraint(obj,"ax")
@@ -313,18 +304,17 @@ class FollowerSketch(FeaturePython):
 			App.ActiveDocument.Sketch.setDriving(ax,False)
 			App.ActiveDocument.Sketch.setDriving(ay,False)
 			# auschcalten
-			print "fertig"
-
+			print("fertig")
 
 
 	def execute(proxy,obj):
-		print "execute"
+		print("execute")
 		obj.recompute()
 
 
 def createFollowerSketch(name="Follower",source=None):
 
-	if source <> None:
+	if source != None:
 		name="Sk_"+source.Label+'_'
 
 	obj = FreeCAD.ActiveDocument.addObject("Sketcher::SketchObjectPython",name)
@@ -341,11 +331,8 @@ def createFollowerSketch(name="Follower",source=None):
 	return obj
 
 
-
-
-
 class ArcSketch(FeaturePython):
-	'''Sketch Object with Python to create two smoothing arcs''' 
+	'''Sketch Object with Python to create two smoothing arcs'''
 
 	##\cond
 	def __init__(self, obj, icon='/home/thomas/.FreeCAD/Mod/freecad-nurbs/icons/draw.svg'):
@@ -363,7 +350,6 @@ class ArcSketch(FeaturePython):
 		self.timestamp=time.time()
 	##\endcond
 
-
 	def onChanged(self, obj, prop):
 		#print ("onChange", prop)
 		pass
@@ -380,7 +366,6 @@ class ArcSketch(FeaturePython):
 			obj.addGeometry(sk.Geometry[3*obj.countArcs+2])
 
 
-
 		def run(ag,bg):
 
 			try:
@@ -388,13 +373,13 @@ class ArcSketch(FeaturePython):
 				p0=sk.getPoint(bg,2)
 				ps=sk.getPoint(ag,2)
 			except:
-				print "points not found"
+				print("points not found")
 				return
 
 			alpha=np.arccos((p2-ps).normalize().dot((p0-ps).normalize()))
 			radius=(p2-ps).Length*np.tan(alpha*0.5)
 
-			print "Richtung ", (p2-ps).normalize().dot((p0-ps).normalize())
+			print("Richtung ", (p2-ps).normalize().dot((p0-ps).normalize()))
 
 			vv=(p2-ps).normalize().cross((p0-ps).normalize())
 
@@ -436,7 +421,7 @@ def createArcSketch(name="TwoArc",source=None):
 	except:
 		pass
 
-	if source <> None:
+	if source != None:
 		name="Sk_"+source.Label+'_'
 
 	obj = FreeCAD.ActiveDocument.addObject("Sketcher::SketchObjectPython",name)
@@ -462,7 +447,7 @@ def createLabel(obj,ref,ctext):
 
 	l.CustomText = ctext
 	l.Label=l.CustomText[0]
-	print l.Target[1][0]
+	print(l.Target[1][0])
 
 	##-----------------------
 	#com=l.Target[0].Shape.CenterOfMass
@@ -472,14 +457,14 @@ def createLabel(obj,ref,ctext):
 
 	l.CustomText = ctext
 	l.Label=l.CustomText[0]
-	print l.Target[1][0]
+	print(l.Target[1][0])
 
 	if l.Target[1][0].startswith("Edge") or l.Target[1][0].startswith("Fac") :
-		print "a"
+		print("a")
 		pp=getattr(l.Target[0].Shape,l.Target[1][0]).CenterOfMass
 		l.TargetPoint=getattr(l.Target[0].Shape,l.Target[1][0]).CenterOfMass
 	else:
-		print "b"
+		print("b")
 		pp=getattr(l.Target[0].Shape,l.Target[1][0]).Point
 		l.TargetPoint=getattr(l.Target[0].Shape,l.Target[1][0]).Point
 

@@ -1,7 +1,7 @@
 #***************************************************************************
 #*																		*
-#*   Copyright (c) 2016, 2018											* 
-#*   <microelly2@freecadbuch.de>										* 
+#*   Copyright (c) 2016, 2018											*
+#*   <microelly2@freecadbuch.de>										*
 #*																		*
 #*  This program is free software; you can redistribute it and/or modify*
 #*  it under the terms of the GNU Lesser General Public License (LGPL)	*
@@ -32,6 +32,7 @@ import nurbswb
 import nurbswb.configuration
 import os
 import re
+from importlib import reload
 global __dir__
 __dir__ = os.path.dirname(nurbswb.__file__)
 
@@ -51,25 +52,25 @@ def get_SelectedObjects(info=0, printError=True):
 			return True
 		if Object.ShapeType == "Edge":
 			Selected_Edges.append(Object)
-			return True 
+			return True
 		if Object.ShapeType == "Face":
 			Selected_Planes.append(Object)
 			return True
 		return False
-			
+
 	m_actDoc=FreeCAD.ActiveDocument
-	
-	if m_actDoc.Name:    
+
+	if m_actDoc.Name:
 		# Return a list of SelectionObjects for a given document name.
 		# "getSelectionEx" Used for selecting subobjects
 		m_selEx = Gui.Selection.getSelectionEx(m_actDoc.Name)
- 
+
 		m_num = len(m_selEx)
 		if info != 0:
 			print_msg("m_selEx : " + str(m_selEx))
 			print_msg("m_num   : " + str(m_num))
-			
-		if m_num >= 1: 
+
+		if m_num >= 1:
 			Selected_Points = []
 			Selected_Edges = []
 			Selected_Planes = []
@@ -77,11 +78,11 @@ def get_SelectedObjects(info=0, printError=True):
 			for Sel_i_Object in m_selEx:
 				if info != 0:
 					print_msg("Processing : " + str(Sel_i_Object.ObjectName))
-								
-				if Sel_i_Object.HasSubObjects:                
+
+				if Sel_i_Object.HasSubObjects:
 					for Object in Sel_i_Object.SubObjects:
 						if info != 0:
-							print_msg("SubObject : " + str(Object)) 
+							print_msg("SubObject : " + str(Object))
 						if hasattr(Object, 'ShapeType'):
 							storeShapeType(Object, Selected_Points, Selected_Edges, Selected_Planes)
 						if hasattr(Object, 'Shape'):
@@ -96,8 +97,8 @@ def get_SelectedObjects(info=0, printError=True):
 							if hasattr(Sel_i_Object.Object.Shape, 'ShapeType'):
 								if not storeShapeType(Sel_i_Object.Object.Shape, Selected_Points, Selected_Edges, Selected_Planes):
 									Selected_Objects.append(Sel_i_Object.Object)
-					
-					
+
+
 			Number_of_Points = len(Selected_Points)
 			Number_of_Edges = len(Selected_Edges)
 			Number_of_Planes = len(Selected_Planes)
@@ -115,7 +116,7 @@ def get_SelectedObjects(info=0, printError=True):
 			return None
 	else:
 		printError_msg("No active document !")
-	return 
+	return
 
 #------------------------------
 
@@ -251,12 +252,12 @@ class _Command():
 
 
 
-	def GetResources(self): 
-		return {'Pixmap' : self.icon, 
-			'MenuText': self.name, 
-			'ToolTip': self.name, 
+	def GetResources(self):
+		return {'Pixmap' : self.icon,
+			'MenuText': self.name,
+			'ToolTip': self.name,
 			'CmdType': "ForEdit" # bleibt aktiv, wenn sketch editor oder andere tasktab an ist
-		} 
+		}
 
 	def IsActive(self):
 		if FreeCADGui.ActiveDocument: return True
@@ -319,7 +320,7 @@ def onselex1():
 # the menu entry list
 FreeCAD.tcmds5=[]
 
-# create menu entries 
+# create menu entries
 '''
 def c1(menu,name,*info):
 	global _Command
@@ -467,7 +468,7 @@ if FreeCAD.GuiUp:
 
 	beztools=[]
 	_beztools=[]
-	
+
 	current=[]
 	_current=[]
 
@@ -486,12 +487,12 @@ if FreeCAD.GuiUp:
 	[c3bI(["Bezier"], always, 'approximator', 'swap Curves')]
 	[c3bI(["Bezier"], always, 'approximator', 'curves to Face')]
 
-	
+
 	[c3bG(["Bezier"], always, 'approximator', 'create MyMin A')]
 	[c3bG(["Bezier"], always, 'approximator', 'create MyMin Soft')]
 	[c3bG(["Bezier"], always, 'approximator', 'create BezierPoles Frame from ribs')]
 
-	
+
 	beztools += [c3bI(["Faces"], always, 'tripod_2', 'create Tripod',
 			tooltip='create a tripod onto the selected face' )]
 	beztools += [c3bI(["Faces"], always, 'tripod_2', 'create Tripod Sketch',
@@ -502,7 +503,7 @@ if FreeCAD.GuiUp:
 	[c3bG(["Points"], always, 'approximator', 'load Pointcloud from Image')]
 	[c3bG(["Points"], always, 'approximator', 'load Cylinderface from Image')]
 	beztools += [c3bG(["Points"], always, 'approximator', 'Bump Face from Image',icon=None)]
-	
+
 	[c3bG(["Points"], always, 'approximator', 'smooth Pointcloud')]
 	[c3bI(["Bezier"], always, 'berings', 'create Sketch Circle')]
 
@@ -517,7 +518,7 @@ if FreeCAD.GuiUp:
 	c3bI(["Bezier","Assembly"], always, 'berings', 'create Triangle')
 	c3bI(["Bezier","Assembly"], always, 'berings', 'create Plane Tube Connector')
 	c3bI(["Bezier","Assembly"], always, 'berings', 'create Helmet Tube Connector')
-	
+
 	beztools += [c3bI(["Bezier","Assembly"], always, 'berings', 'create Bering')]
 	c3bG(["Bezier","Assembly"], always, 'berings', 'create Tangent Helpers',"/../icons/alpha.svg")
 	beztools += [c3bI(["Bezier","Assembly"], always, 'berings', 'create Beface')]
@@ -534,7 +535,7 @@ if FreeCAD.GuiUp:
 
 
 	current += [c3bI(["Bezier"], always, 'points_to_wires', 'AA',tooltip="Eine Testfunktion")]
-	
+
 
 
 	current += [c3bI(["Bezier"], always, 'points_to_face', 'Reconstruct Sphere',tooltip="Subselection to Sphere",icon=None)]
@@ -677,13 +678,13 @@ if FreeCAD.GuiUp:
 	c2a(["Curves"],always,'facedrawa','facedraw','create Map of a face','/../icons/draw.svg',"createMap()")
 	c2a(["Curves"],always,'facedrawa2','facedraw','create Curvature Map of a face','/../icons/draw.svg',"createMap(mode='curvature')")
 	c2a(["Curves"],always,'curvaturea','curvatureplot','draw the curvature net','/../icons/draw.svg',"run()")
-	
+
 	c2a(["Curves"],always,'facedrawb','facedraw','create Grids for a face','/../icons/draw.svg',"createGrid()")
-	
+
 	c2a(["Curves"],always,'isodraw32','isodraw','3D to 2D','/../icons/draw.svg',"map3Dto2D()")
 	c2a(["Curves"],always,'isodraw23','isodraw','2D to 3D','/../icons/draw.svg',"map2Dto3D()")
 	c2a(["Curves"],always,'isodraw24','isodraw','3D Grid to 2D Grid','/../icons/draw.svg',"map3Dgridto2Dgrid()")
-	
+
 	c2b(["Curves"],always,0,'isodraw','create Brezel','/../icons/draw.svg')
 #	c2a(["Curves"],always,'importColorSVG','shoe_importSVG','import SVG for shoes','/../icons/draw.svg',"import_test()")
 
@@ -697,7 +698,7 @@ if FreeCAD.GuiUp:
 	c2a(["Curves"],always,'expSVG','shoe_importSVG','export svg file','/../icons/draw.svg',"export_svg()")
 
 	c2a(["Curves"],always,'cnotrol','controlpanel','create a controlpanel','/../icons/draw.svg',"run()")
-	
+
 	c2a(["Curves"],always,'beziera','bezier','selected face to sketch','/../icons/draw.svg',"faceToSketch()")
 	c2a(["Curves"],always,'bezierb','bezier','selected edges to sketches','/../icons/draw.svg',"subsToSketch()")
 
@@ -786,10 +787,10 @@ if FreeCAD.GuiUp:
 	c2a(["Topology"],always,'Topo4','analyse_topology_v2','add to Vertex Store','/../icons/nurbs.svg',"addToVertexStore()")
 	c2a(["Topology"],always,'Topo2','analyse_topology_v2','print Vertex Store Dump','/../icons/nurbs.svg',"printVertexStore()")
 	c2a(["Topology"],always,'Topo2a','analyse_topology_v2','display Vertex Store Common Points','/../icons/nurbs.svg',"displayVertexStore()")
-	
+
 	c2a(["Topology"],always,'Topo3','analyse_topology_v2','reset Vertex Store','/../icons/nurbs.svg',"resetVertexStore()")
-	
-	
+
+
 	c2a(["Topology"],always,'Topo6','analyse_topology_v2','load Test 1','/../icons/nurbs.svg',"loadTest1()")
 	c2a(["Topology"],always,'Topo7','analyse_topology_v2','load Test 2','/../icons/nurbs.svg',"loadTest2()")
 	c2a(["Topology"],always,'Topo10','fem_edgelength_mesh','Grid Tension Simulation','/../icons/nurbs.svg',"run()")
@@ -954,7 +955,7 @@ static char * nurbs_xpm[] = {
 		]
 
 		cmds2=['Nurbs_facedraw','Nurbs_patcha','Nurbs_patchb','Nurbs_folda']
-		
+
 		cmds3=['Nurbs_CreateWorkspace','Nurbs_CreateWSLink','Nurbs_ViewsQV','Nurbs_Views2H','Nurbs_DarkRoom','Nurbs_LightOn','Nurbs_LightOff']
 		cmds4=['Nurbs_pta','Nurbs_ptb','Nurbs_ptc','Nurbs_ptd','Nurbs_pte']
 		cmds5=['Nurbs_geodesic'+str(a+1) for a in range(6)]
@@ -983,7 +984,7 @@ static char * nurbs_xpm[] = {
 			a=_t[1]
 			try:menues[tuple(c)].append(a)
 
-			except: 
+			except:
 				menues[tuple(c)]=[a]
 				ml.append(tuple(c))
 
@@ -1011,4 +1012,3 @@ static char * nurbs_xpm[] = {
 
 
 FreeCADGui.addWorkbench(NurbsWorkbench(toolbars, __vers__))
-

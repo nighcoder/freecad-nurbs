@@ -1,12 +1,13 @@
 '''dynamic offset node'''
 
-from say import *
+from .say import *
+from importlib import reload
 
 Gui.ActiveDocument=None
 import FreeCAD
 if 0:
 	try:
-		FreeCAD.open(u"/home/thomas/Schreibtisch/tt_offset_example.fcstd")
+		FreeCAD.open("/home/thomas/Schreibtisch/tt_offset_example.fcstd")
 		App.setActiveDocument("tt_offset_example")
 		App.ActiveDocument=App.getDocument("tt_offset_example")
 		Gui.ActiveDocument=Gui.getDocument("tt_offset_example")
@@ -19,10 +20,10 @@ reload (nurbswb.datatools)
 import scipy.interpolate
 
 
-## calculates a scipy.interpolate.interp1d 
+## calculates a scipy.interpolate.interp1d
 # for the floatlist obj.datalist
 #
-# in debugmode the calculated shape contains wires for both curves and 
+# in debugmode the calculated shape contains wires for both curves and
 # connecting lines between corresponding points on all curves
 
 
@@ -33,7 +34,7 @@ def myupdate(obj):
 	fl=obj.data
 	if fl == None: return
 
-	x=range(len(fl.datalist))
+	x=list(range(len(fl.datalist)))
 	f = scipy.interpolate.interp1d(x, fl.datalist)
 
 	def k(i,l):
@@ -41,13 +42,13 @@ def myupdate(obj):
 		rc=f(1.0*i/l*(len(data)-1))/fl.factor
 		return rc
 
-	print "update .."
+	print("update ..")
 	apols=[]
 	apols1=[]
 	apols2=[]
-	print "lens"
-	print len(obj.curveO.Shape.Edges)
-	print len(obj.curveI.Shape.Edges)
+	print("lens")
+	print(len(obj.curveO.Shape.Edges))
+	print(len(obj.curveI.Shape.Edges))
 	obj.curveI
 	obj.curveO
 	for i,e in enumerate(obj.curveI.Shape.Edges):
@@ -86,7 +87,7 @@ def myupdate(obj):
 	apols2=apols2n
 
 	comps=[]
-	
+
 	comps=[Part.makePolygon([apols1[i],apols[i],apols2[i]]) for i in range(l)]
 	comps += [Part.makePolygon(apols),Part.makePolygon(apols1),Part.makePolygon(apols2)]
 
@@ -94,13 +95,13 @@ def myupdate(obj):
 	bc.interpolate(apols)
 	# bc.setPeriodic()
 	comps.append(bc.toShape())
-	if obj.debug: 
+	if obj.debug:
 		obj.Shape=Part.Compound(comps)
 	else:
 		obj.Shape=bc.toShape()
 
 
-from say import *
+from .say import *
 import nurbswb.pyob
 
 ## A configurable offset curve
@@ -109,10 +110,10 @@ import nurbswb.pyob
 # ----------
 #
 #  - **data** - link to a FloatList node
-#  - **curveO** - inner offset curve node 
+#  - **curveO** - inner offset curve node
 #  - **curveI** - outer offset curve node
 #  - **debug**  - displays some helping 2D information
-# 
+#
 # Icon
 # ----
 # @image html plane.svg
@@ -126,7 +127,7 @@ import nurbswb.pyob
 #
 # Example
 # -------
-#\code 
+#\code
 #import nurbswb.datatools
 #fl=nurbswb.datatools.createFloatlist("ParameterList")
 #fl.val007=10
@@ -152,18 +153,18 @@ class DynaOffset(nurbswb.pyob.FeaturePython):
 	def __init__(self, obj):
 		obj.Proxy = self
 		self.Type = self.__class__.__name__
-		nurbswb.pyob.ViewProvider(obj.ViewObject) 
+		nurbswb.pyob.ViewProvider(obj.ViewObject)
 
 
 	def XonChanged(proxy,obj,prop):
 		'''run myExecute for property prop: relativePosition and vertexNumber'''
-		
-		print "onChanged ",prop
+
+		print("onChanged ",prop)
 		if prop.startswith("val"):
 			data=[]
 			for i in range(12):
 				data.append(getattr(obj, "val%03d" % (i)))
-			print data
+			print(data)
 			obj.datalist=data
 	##\endcond
 
@@ -198,7 +199,7 @@ def run():
 if __name__=='__main__':
 
 	fl2=App.ActiveDocument.getObject("ParmeterList")
-	if fl2 == None: 
+	if fl2 == None:
 		fl2=nurbswb.datatools.createFloatlist("ParameterList")
 		fl2.val007=10
 

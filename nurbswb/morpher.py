@@ -1,6 +1,6 @@
 import numpy as np
 import random
-
+from importlib import reload
 import nurbswb
 from nurbswb.pyob import  FeaturePython,ViewProvider
 from nurbswb.say import *
@@ -59,8 +59,8 @@ class Morpher(FeaturePython):
 		pa=np.array(sfa.getPoles())
 		pb=np.array(sfb.getPoles())
 
-		print pa.shape
-		print pb.shape
+		print(pa.shape)
+		print(pb.shape)
 		pb2=npb.copy()
 		a,b=pb.shape[0:1]
 
@@ -68,22 +68,22 @@ class Morpher(FeaturePython):
 			ppa=pa.swapaxes(0,1)
 			ppa=ppa[::-1]
 			pa=ppa.swapaxes(0,1)
-			pb=pb[::-1] 
-			print pa.shape
-			print pb.shape
-			print "Ecken 0 0"
-			print pa[0,0]
-			print pb[0,0]
-			print "Eckebn -1 -1 "
-			print pa[-1,-1]
-			print pb[-1,-1]
+			pb=pb[::-1]
+			print(pa.shape)
+			print(pb.shape)
+			print("Ecken 0 0")
+			print(pa[0,0])
+			print(pb[0,0])
+			print("Eckebn -1 -1 ")
+			print(pa[-1,-1])
+			print(pb[-1,-1])
 
-			print "Eckebn 0 1"
-			print pa[0,-1]
-			print pb[0,-1]
-			print "Eckebn 1 0"
-			print pa[-1,0]
-			print pb[-1,0]
+			print("Eckebn 0 1")
+			print(pa[0,-1])
+			print(pb[0,-1])
+			print("Eckebn 1 0")
+			print(pa[-1,0])
+			print(pb[-1,0])
 
 
 		# pole morphen
@@ -99,13 +99,13 @@ class Morpher(FeaturePython):
 
 		bs.buildFromPolesMultsKnots(
 					pc,
-					mu,mv,range(len(mu)),range(len(mv)),
+					mu,mv,list(range(len(mu))),list(range(len(mv))),
 					False,False,3,3)
 
 		obj.Shape=bs.toShape()
 
 	def myExecute(self,obj):
-		print obj.Label," executed"
+		print(obj.Label," executed")
 
 
 def createMorpher():
@@ -134,7 +134,7 @@ class CurveMorpher(FeaturePython):
 		obj.addProperty("App::PropertyBool","_showborders","borders")
 		obj.addProperty("App::PropertyFloat","factorForce","config").factorForce=0
 		obj.addProperty("App::PropertyFloat","factor2Force","config").factor2Force=0
-		obj.addProperty("App::PropertyVector","pull","config").pull=FreeCAD.Vector(0,0,0)  
+		obj.addProperty("App::PropertyVector","pull","config").pull=FreeCAD.Vector(0,0,0)
 		obj.addProperty("App::PropertyInteger","count","config").count=9
 		obj.addProperty("App::PropertyInteger","degree","config").degree=3
 		obj.addProperty("App::PropertyBool","curvesNS")
@@ -152,7 +152,7 @@ class CurveMorpher(FeaturePython):
 		obj.addProperty("App::PropertyBool","curveOnlyA","special")
 		obj.addProperty("App::PropertyFloat","curveAPosition","special").curveAPosition=50
 		obj.addProperty("App::PropertyFloat","curveBPosition","special").curveBPosition=50
-		
+
 		obj.curvesNS=1
 		obj.curvesWE=1
 		obj.faceWE=0
@@ -204,7 +204,7 @@ class CurveMorpher(FeaturePython):
 
 			ptsa=np.array(ptsa)
 			ptsb=np.array(ptsb)
-			assert ptsa.shape == ptsb.shape	
+			assert ptsa.shape == ptsb.shape
 			l=ptsa.shape[0]
 			pts=u*ptsa+(1-u)*ptsb
 			AA=pts[0].copy()
@@ -255,7 +255,7 @@ class CurveMorpher(FeaturePython):
 		if obj.curveOnlyA:
 			Arange=[0.01*obj.curveAPosition*anz]
 		else:
-			Arange=range(anz+1)
+			Arange=list(range(anz+1))
 
 		for V in Arange:
 
@@ -274,9 +274,9 @@ class CurveMorpher(FeaturePython):
 			else:
 				A=np.array(cc.value(v))
 			if flipB:
-				B=np.array(cd.value(ff-v))	
+				B=np.array(cd.value(ff-v))
 			else:
-				B=np.array(cd.value(v))	
+				B=np.array(cd.value(v))
 
 			if obj.flipA:
 				A,B=B,A
@@ -294,12 +294,12 @@ class CurveMorpher(FeaturePython):
 		if obj.curveOnlyB:
 			Brange=[0.01*obj.curveBPosition*anz]
 		else:
-			Brange=range(anz+1)
+			Brange=list(range(anz+1))
 
 		flipA=obj.flipBA
 		flipB=obj.flipBB
 
-		
+
 		for iV,V in enumerate(Brange):
 			if not (obj.curvesWE or obj.faceWE):
 				break
@@ -317,9 +317,9 @@ class CurveMorpher(FeaturePython):
 			else:
 				A=np.array(cc.value(v))
 			if flipB:
-				B=np.array(cd.value(ff-v))	
+				B=np.array(cd.value(ff-v))
 			else:
-				B=np.array(cd.value(v))	
+				B=np.array(cd.value(v))
 
 			if obj.flipB:
 				A,B=B,A
@@ -350,7 +350,7 @@ class CurveMorpher(FeaturePython):
 		if prop in ["Shape"]:
 			return
 
-		
+
 		self.showprops(obj,prop)
 
 #		try:
@@ -457,8 +457,3 @@ def curvemorphedFace():
 if __name__ == '__main__':
 	#createMorpher()
 	curvemorphedFace()
-
-
-
-
-

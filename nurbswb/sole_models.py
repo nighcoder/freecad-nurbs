@@ -1,10 +1,10 @@
 '''
-sole model collection 
+sole model collection
 the model can be selected by the listModels method
 '''
 
 import numpy as np
-
+from importlib import reload
 ## the basic model
 
 class model():
@@ -118,4 +118,3 @@ def test():
 
 if __name__=='__main__':
 	test()
-

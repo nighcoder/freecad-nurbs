@@ -11,6 +11,7 @@ the skeche contains exactly one bspline curve
 import FreeCAD,FreeCADGui
 App=FreeCAD
 Gui=FreeCADGui
+from importlib import reload
 
 import os, nurbswb
 global __dir__
@@ -21,7 +22,7 @@ reload (nurbswb.spreadsheet_lib)
 from nurbswb.spreadsheet_lib import ssa2npa, npa2ssa, cellname
 
 #\endcond
-# from nurbswb.errors import showdialog 
+# from nurbswb.errors import showdialog
 
 from nurbswb.say import *
 
@@ -47,7 +48,7 @@ def run():
 		try:
 			s=sss[0]
 			c=s.Shape.Edge1.Curve
-		except: 
+		except:
 			showdialog("Error","Height profile document has no sketch")
 
 
@@ -85,4 +86,4 @@ def run():
 		nurbswb.sole.run()
 		dok2.recompute()
 
-	except : showdialog() 
+	except : showdialog()

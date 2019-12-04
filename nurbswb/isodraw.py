@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
 #-------------------------------------------------
-#-- methods for drawing on faces 
+#-- methods for drawing on faces
 #--
 #-- microelly 2017 v 0.3
 #--
@@ -11,6 +11,7 @@
 
 ##\cond
 from nurbswb.say import *
+from importlib import reload
 
 import FreeCAD,FreeCADGui
 App=FreeCAD
@@ -32,7 +33,7 @@ import nurbswb
 
 global __dir__
 __dir__ = os.path.dirname(nurbswb.__file__)
-print __dir__
+print(__dir__)
 
 
 class PartFeature:
@@ -86,7 +87,7 @@ def createShape(obj):
 	[uv2x,uv2y,xy2u,xy2v]=[obj.mapobject.Proxy.uv2x,obj.mapobject.Proxy.uv2y,obj.mapobject.Proxy.xy2u,obj.mapobject.Proxy.xy2v]
 
 	if xy2v==None:
-		print "Kann umkehrung nicht berechnen xy2v nicht vorhanden"
+		print("Kann umkehrung nicht berechnen xy2v nicht vorhanden")
 		return
 
 	# diese daten vom mapobjekt lesen #+#
@@ -126,7 +127,7 @@ def createShape(obj):
 				ptsaa += pts[1:]
 
 		pts=[p-pos for p in ptsaa]
-		
+
 		pts2=[]
 
 		#refpos geht noch nicht
@@ -193,7 +194,7 @@ class Isodraw(PartFeature):
 		obj.addProperty("App::PropertyBool","drawFace","Output","display subface cut by the wire projection")
 		obj.addProperty("App::PropertyBool","reverseFace","Output","display inner or outer subface")
 #		obj.addProperty("App::PropertyInteger","pointcount","Details","count of points to discretize source wire")
-#		
+#
 #		obj.pointcount=100
 
 		obj.addProperty("App::PropertyInteger","pointdist","Details",)
@@ -209,7 +210,7 @@ class Isodraw(PartFeature):
 
 	def execute(proxy,obj):
 		createShape(obj)
-		if obj.backref <>None:
+		if obj.backref !=None:
 			obj.backref.touch()
 			obj.backref.Document.recompute()
 		face=obj.face.Shape.Face1
@@ -217,7 +218,7 @@ class Isodraw(PartFeature):
 		reload(nurbswb.facedraw)
 		try: obj.ViewObject.ShapeColor=obj.wire.ViewObject.ShapeColor
 		except:obj.ViewObject.ShapeColor=(1.,0.,0.)
-		
+
 		nurbswb.facedraw.drawcurve(obj,face)
 
 
@@ -263,11 +264,11 @@ class Brezel(PartFeature):
 
 	def execute(proxy,obj):
 		#createShape(obj)
-		if obj.backref <>None:
+		if obj.backref !=None:
 			obj.backref.touch()
 			obj.backref.Document.recompute()
 		# face=obj.face.Shape.Face1
-		
+
 		import nurbswb.facedraw
 		#reload(nurbswb.facedraw)
 		try: obj.ViewObject.ShapeColor=obj.wire.ViewObject.ShapeColor
@@ -280,7 +281,7 @@ class Brezel(PartFeature):
 
 		wires=[]
 		for w in [obj.wire1,obj.wire2,obj.wire3,obj.wire4]:
-			if w <> None: wires  += [w]
+			if w != None: wires  += [w]
 
 
 		#faceobj=App.ActiveDocument.face
@@ -371,7 +372,7 @@ class Map(PartFeature):
 		obj.mode=mode
 		obj.ve=-1
 		obj.ue=-1
-		
+
 		obj.border=0
 		obj.ub=10
 		obj.vb=10
@@ -392,7 +393,7 @@ class Map(PartFeature):
 		obj.addProperty("App::PropertyInteger","uMax","Base")
 		obj.addProperty("App::PropertyInteger","uCenter","Base")
 		obj.addProperty("App::PropertyInteger","uCount","Base")
-		
+
 		obj.addProperty("App::PropertyInteger","vMin","Base")
 		obj.addProperty("App::PropertyInteger","vMax","Base")
 		obj.addProperty("App::PropertyInteger","vCenter","Base")
@@ -403,7 +404,7 @@ class Map(PartFeature):
 
 		obj.addProperty("App::PropertyFloat","fx","Base")
 		obj.addProperty("App::PropertyFloat","fy","Base")
-		
+
 		obj.addProperty("App::PropertyFloat","vMapCenter","Map")
 		obj.addProperty("App::PropertyFloat","uMapCenter","Map")
 
@@ -411,7 +412,7 @@ class Map(PartFeature):
 		obj.addProperty("App::PropertyBool","display3d","Map")
 		obj.addProperty("App::PropertyBool","displayCircles","Map")
 		obj.addProperty("App::PropertyBool","flipuv23","Map").flipuv23=True
-		
+
 		obj.display2d=True
 		obj.display3d=True
 
@@ -502,7 +503,7 @@ class Map(PartFeature):
 		obj.Shape=	Part.Compound(cps)
 		obj.Placement=pl
 
-		if obj.backref <>None:
+		if obj.backref !=None:
 			obj.backref.touch()
 			obj.backref.Document.recompute()
 
@@ -516,16 +517,16 @@ class Map(PartFeature):
 		proxy.uv2y=uv2y
 		proxy.xy2u=xy2u
 		proxy.xy2v=xy2v
-		print "getmap done"
+		print("getmap done")
 
-	
+
 
 
 def createMap(mode=''):
 	'''create a Map object'''
 	b=FreeCAD.activeDocument().addObject("Part::FeaturePython","MAP")
 	Map(b,mode=mode)
-	
+
 	# hack
 	b.display2d=False
 	b.displayCircles=True
@@ -544,20 +545,20 @@ def createMap(mode=''):
 
 def createGrid(mapobj,upmode=False):
 	'''create a 2D grid  or 3D grid (if upmode) for the map obj'''
- 
+
 	obj=mapobj
-	
-	try: 
+
+	try:
 		face=obj.faceObject.Shape.Faces[obj.faceNumber]
 		bs=face.Surface
 	except: return Part.Shape()
-	
-	print "createGrid for special faces"
-	print face
+
+	print("createGrid for special faces")
+	print(face)
 	import numpy as np
 
 	sf=face.Surface
-	
+
 	if sf.__class__.__name__ == 'Cone':
 
 		alpha,beta,hmin,hmax = face.ParameterRange
@@ -613,8 +614,8 @@ def createGrid(mapobj,upmode=False):
 
 	#su=bs.UPeriod()
 	#sv=bs.VPeriod()
-	
-	print "hack DD suu asv"
+
+	print("hack DD suu asv")
 	su=face.ParameterRange[1]
 	sv=face.ParameterRange[3]
 
@@ -623,7 +624,7 @@ def createGrid(mapobj,upmode=False):
 	if sv>1000: sv=face.ParameterRange[3]
 
 	# mittelpunkt
-	
+
 #	try: sweep=obj.Faceobject.TypeId=='Part::Sweep'
 #	except: sweep=True
 
@@ -662,10 +663,10 @@ def createGrid(mapobj,upmode=False):
 	vc=obj.uCount
 	uc=obj.vCount
 
-	print "isodraw #ll"
+	print("isodraw #ll")
 	print (su,sv)
 	print (uc,vc)
-	print face.ParameterRange
+	print(face.ParameterRange)
 
 
 	ptsa=[]
@@ -712,7 +713,7 @@ def createGrid(mapobj,upmode=False):
 
 	[uv2x,uv2y,xy2u,xy2v]=getmap(mapobj,obj.faceObject)
 
-	print "hier 3D Methode  ccc..oo.............."
+	print("hier 3D Methode  ccc..oo..............")
 	if obj.mode=='curvature':
 		[uv2x,uv2y,uv2z,xy2u,xy2v]=getmap3(mapobj,obj.faceObject)
 	ptsa=[]
@@ -769,8 +770,8 @@ def createGrid(mapobj,upmode=False):
 						z2=bs.curvature(uv2,vv2,obj.modeCurvature)
 					except:
 						z2=0
-					
-					if z2<>0:r=round(1.0/z2)
+
+					if z2!=0:r=round(1.0/z2)
 					else: r='planar'
 					if u>=mapobj.vMin-1 and u<=mapobj.vMax+1 and v>=mapobj.uMin-1 and v<=mapobj.uMax+1:
 						print ("u,v, curvature,radius ",u,v,round(z2,6),r)
@@ -785,7 +786,7 @@ def createGrid(mapobj,upmode=False):
 #				print (x,y,z)
 				pts.append(FreeCAD.Vector(x,y,z))
 
-#				if u==5: 
+#				if u==5:
 #					print ("aadfdbbw--",uv,vv,z)
 #					print (x,y)
 
@@ -797,7 +798,7 @@ def createGrid(mapobj,upmode=False):
 
 
 		print ("Rahmen 3D",obj.uMin,obj.uMax,obj.vMin,obj.vMax)
-		print obj.faceObject.TypeId
+		print(obj.faceObject.TypeId)
 
 #		try: sweep=obj.faceObject.TypeId=='Part::Sweep'
 #		except: sweep=True
@@ -809,7 +810,7 @@ def createGrid(mapobj,upmode=False):
 			vMin,vMax,uMin,uMax=obj.uMin,obj.uMax,obj.vMin,obj.vMax
 
 		relpos=obj.Placement.Base*(-1)
-		
+
 		comps=[]
 
 		for pts in ptska[uMin:uMax]:
@@ -864,7 +865,7 @@ def createGrid(mapobj,upmode=False):
 				ll += [vh2]
 
 			comps += [ Part.makePolygon(ll) ]
-		
+
 
 		# markiere zentrum der karte
 		z=bs.value(sua+0.5*sul,sva+0.5*svl)
@@ -875,7 +876,7 @@ def createGrid(mapobj,upmode=False):
 		th.Base=z
 		t2=pmh.multiply(th)
 		circ.Location=t2.Base
-		
+
 		th=FreeCAD.Placement()
 		th.Base=bs.normal(sua+0.5*sul,sva+0.5*svl)
 		t2=pmh.multiply(th)
@@ -917,7 +918,7 @@ def createGrid(mapobj,upmode=False):
 		# markiere zentrum der karte
 		uv=sua+0.5*sul
 		vm=sva+0.5*svl
-		
+
 		ky=ba.length(vm,mpv)
 		if vm<mpv: ky =-ky
 
@@ -1003,7 +1004,7 @@ class Drawgrid(PartFeature):
 		obj.addProperty("App::PropertyInteger","uMax","Base")
 		obj.addProperty("App::PropertyInteger","uCenter","Base")
 		obj.addProperty("App::PropertyInteger","uCount","Base")
-		
+
 		obj.addProperty("App::PropertyInteger","vMin","Base")
 		obj.addProperty("App::PropertyInteger","vMax","Base")
 		obj.addProperty("App::PropertyInteger","vCenter","Base")
@@ -1014,10 +1015,10 @@ class Drawgrid(PartFeature):
 		obj.addProperty("App::PropertyBool","flipxy","Base")
 		obj.addProperty("App::PropertyFloat","fx","Base")
 		obj.addProperty("App::PropertyFloat","fy","Base")
-		
+
 		obj.addProperty("App::PropertyFloat","vMapCenter","Map")
 		obj.addProperty("App::PropertyFloat","uMapCenter","Map")
-		
+
 		obj.fx=1.
 		obj.fy=1.
 		obj.flipxy=True
@@ -1045,10 +1046,10 @@ class Drawgrid(PartFeature):
 
 
 	def execute(proxy,obj):
-		print "exe",obj
+		print("exe",obj)
 		if obj.faceObject != None:
 			obj.Shape=createGrid(obj)
-		if obj.backref <>None:
+		if obj.backref !=None:
 			obj.backref.touch()
 			obj.backref.Document.recompute()
 
@@ -1073,10 +1074,10 @@ class Draw3Dgrid(PartFeature):
 
 
 	def execute(proxy,obj):
-		print "exe",obj
+		print("exe",obj)
 		if obj.drawgrid != None:
 			obj.Shape=createGrid(obj.drawgrid,True)
-		if obj.backref <>None:
+		if obj.backref !=None:
 			obj.backref.touch()
 			obj.backref.Document.recompute()
 
@@ -1094,7 +1095,7 @@ class ViewProviderSL(ViewProvider):
 			ws.hide()
 
 	def onDelete(self, obj, subelements):
-		print "on Delete Sahpelink"
+		print("on Delete Sahpelink")
 		print ("from", obj.Object.workspace,obj.Object.Label,obj.Object.Name)
 		ws=WorkSpace(obj.Object.workspace)
 		objs=ws.dok.findObjects()
@@ -1104,7 +1105,7 @@ class ViewProviderSL(ViewProvider):
 			print (s,obj.Object.Name)
 			if obj.Object.Label.startswith(s):
 				ws.dok.removeObject(jj.Name)
-				print "gguutt"
+				print("gguutt")
 				return True
 #		return False
 		return(True)
@@ -1117,13 +1118,13 @@ class ViewProviderSL(ViewProvider):
 class ShapeLink(PartFeature):
 
 	def __init__(self,obj,sobj,dokname):
-		print "create shape link"
+		print("create shape link")
 		PartFeature.__init__(self,obj)
 		obj.addProperty("App::PropertyLink","source","Base")
 		obj.addProperty("App::PropertyBool","nurbs","Base")
 		obj.addProperty("App::PropertyInteger","gridcount","Base")
 		obj.addProperty("App::PropertyString","workspace","Base")
-		
+
 
 		obj.source=sobj
 		obj.workspace=dokname
@@ -1140,13 +1141,13 @@ class ShapeLink(PartFeature):
 		print ("update shape",obj.source.Name,obj.workspace,obj.gridcount)
 
 		tw=WorkSpace(obj.workspace)
-		print "!!",tw
-		print tw.dok
+		print("!!",tw)
+		print(tw.dok)
 		target=tw.dok.getObject(obj.source.Name)
-		print target
+		print(target)
 		if target==None:
 			tw.addObject2(obj.source,obj.gridcount)
-		print target
+		print(target)
 		if 1 or obj.nurbs:
 			target.Shape=obj.source.Shape.toNurbs()
 
@@ -1154,7 +1155,7 @@ class ShapeLink(PartFeature):
 			count=obj.gridcount
 			f=obj.source.Shape.Face1.toNurbs()
 			fs=f.Face1.Surface
-			
+
 			for ui in range(count+1):
 					cs.append(fs.uIso(1.0/count*ui).toShape())
 			for vi in range(count+1):
@@ -1183,7 +1184,7 @@ class ViewProviderWSL(ViewProvider):
 			ws.hide()
 
 	def onDelete(self, obj, subelements):
-		print "on Delete"
+		print("on Delete")
 		App.closeDocument(obj.Object.workspace)
 		#return False
 		return(True)
@@ -1260,14 +1261,14 @@ class WorkSpace():
 		mdiarea=mw.findChild(QtGui.QMdiArea)
 
 		sws=mdiarea.subWindowList()
-		print "windows ..."
+		print("windows ...")
 		for w2 in sws:
-			print str(w2.windowTitle())
+			print(str(w2.windowTitle()))
 			s=str(w2.windowTitle())
 			if s == self.name + '1 : 1[*]':
-				print "gefundne"
+				print("gefundne")
 				return w2
-		print self.name + '1:1[*]'
+		print(self.name + '1:1[*]')
 
 
 
@@ -1277,12 +1278,12 @@ class WorkSpace():
 
 def createLink(obj,dokname="Linkdok"):
 	ad=App.ActiveDocument
-	print ad.Name
+	print(ad.Name)
 
 	lidok= WorkSpace(dokname)
 	link=lidok.addObject2(obj)
 	lidok.recompute()
-	
+
 	bares=obj.Document.addObject("Part::FeaturePython","Base Link "+obj.Label)
 	bares.Label=obj.Label+"@"+dokname
 
@@ -1304,12 +1305,12 @@ def testF():
 	try:obj.backref=link
 	except: pass
 
-	print lidok.Name
+	print(lidok.Name)
 	gad=Gui.getDocument(lidok.Name)
 	lidok.recompute()
 	Gui.SendMsgToActiveView("ViewSelection")
 	Gui.SendMsgToActiveView("ViewFit")
-	print ad.Name
+	print(ad.Name)
 	App.setActiveDocument(ad.Name)
 	Gui.ActiveDocument=Gui.getDocument(ad.Name)
 	return  link
@@ -1437,11 +1438,11 @@ def map3Dto2D():
 		s=s0
 		mapobj=base.mapobject
 		face=mapobj.faceObject
-	print face.Label
-	print "Run 3D to 2D"
+	print(face.Label)
+	print("Run 3D to 2D")
 
 	for wire in s:
-		print "Wire ",wire
+		print("Wire ",wire)
 		[uv2x,uv2y,xy2u,xy2v]=getmap(mapobj,face)
 
 #		bs=face.Shape.Face1.Surface
@@ -1449,10 +1450,10 @@ def map3Dto2D():
 		pts2=[]
 		firstEdge=True
 		for e in wire.Shape.Edges:
-			print "Edge",e
-			
+			print("Edge",e)
+
 			# auf 5 millimeter genau
-			if mapobj<>None:
+			if mapobj!=None:
 				dd=mapobj.pointsPerEdge
 			else:
 				dd=int(round(e.Length/5))
@@ -1469,16 +1470,16 @@ def map3Dto2D():
 #			su=face.Shape.Face1.ParameterRange[1]
 #			sv=face.Shape.Face1.ParameterRange[3]
 #			print ("su sv",su,sv)
-#			
-#			
+#
+#
 			FreeCAD.ffg=face
-			print face
-			print face.Shape
-			print face.Shape.Faces
-			print face.Shape.Faces[0]
+			print(face)
+			print(face.Shape)
+			print(face.Shape.Faces)
+			print(face.Shape.Faces[0])
 			face1=face.Shape.Faces[0]
-			print face1
-			print "!!",face1.ParameterRange
+			print(face1)
+			print("!!",face1.ParameterRange)
 
 			sua=face1.ParameterRange[0]
 			sva=face1.ParameterRange[2]
@@ -1486,7 +1487,6 @@ def map3Dto2D():
 			sve=face1.ParameterRange[3]
 			sul=sue-sua
 			svl=sve-sva
-
 
 
 			for p in pts:
@@ -1506,7 +1506,7 @@ def map3Dto2D():
 #				if su>10000: su=face.Shape.Face1.ParameterRange[1]
 #				if sv>10000: sv=face.Shape.Face1.ParameterRange[3]
 
-#				
+#
 #				try: sweep=face.TypeId=='Part::Sweep'
 #				except: sweep=True
 
@@ -1523,10 +1523,10 @@ def map3Dto2D():
 
 
 				#hack zylinder schnell xx
-				
-				
+
+
 				if bs.__class__.__name__=='Cylinder':
-					print "hack fuer zylinder schnell zeile 1413"
+					print("hack fuer zylinder schnell zeile 1413")
 					bs.Radius
 					#x *= 0.01 *0.2
 					x /= bs.Radius
@@ -1535,22 +1535,21 @@ def map3Dto2D():
 					y *= 100 *bs.Radius/100
 					x,y=y,x
 
-
-				print("Umrechung u,v,x,y", u,v,x,y)
-				if mapobj<>None and mapobj.flipxy:
+				print(("Umrechung u,v,x,y", u,v,x,y))
+				if mapobj!=None and mapobj.flipxy:
 					p2=FreeCAD.Vector(y,x,0)
 				else:
 					p2=FreeCAD.Vector(-y,-x,0)
 				# hack richgtung beim Schuh
 				p2=FreeCAD.Vector(y,x,0)
 #				p2=FreeCAD.Vector(y,x,0)
-				print "p2",p2
+				print("p2",p2)
 				pts2.append(p2)
 		FreeCAD.ptsa=pts2
 		a=Draft.makeWire(pts2,closed=True)
 		a.Label="map2D_for_"+wire.Label
 		a.ViewObject.ShapeColor=wire.ViewObject.LineColor
-		
+
 
 
 def map2Dto3D():
@@ -1569,14 +1568,14 @@ def map2Dto3D():
 	for w in s:
 		f=createIsodrawFace()
 		f.mapobject=moa
-		print moa.Label
+		print(moa.Label)
 		f.face=moa.faceObject
 		f.wire=w
 		f.Label="map3D_for_"+w.Label+"_on_"+f.face.Label + "_by_" + moa.Label
 		#color=(random.random(),random.random(),random.random())
 		color=w.ViewObject.ShapeColor
-		print "color",color
-		print w.Label
+		print("color",color)
+		print(w.Label)
 		w.ViewObject.ShapeColor=color
 		w.ViewObject.LineColor=color
 		App.activeDocument().recompute()
@@ -1603,11 +1602,11 @@ def map3Dgridto2Dgrid():
 	if len(s0)==1:
 		s=s0
 
-	print s0
+	print(s0)
 
 	polcol=[]
 	for wire in s:
-		print wire.Label
+		print(wire.Label)
 		[uv2x,uv2y,xy2u,xy2v]=getmap(mapobj,face)
 
 		# bs=face.Shape.Face1.Surface
@@ -1620,7 +1619,7 @@ def map3Dgridto2Dgrid():
 			n +=1
 			# if n>6: break
 			# auf 5 millimeter genau
-			if mapobj<>None:
+			if mapobj!=None:
 				dd=mapobj.pointsPerEdge
 			else:
 				dd=int(round(e.Length/5))
@@ -1634,7 +1633,7 @@ def map3Dgridto2Dgrid():
 			firstEdge=False
 
 			FreeCAD.ptsaa=pts
-			
+
 			ptsb=[]
 			for p in pts:
 #				(u,v)=bs.parameter(p)
@@ -1658,10 +1657,10 @@ def map3Dgridto2Dgrid():
 
 				v=(v-sva)/svl
 				u=(u-sua)/sul
-				
+
 				x=uv2x(u,v)
 				y=uv2y(u,v)
-				if mapobj<>None and mapobj.flipxy:
+				if mapobj!=None and mapobj.flipxy:
 					p2=FreeCAD.Vector(y,x,0)
 				else:
 					p2=FreeCAD.Vector(-y,-x,0)
@@ -1674,8 +1673,8 @@ def map3Dgridto2Dgrid():
 				try:
 					polcol += [Part.makePolygon(ptsb)]
 				except:
-					print "kann kein polygon bauen"
-					print ptsb
+					print("kann kein polygon bauen")
+					print(ptsb)
 
 		#Draft.makeWire(pts2)
 	Part.show(Part.Compound(polcol))
@@ -1684,12 +1683,12 @@ def map3Dgridto2Dgrid():
 
 
 def getmap(mapobj,obj):
-	'''berechnet vier interpolatoren zum umrechnen von xy(isomap) in uv(nurbs) und zurueck 
+	'''berechnet vier interpolatoren zum umrechnen von xy(isomap) in uv(nurbs) und zurueck
 	mapobj liefert die parameter
 	obj ist das Part mit der benutzten Face
 	'''
 
-	#default values 
+	#default values
 	mpv=0.5
 	mpu=0.5
 	fx=-1
@@ -1705,16 +1704,15 @@ def getmap(mapobj,obj):
 #	su=bs.UPeriod()
 #	sv=bs.VPeriod()
 
-
-	print "hack B-BB su sv aa bb"
-	print face
-	print obj.Label
+	print("hack B-BB su sv aa bb")
+	print(face)
+	print(obj.Label)
 	print ("get map parameter Range ",face.ParameterRange)
-	print "BS CLASS_______!!_______________",bs.__class__.__name__
-	print "isodraw.py zele  1705"
-	
+	print("BS CLASS_______!!_______________",bs.__class__.__name__)
+	print("isodraw.py zele  1705")
+
 	if bs.__class__.__name__=='Cylinder':
-		print "CYLINDER MODE!!"
+		print("CYLINDER MODE!!")
 
 		def m_uv2x(u,v):
 			return bs.Radius*u
@@ -1725,7 +1723,7 @@ def getmap(mapobj,obj):
 
 		def m_xy2u(x,y):
 			return x/bs.Radius
-			return x*001
+			return x*0o01
 
 		def m_xy2v(x,y):
 			return y
@@ -1734,7 +1732,7 @@ def getmap(mapobj,obj):
 		return [m_uv2x,m_uv2y,m_xy2u,m_xy2v]
 
 	if bs.__class__.__name__=='Cone':
-		print "CONE MODE!!"
+		print("CONE MODE!!")
 
 		alpha,beta,hmin,hmax = face.ParameterRange
 
@@ -1784,7 +1782,7 @@ def getmap(mapobj,obj):
 	sul=sue-sua
 	svl=sve-sva
 
-	if mapobj<>None:
+	if mapobj!=None:
 		if hasattr(mapobj,'faceObject'):
 
 			mpv=mapobj.uMapCenter/100
@@ -1908,7 +1906,7 @@ def getmap(mapobj,obj):
 		print('Handling  error:', err)
 		xy2v=None
 		xy2u=None
-		print "FEHLER BERECHNUNG bUMKEHRfunktionen"
+		print("FEHLER BERECHNUNG bUMKEHRfunktionen")
 
 
 	return [uv2x,uv2y,xy2u,xy2v]
@@ -1930,11 +1928,11 @@ def getmap(mapobj,obj):
 
 def getmap3(mapobj,obj,calcZ=None):
 	''' berechnet einen dritten wert für z'''
-	
-	print "berechne curvature gauss"
-	print mapobj.Label
-	print obj.Label
-	
+
+	print("berechne curvature gauss")
+	print(mapobj.Label)
+	print(obj.Label)
+
 	def calcZ(face,u,v):
 		bs=face.Surface
 		ur= 1.0*(u)/30 #mapobj.uCount
@@ -1959,7 +1957,7 @@ def getmap3(mapobj,obj,calcZ=None):
 
 		tt=mapobj.modeCurvature
 		FreeCAD.bsa=bs
-		
+
 		try:
 			cc=bs.curvature(ur,vr,tt)
 		# kewgelhack
@@ -1976,7 +1974,7 @@ def getmap3(mapobj,obj,calcZ=None):
 			# beschraenken nach oben
 			#if z>30: z=30
 			#if z<-30: z=-30
-#		if z<>0: print ("!curvature ur,vr,z", round(ur),round(vr),z) 
+#		if z<>0: print ("!curvature ur,vr,z", round(ur),round(vr),z)
 
 		if tt=="Mean":
 			z=10000*cc
@@ -1989,7 +1987,7 @@ def getmap3(mapobj,obj,calcZ=None):
 
 		return z
 
-	#default values 
+	#default values
 	mpv=0.5
 	mpu=0.5
 	fx=-1
@@ -2006,7 +2004,7 @@ def getmap3(mapobj,obj,calcZ=None):
 	#su=bs.UPeriod()
 	#sv=bs.VPeriod()
 
-	print "hack BB su sv aa bb XX"
+	print("hack BB su sv aa bb XX")
 
 	su=face.ParameterRange[1]
 	sv=face.ParameterRange[3]
@@ -2025,7 +2023,7 @@ def getmap3(mapobj,obj,calcZ=None):
 	svl=sve-sva
 
 
-	if mapobj<>None:
+	if mapobj!=None:
 		if hasattr(mapobj,'faceObject'):
 
 			mpv=mapobj.uMapCenter/100
@@ -2102,10 +2100,10 @@ def getmap3(mapobj,obj,calcZ=None):
 	if mapobj == None:
 		xy2v=None
 		xy2u=None
-		
+
 		return [uv2x,uv2y,uv2z,xy2u,xy2v]
 
-	
+
 
 #------------------------------------------------------
 
@@ -2153,7 +2151,7 @@ def getmap3(mapobj,obj,calcZ=None):
 		print('Handling  error:', err)
 		xy2v=None
 		xy2u=None
-		print "FEHLER BERECHNUNG bUMKEHRfunktionen"
+		print("FEHLER BERECHNUNG bUMKEHRfunktionen")
 
 
 	return [uv2x,uv2y,uv2z,xy2u,xy2v]
@@ -2185,7 +2183,7 @@ def testC():
 	#wire=App.ActiveDocument.Shape001
 	p=wire.Shape.Vertex1.Point
 	p
-	print "huu"
+	print("huu")
 	[uv2x,uv2y,xy2u,xy2v]=getmap(face)
 
 	(u,v)=bs.parameter(p)
@@ -2201,7 +2199,7 @@ def testC():
 	pt=bs.value(u,v)
 #	print pt
 #	print p
-	print p-pt
+	print(p-pt)
 
 def testD():
 #	kku2=np.array(FreeCAD.kku).reshape(31,31,3)
@@ -2233,7 +2231,7 @@ def testE():
 		pt=bs.value(u,v)
 	#	print pt
 	#	print p
-		print p-pt
+		print(p-pt)
 		ptbb.append(pt)
 
 	Draft.makeWire(ptbb)

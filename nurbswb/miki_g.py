@@ -18,6 +18,7 @@
 
 import FreeCAD
 import FreeCADGui
+from importlib import reload
 
 #from transportationwb.say import sayexc, say
 #from transportationwb.say import  *
@@ -263,7 +264,7 @@ def VerticalGroup(title=''):
 	w.setTitle("vertical layout group")
 	layout = QtGui.QVBoxLayout()
 	layout.setAlignment(QtCore.Qt.AlignLeft)
-#	label = QtGui.QLabel("HUWAS2")   
+#	label = QtGui.QLabel("HUWAS2")
 #	layout.addWidget(label)
 #	verticalSpacer = QtGui.QSpacerItem(10, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 #	layout.addItem(verticalSpacer)
@@ -333,12 +334,12 @@ class Miki(object):
 
 	def __init__(self):
 		## objects of huhu
-		self.objects = [] 
+		self.objects = []
 		## the widget of the generated Qt sctructure
 		self.widget = None
-		## the ids of the input/output sub-widgets 
+		## the ids of the input/output sub-widgets
 		self.ids = {}
-		
+
 		##\cond
 		self.anchors = {}
 		self.indents = []
@@ -565,9 +566,9 @@ class Miki(object):
 							print ("nicht implementierter typ  Ax")
 							print ([v,cn])
 							print (l)
-							print parent
+							print(parent)
 							ex="parent."+l[4]+"(FreeCAD."+str(v)+")"
-							print "*** "+ex
+							print("*** "+ex)
 						elif l[4]=='setValue':
 							parent.setValue(v)
 							continue
@@ -575,7 +576,7 @@ class Miki(object):
 							print ("nicht implementierter typ  Ayy")
 							print ([v,cn])
 							print (l)
-							ex='' 
+							ex=''
 							print ("nicht implementierter typ")
 
 						exec(ex)
@@ -898,7 +899,7 @@ class MikiDockWidget(QtGui.QDockWidget):
 
 
 def getMainWindowByName(name):
-	'''returns a main window of a given Title, 
+	'''returns a main window of a given Title,
 	if there is no such main window an new main window is created'''
 
 	if name == 'FreeCAD':
@@ -926,8 +927,8 @@ class _MyTabWidget(QtGui.QTabWidget):
 		self.setMinimumSize(500, 800)
 
 	def addWidget(self,w):
-		print "addWidget----------------"
-		print "count ",self.count()
+		print("addWidget----------------")
+		print("count ",self.count())
 		self.addTab(w,self.tabname)
 		self.show()
 
@@ -941,7 +942,7 @@ class MyWidget(QtGui.QLabel):
 		self.tabname=nae
 
 def MyTabWidget(title=''):
-	
+
 	'''create the dialog as a main window (not a dock widget)'''
 
 	w = _MyTabWidget()
@@ -1077,14 +1078,14 @@ class PicWidget(QtGui.QLabel):
 		im[10:20,10:20]=[140,240,140]
 		image_profile = QtGui.QImage(im.data, im.shape[1], im.shape[0], cc, QtGui.QImage.Format_RGB888)
 	#	image_profile = QtGui.QImage(image_path) #QImage object
-		if frame.sizeX<>0 and frame.sizeY<>0:
-			image_profile = image_profile.scaled(frame.sizeX,frame.sizeY, aspectRatioMode=QtCore.Qt.KeepAspectRatio, transformMode=QtCore.Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration    
+		if frame.sizeX!=0 and frame.sizeY!=0:
+			image_profile = image_profile.scaled(frame.sizeX,frame.sizeY, aspectRatioMode=QtCore.Qt.KeepAspectRatio, transformMode=QtCore.Qt.SmoothTransformation) # To scale image for example and keep its Aspect Ration
 		label_Image.setPixmap(QtGui.QPixmap.fromImage(image_profile))
 		frame.setMinimumSize(PySide.QtCore.QSize( im.shape[1], im.shape[0]))
-		if frame.sizeX<>0 and frame.sizeY<>0:
+		if frame.sizeX!=0 and frame.sizeY!=0:
 			frame.setMinimumSize(PySide.QtCore.QSize(frame.sizeX,frame.sizeY))
 		label_Image.setAlignment(QtCore.Qt.AlignCenter)
-		
+
 		return frame
 
 ##use case
@@ -1111,7 +1112,7 @@ def createMikiGui(layout, app):
 	appi.root = miki
 
 	rca = miki.run(layout)
-	
+
 	return rca
 
 
@@ -1258,7 +1259,7 @@ VerticalLayoutTab:
 			QtGui.QPushButton:
 		QtGui.QPushButton:
 	VerticalGroup:
-	setSpacer: 
+	setSpacer:
 	'''
 
 

@@ -26,21 +26,21 @@ import numpy as np
 
 #import matplotlib
 #import matplotlib.pyplot as plt
-#from matplotlib.pyplot import cm 
+#from matplotlib.pyplot import cm
 
 import os,random,time,sys,traceback
 import inspect
 
 
-## 
+##
 #
-# <A HREF="http://www.freecadbuch.de/doku.php?id=blog">FreeCAD Buch 2</A> 
+# <A HREF="http://www.freecadbuch.de/doku.php?id=blog">FreeCAD Buch 2</A>
 #
 # @author microelly
 # @warning works only on linux, writes to /tmp/log.txt
 #
 # @param[in] s String to log
-# @param[in] logon is logging on (False) 
+# @param[in] logon is logging on (False)
 #
 # @image html plane.svg
 #
@@ -62,7 +62,7 @@ def sayd(s):
         FreeCAD.Console.PrintMessage(str(s)+"\n")
 
 def say(s):
-    '''print information to console''' 
+    '''print information to console'''
     log(str(s))
     FreeCAD.Console.PrintMessage(str(s)+"\n")
 
@@ -80,13 +80,13 @@ def sayW(s):
 
 def errorDialog(msg):
     ''' pop up an error QMessageBox'''
-    diag = QtGui.QMessageBox(QtGui.QMessageBox.Critical,u"Error Message",msg )
+    diag = QtGui.QMessageBox(QtGui.QMessageBox.Critical,"Error Message",msg )
     diag.setWindowFlags(PySide.QtCore.Qt.WindowStaysOnTopHint)
     diag.exec_()
 
 
 def sayexc(mess=''):
-    ''' print message with traceback''' 
+    ''' print message with traceback'''
     exc_type, exc_value, exc_traceback = sys.exc_info()
     ttt=repr(traceback.format_exception(exc_type, exc_value,exc_traceback))
     lls=eval(ttt)
@@ -95,12 +95,11 @@ def sayexc(mess=''):
     FreeCAD.Console.PrintError(mess + "\n" +"-->  ".join(l2))
 
     l=len(inspect.stack())
-    print inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2]
-    if l>3: print inspect.stack()[2][3]," @ ",inspect.stack()[2][1]," line: ",inspect.stack()[2][2]
-    if  l>3 and inspect.stack()[3][3] <>'<module>':        
-        print inspect.stack()[3][1]," line ",inspect.stack()[3][2]
-        print inspect.stack()[3][3]
-
+    print(inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2])
+    if l>3: print(inspect.stack()[2][3]," @ ",inspect.stack()[2][1]," line: ",inspect.stack()[2][2])
+    if  l>3 and inspect.stack()[3][3] !='<module>':
+        print(inspect.stack()[3][1]," line ",inspect.stack()[3][2])
+        print(inspect.stack()[3][3])
 
 
 def showdialog(title="Fehler",
@@ -129,8 +128,8 @@ def sayexc2(title='Fehler', mess=''):
     showdialog(title, text=mess, detail="--> ".join(la2))
 
     l=len(inspect.stack())
-    print inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2]
-    if l>3: print inspect.stack()[2][3]," @ ",inspect.stack()[2][1]," line: ",inspect.stack()[2][2]
-    if l>4 and inspect.stack()[3][3] <>'<module>':
-        print inspect.stack()[3][1]," line ",inspect.stack()[2][2]
-        print inspect.stack()[3][3]
+    print(inspect.stack()[1][3]," @ ",inspect.stack()[1][1]," line: ",inspect.stack()[1][2])
+    if l>3: print(inspect.stack()[2][3]," @ ",inspect.stack()[2][1]," line: ",inspect.stack()[2][2])
+    if l>4 and inspect.stack()[3][3] !='<module>':
+        print(inspect.stack()[3][1]," line ",inspect.stack()[2][2])
+        print(inspect.stack()[3][3])

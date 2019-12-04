@@ -17,10 +17,10 @@ def run():
 
 	wireobs=sel[1:]
 
-	print face
+	print(face)
 	wires=[]
 	for w in wireobs:
-		print w.Shape.Wires
+		print(w.Shape.Wires)
 		wires += [w.Shape.Wires[0]]
 
 
@@ -37,7 +37,7 @@ def run():
 				splita += [(e,face)]
 
 			r=Part.makeSplitShape(face, splita)
-			print r
+			print(r)
 			for fs in r:
 				for f in fs:
 					Part.show(f)
@@ -57,11 +57,10 @@ def extractWires():
 	'''extract the wires'''
 	sel=Gui.Selection.getSelection()
 	w=sel[0]
-	print w.Shape.Wires
+	print(w.Shape.Wires)
 	for i,wire in  enumerate(w.Shape.Wires):
 		Part.show(wire)
 		App.ActiveDocument.ActiveObject.Label="wire " + str(i+1) +" for "+  w.Label +" "
 		wire.reverse()
 		Part.show(wire)
 		App.ActiveDocument.ActiveObject.Label="wire " + str(i+1) +" for " +  w.Label +" reverse "
-		

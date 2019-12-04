@@ -15,9 +15,10 @@ Gui=FreeCADGui
 
 import Part,Points
 
+from importlib import reload
 import networkx as nx
 import random
-import os 
+import os
 import nurbswb
 
 # modul variables
@@ -49,7 +50,7 @@ def createFaceMidPointmodel(a):
 	for f in fs:
 		c=f.CenterOfMass
 		pts.append(c)
-		for v in f.Vertexes: 
+		for v in f.Vertexes:
 			p=v.Point
 			pts.append(p)
 			col.append(Part.makeLine(rf(c),rf(p)))
@@ -77,7 +78,7 @@ def loadModel(s):
 		pp=(round(v.Point.x,2),round(v.Point.y,2),round(v.Point.z,2))
 
 		try: points[pp]
-		except: 
+		except:
 			points[pp]=i
 			g.add_node(i,pos=(v.Point.x,v.Point.y),keys=[],quality=0,vector=ptokey(v.Point))
 
@@ -111,22 +112,22 @@ def loadModel(s):
 				esl.append(e)
 				sl += g.edge[n][e]['vector'].Length
 				vs += g.edge[n][e]['vector']
-				edirs += [g.edge[n][e]['vector']] 
+				edirs += [g.edge[n][e]['vector']]
 
 			vsn=FreeCAD.Vector(vs)
 
 			# some trouble ist the sum of all vectors is zero
 			if 0: # still look for a better solution
-				if vsn.Length < 1: 
+				if vsn.Length < 1:
 					vsn= g.edge[n][esl[0]]['vector'].cross(g.edge[n][esl[2]]['vector'])
 
-				if vsn.Length < 1: 
+				if vsn.Length < 1:
 					vsn= g.edge[n][esl[0]]['vector'].cross(g.edge[n][esl[1]]['vector'])
 
 
-			if vsn.Length > 1: 
+			if vsn.Length > 1:
 				vsn.normalize()
-			else: vsn=0 
+			else: vsn=0
 
 			for e in es:
 				v = FreeCAD.Vector(g.edge[n][e]['vector'])
@@ -245,7 +246,7 @@ def createKeys():
 			except: kp[key] = 1
 
 	anz=0
-	print "Keys, count occur"
+	print("Keys, count occur")
 	for k in kp:
 		print (k,kp[k])
 		if kp[k]==1: anz += 1
@@ -318,7 +319,7 @@ def werteausLevel(i=1):
 	for k in kp:
 		if kp[k]==1: anz += 1
 
-	#set the quality of the unique points 
+	#set the quality of the unique points
 	for n in g.nodes():
 		if g.node[n]['quality']==0:
 			key=g.node[n]['keys'][i]
@@ -357,14 +358,13 @@ def run():
 def runAna(model,silent=False):
 	'''main analysis method'''
 
-	print "NodesA",g.nodes()
+	print("NodesA",g.nodes())
 	mp=createFaceMidPointmodel(model)
-	print "NodesB",g.nodes()
+	print("NodesB",g.nodes()
 	loadModel(mp)
 
-	print "Model ",mp.Label
-	print "NodesC",g.nodes()
-
+	print("Model ",mp.Label)
+	print("NodesC",g.nodes())
 
 	# link labels and geometry from freecad to networkx
 	bm=model
@@ -373,17 +373,16 @@ def runAna(model,silent=False):
 	for i,v in enumerate(sp.Vertexes):
 		pp=(round(v.Point.x,2),round(v.Point.y,2),round(v.Point.z,2))
 		try:
-#			print (pp,i) 
+#			print (pp,i)
 #			print ("found ",points[pp])
 			gi=points[pp]
 
 			g.node[gi]["label"]=bm.Label+":Vertex"+str(i+1)
 			g.node[gi]["Vertex"]=v
 #			print g.node[gi]
-		except: 
-			print "NOT FOUND"
+		except:
+			print("NOT FOUND")
 			pass
-
 
 	for i,f in enumerate(sp.Faces):
 		print ("Face ",i,len(f.Vertexes))
@@ -391,7 +390,7 @@ def runAna(model,silent=False):
 #			print (v,ptokey(v.Point),points[ptokey(v.Point)])
 			pix=points[ptokey(v.Point)]
 #			print g.node[pix]
-			
+
 			#flaechennormale anfuegen
 			(u,v)=f.Surface.parameter(v.Point)
 #			print( pix,"Addiere Flaechennoirmalw",(u,v),f.normalAt(u,v))
@@ -399,30 +398,27 @@ def runAna(model,silent=False):
 				g.node[pix]['fdirs'].append(f.normalAt(u,v))
 			except:
 				g.node[pix]['fdirs'] = [(f.normalAt(u,v))]
-			print "len fdirs",len(g.node[pix]['fdirs'] )
-
+			print("len fdirs",len(g.node[pix]['fdirs'] ))
 
 		c=f.CenterOfMass
 		pp=(round(c.x,2),round(c.y,2),round(c.z,2))
 		try:
-#			print (pp,i) 
+#			print (pp,i)
 #			print ("found ",points[pp])
 			gi=points[pp]
 
 			g.node[gi]["label"]=bm.Label+":Face"+str(i+1)
 			g.node[gi]["Face"]=f
 #			print g.node[gi]
-		except: 
-			print "NOT FOUND"
+		except:
+			print("NOT FOUND")
 			pass
 
-
-
 	kp=createKeys()
-	print g.nodes()
-	
+	print(g.nodes())
+
 	setQuality(g.nodes(),kp)
-	
+
 	#hack
 	#return
 
@@ -469,14 +465,14 @@ def runCompare():
 	for model in s:
 #		g=nx.Graph()
 #		FreeCAD.g=g
-		print "Startrnstand"
+		print("Startrnstand")
 		for v in g.nodes():
-			print g.node[v]['fdirs']
-			print g.node[v]['edirs']
+			print(g.node[v]['fdirs'])
+			print(g.node[v]['edirs'])
 			g.node[v]['fdirs']=[]
 			g.node[v]['edirs']=[]
-		print "--------------"
-		print "NodesA",g.nodes()
+		print("--------------")
+		print("NodesA",g.nodes())
 		runAna(model,silent=True)
 	displayVertexStore()
 
@@ -493,7 +489,7 @@ def displayQualityPoints():
 			if  g.node[v]['quality']==q: pts.append(g.node[v]['vector'])
 
 #		print pts
-		if pts<>[]:
+		if pts!=[]:
 			Points.show(Points.Points(pts))
 			App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(
 				random.random(),random.random(),random.random())
@@ -506,11 +502,11 @@ def printData():
 	'''print some diagnostic data'''
 	g=FreeCAD.g
 	for v in g.nodes():
-		print v
-		print g.node[v]['quality']
-		print g.node[v]['keys']
-		print g.node[v]['vector']
-		print g.node[v]['keys'][g.node[v]['quality']-1]
+		print(v)
+		print(g.node[v]['quality'])
+		print(g.node[v]['keys'])
+		print(g.node[v]['vector'])
+		print(g.node[v]['keys'][g.node[v]['quality']-1])
 
 
 def addToVertexStore():
@@ -519,20 +515,20 @@ def addToVertexStore():
 	try: FreeCAD.PT
 	except: FreeCAD.PT={}
 
-	print "addtoVertexStore"
+	print("addtoVertexStore")
 	g=FreeCAD.g
 	a=FreeCAD.a
 	for v in g.nodes():
-		
+
 		try: g.node[v]['label']
 		except: g.node[v]['label']='----'
 
-		print "kkkk"
-		print g.node[v]['label']
-		print g.node[v]['quality']-1
-		print g.node[v]['keys']
+		print("kkkk")
+		print(g.node[v]['label'])
+		print(g.node[v]['quality']-1)
+		print(g.node[v]['keys'])
 #		print g.node[v]['keys'][g.node[v]['quality']-1]
-		print "ha"
+		print("ha")
 
 #		key=(a.Label,g.node[v]['label'],v,g.node[v]['keys'][g.node[v]['quality']-1],"!>",
 #			g.node[v]['quality'],"<!",g.node[v]['keys'])
@@ -552,28 +548,25 @@ def addToVertexStore():
 def resetVertexStore():
 	'''clear the vertex store for next analysis'''
 	FreeCAD.PT={}
-	print FreeCAD.PT
+	print(FreeCAD.PT)
 
 
-def printVertexStore(): 
+def printVertexStore():
 	'''print the vertex store'''
-	print "The vertex Store"
+	print("The vertex Store")
 	for j in FreeCAD.PT:
-		print
-		print j
+		print()
+		print(j)
 		vs=FreeCAD.PT[j]
 		for v in vs:
-			if str(v[1])<>'----':
-				print v[1:-1]
+			if str(v[1])!='----':
+				print(v[1:-1])
 #				print "	",v[-1]
 
 
-
-
-
-def displayVertexStore(): 
+def displayVertexStore():
 	'''print the vertex store'''
-	print "The vertex Store compare"
+	print("The vertex Store compare")
 	found=0
 	count=0
 	keys={}
@@ -587,12 +580,12 @@ def displayVertexStore():
 				if str(v[1]) =='----': continue
 				k=v[3]
 				count +=1
-				try: 
+				try:
 					keys[k] += 1
 					keyd[k] += [(j,v[:-2])]
 					# print v
-				except: 
-					keys[k]=1 
+				except:
+					keys[k]=1
 					keyd[k] = [(j,v[:-2])]
 	pts=[]
 	for k in keys:
@@ -625,39 +618,39 @@ def displayVertexStore():
 #			print "!!",keyd[k][0][0]
 			pts.append(keyd[k][0][0])
 
-	print
-	print "nach keys ausgegeben"
+	print()
+	print("nach keys ausgegeben")
 	for k in keys:
-		if k[0] %100 <>0: #ignore reine flaechen
-			print
-			print k
+		if k[0] %100 !=0: #ignore reine flaechen
+			print()
+			print(k)
 			for p in keyd[k]:
-				print p[1]
+				print(p[1])
 
 	anz=0
 	gps=[]
-	print
-	print "nach keys ausgegeben nur noch paare-------------------------------"
+	print()
+	print("nach keys ausgegeben nur noch paare-------------------------------")
 	for k in keys:
 		first=True
-		if k[0] %100 <>0: #ignore reine flaechen
+		if k[0] %100 !=0: #ignore reine flaechen
 			if len(keyd[k])==2:
 				[p,q] = keyd[k]
-				if p[1][0] <> q[1][0]:
+				if p[1][0] != q[1][0]:
 					if p[1][1].startswith( p[1][0]):
 						if first:
-							print
-							print k
+							print()
+							print(k)
 							first=False
-						print p[1]
-#						print p
-						print q[1]
+						print(p[1])
+#					print p
+						print(q[1])
 						anz +=1
 						gps += [FreeCAD.Vector(p[0]),FreeCAD.Vector(q[0])]
 
-	print "gefundene paare ",anz
+	print("gefundene paare ",anz)
 
-	if gps<>[]:
+	if gps!=[]:
 		Points.show(Points.Points(gps))
 		App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(
 			random.random(),random.random(),random.random())
@@ -681,9 +674,9 @@ def displayVertexStore():
 
 
 def loadTest1():
-	print __file__
+	print(__file__)
 	# hier relativen pfad reintun
-	FreeCAD.open(u"/home/thomas/Schreibtisch/zwei_gleiche_fenster.fcstd")
+	FreeCAD.open("/home/thomas/Schreibtisch/zwei_gleiche_fenster.fcstd")
 	App.setActiveDocument("zwei_gleiche_fenster")
 	App.ActiveDocument=App.getDocument("zwei_gleiche_fenster")
 	Gui.ActiveDocument=Gui.getDocument("zwei_gleiche_fenster")
@@ -715,21 +708,21 @@ def getUniques(keys):
 			us += keys[k]
 	return us
 
-	
+
 def Test4():
 	g=FreeCAD.g
-	print "Test 4"
+	print("Test 4")
 #	print g.nodes()
 
 	keys=getkeytab(g,g.nodes())
 
-	print "keytab all results ..."
+	print("keytab all results ...")
 	for k in keys:
 		print (k,keys[k])
-		
+
 	uniqs=getUniques(keys)
-	print "uniques start "
-	print uniqs
+	print("uniques start ")
+	print(uniq
 
 	for n in uniqs:
 		g.node[n]['upath']=[n]
@@ -738,9 +731,9 @@ def Test4():
 	found=True
 	for i in range(8):
 		if not found: break
-		
+
 		found=False
-		print "loop i= ",i
+		print("loop i= ",i)
 		for n in uniqs:
 			nbs=g.neighbors(n)
 			nbs2=[]
@@ -749,25 +742,25 @@ def Test4():
 					nbs2.append(na)
 
 			keys=getkeytab(g,nbs2)
-			
+
 #			print
 #			print ("node ",n,getkeyg(g,n),nbs2)
 #			print nbs
-			
+
 			for k in keys:
 				print (k,keys[k])
 
 			uniqs2=getUniques(keys)
-			if uniqs2<>[]:
-				print "----------------------------------uniques2: ",uniqs2
+			if uniqs2!=[]:
+				print("----------------------------------uniques2: ",uniqs2)
 				for u in uniqs2:
-					if u not in uniqs: 
+					if u not in uniqs:
 		#				print "-add--------------------",u
 						found=True
 						uniqs += [u]
 						g.node[u]['upath']= g.node[n]['upath']+[u]
 
-	print
+	print()
 	print ("all uniqs ",uniqs)
 
 	for n in uniqs:
@@ -784,8 +777,8 @@ def Test4():
 
 	App.ActiveDocument.ActiveObject.Label="Eindeutige Punkte"
 
-	print
-	print "nicht zuordenbar ..."
+	print()
+	print("nicht zuordenbar ...")
 	noups=[]
 	for n in g.nodes():
 		if n not in uniqs:
@@ -810,9 +803,9 @@ def Test3():
 		reload (nurbswb.fem_edgelength_mesh)
 		nurbswb.fem_edgelength_mesh.run()
 		Gui.updateGui()
-		print "i ",i
+		print("i ",i)
 		time.sleep(0.01)
-	
+
 
 '''
 

@@ -1,3 +1,4 @@
+from importlib import reload
 App=FreeCAD
 
 try:
@@ -34,6 +35,3 @@ hp.Placement.Base.x=1200
 
 hp.mode='Surface'
 hp.Placement.Base.x=1200
-
-
-

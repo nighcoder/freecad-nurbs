@@ -1,5 +1,5 @@
 '''make a perspective transformation of a bspline curve'''
-from say import *
+from .say import *
 import nurbswb.pyob
 
 '''
@@ -20,8 +20,6 @@ def sayexc(title='Fehler',mess=''):
 	l2=lls[(l-3):]
 	FreeCAD.Console.PrintError(mess + "\n" +"-->  ".join(l2))
 	showdialog(title,text=mess,detail="--> ".join(l2))
-
-
 
 class PartFeature:
 	def __init__(self, obj):
@@ -87,8 +85,6 @@ def diag(p,pts,u0,v0):
 		pn=bs.value(un,vn)
 		return [True,pn]
 
-
-
 def find_coeffs(pa, pb):
 	'''calculate the coeffs for a perspective transformation of quadrangle  pa  to quadrangle  pb'''
 	matrix = []
@@ -104,20 +100,19 @@ def find_coeffs(pa, pb):
 
 def trafo(x,y,coeffs):
 	'''
-	coeffs is a 8-tuple  which contains the coefficients for a perspective transform. 
-	For each pixel (x, y) in the output image, 
-	the new value is taken from a position 
-	(a x + b y + c)/(g x + h y + 1), 
-	(d x + e y + f)/(g x + h y + 1) 
+	coeffs is a 8-tuple  which contains the coefficients for a perspective transform.
+	For each pixel (x, y) in the output image,
+	the new value is taken from a position
+	(a x + b y + c)/(g x + h y + 1),
+	(d x + e y + f)/(g x + h y + 1)
 	'''
 	(a, b, c, d, e, f, g, h)=coeffs
 	y2=x2=(a*x + b*y + c)/(g*x + h*y + 1)
-	y2=(d*x + e*y + f)/(g*x + h*y + 1) 
+	y2=(d*x + e*y + f)/(g*x + h*y + 1)
 	return (x2,y2,0)
 
-## Trafo ist eine Klasse. mit der man eine Kurve perspektivisch 
+## Trafo ist eine Klasse. mit der man eine Kurve perspektivisch
 # verzerren kann
-
 
 class Trafo(nurbswb.pyob.FeaturePython):
 	def __init__(self,obj ):
@@ -134,9 +129,8 @@ class Trafo(nurbswb.pyob.FeaturePython):
 		nurbswb.pyob.ViewProvider(obj.ViewObject)
 		obj.ViewObject.LineColor=(0.5,1.0,0.5)
 
-
 	def execute(proxy,obj):
-		try: 
+		try:
 			if proxy.lock: return
 		except:
 			print("except proxy lock")
@@ -147,14 +141,13 @@ class Trafo(nurbswb.pyob.FeaturePython):
 	def myexecute(self,obj):
 
 		#calculate the point coordinats for source and target frame
-		if obj.source<>None:
+		if obj.source!=None:
 			pts1= np.float32([(p.x,p.y) for p in obj.source.Points])
 		else:
 			tpts1=[obj.model.Shape.BoundBox.getPoint(i) for i in range(4)]
 			pts1= np.float32([(p.x,p.y) for p in tpts1])
 		pts2= np.float32([(p.x,p.y) for p in obj.target.Points])
 		pts3= np.float32([(p.x,p.y) for p in obj.model.Shape.Edge1.Curve.getPoles()])
-
 
 		#create the source poles helper
 		c=obj.model.Shape.Edge1.Curve.getPoles()
@@ -183,7 +176,7 @@ class Trafo(nurbswb.pyob.FeaturePython):
 			ptsa=[FreeCAD.Vector(p[0],p[1],0) for p in a]
 
 		else:
-			
+
 			pts=obj.source.Points
 			pts=np.array([[pts[0],pts[1]],[pts[3],pts[2]]])
 
@@ -209,7 +202,6 @@ class Trafo(nurbswb.pyob.FeaturePython):
 			a=[trafo(p[0],p[1],M) for p in pts3]
 ##			ptsa=[FreeCAD.Vector(p[0],p[1],0) for p in a]
 
-			
 			pas=[]
 			for i,p in enumerate(lrc):
 				[flag,pt]=p
@@ -217,7 +209,6 @@ class Trafo(nurbswb.pyob.FeaturePython):
 				else: p2=pt
 				pas.append(p2)
 			ptsa=pas
-
 
 #		poly=Part.makePolygon(ptsa)
 #		obj.Shape=poly
@@ -239,8 +230,6 @@ class Trafo(nurbswb.pyob.FeaturePython):
 		ee.Label="Target Poles"
 		ee.ViewObject.ControlPoints=True
 
-
-
 def run():
 	''' create a transform object for a selected  curve'''
 
@@ -249,19 +238,19 @@ def run():
 		raise Exception("nothing selected")
 
 	model=Gui.Selection.getSelection()[0]
-	if model.Shape.Edge1.Curve.__class__.__name__ <>'BSplineCurve':
-		print model.Label
-		print model.Shape.Edge1.Curve.__class__.__name__
+	if model.Shape.Edge1.Curve.__class__.__name__ !='BSplineCurve':
+		print(model.Label)
+		print(model.Shape.Edge1.Curve.__class__.__name__)
 		showdialog('Error','edge of the selected curve is not a BSpline','method is only implemented for BSpline Curves')
 		raise Exception("not implemented for this curve type")
-	
-	try: 
+
+	try:
 		source=Gui.Selection.getSelection()[1]
 		points2=source.Points
 		# todo: rectangle as source frame
 	except:
-		print "use bound box as source frame"
-		print model.Shape.BoundBox
+		print("use bound box as source frame")
+		print(model.Shape.BoundBox)
 		points2=[model.Shape.BoundBox.getPoint(i) for i in range(4)]
 		source=None
 
@@ -279,9 +268,8 @@ def run():
 	b.target=line2
 	b.model=model
 	b.center=center
-	b.useCenter= center <> None
+	b.useCenter= center != None
 
 	FreeCAD.activeDocument().recompute()
-
 
 # run()

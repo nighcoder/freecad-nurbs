@@ -25,7 +25,7 @@ def createListWidget(obj=None,propname=None):
 	box = QtGui.QVBoxLayout()
 	w.setLayout(box)
 
-	listWidget = QtGui.QListWidget() 
+	listWidget = QtGui.QListWidget()
 	listWidget.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
 	listWidget.sels=[]
 	ks={}
@@ -36,13 +36,13 @@ def createListWidget(obj=None,propname=None):
 	for  k in ks.keys():
 		item = QtGui.QListWidgetItem(k)
 		listWidget.addItem(item)
-		
+
 	def f(*arg):
-		print "itemsele cahgned"
+		print("itemsele cahgned")
 		print  (arg,listWidget)
-		print listWidget.selectedItems()
+		print(listWidget.selectedItems())
 		for item in  listWidget.selectedItems():
-			print ks[item.text()]
+			print(ks[item.text()])
 
 		listWidget.sels= [ ks[item.text()] for item in  listWidget.selectedItems()]
 
@@ -61,7 +61,7 @@ def createListWidget(obj=None,propname=None):
 			if not a in listWidget.sels:
 				bb.append(a)
 			else:
-				print "skip ", a.Label
+				print("skip ", a.Label)
 
 		# wrte list back to objects
 		setattr(ref,propname,bb)
@@ -85,7 +85,7 @@ def createListWidget(obj=None,propname=None):
 		# add selected objects if not already on list
 		for s in sels:
 			if s not in aa:
-				print a.Label +"not in aa"
+				print(a.Label +"not in aa")
 				aa.append(s)
 
 		#write list back to objects
@@ -126,9 +126,9 @@ def hu():
 
 	label="Spreadsheet"
 	sws=mdiarea.subWindowList()
-	print "windows ..."
+	print("windows ...")
 	for w2 in sws:
-		print str(w2.windowTitle())
+		print(str(w2.windowTitle()))
 		if str(w2.windowTitle()).startswith(label):
 			sw=w2
 			bl=w2.children()[3]
@@ -153,7 +153,7 @@ def hu():
 
 
 ## create a Controller Widget for a property
- 
+
 
 def createPropWidget(obj,propname):
 	'''create and return widget for obj.propname'''
@@ -179,7 +179,7 @@ def createPropWidget(obj,propname):
 
 	cellmode=False
 
-	try: 
+	try:
 		obj.getPropertyByName(propname+"Typ")
 		cellmode=True
 	except:
@@ -209,9 +209,9 @@ def createPropWidget(obj,propname):
 	w.d.setSingleStep(obj.getPropertyByName(propname+"Step"))
 
 	def valueChangedA(val):
-		'''update obj and ref with new value''' 
-		print "update ----------"
-		
+		'''update obj and ref with new value'''
+		print("update ----------")
+
 		ref=obj.getPropertyByName(propname+"Source")
 		print (ref.Label,propname,val)
 		if ref.__class__.__name__ == 'Sheet':
@@ -319,7 +319,7 @@ class ViewProvider:
 		return None
 
 #-------------------
-# contextmenu und double click 
+# contextmenu und double click
 
 	def setupContextMenu(self, obj, menu):
 		self.Object=obj.Object
@@ -330,7 +330,7 @@ class ViewProvider:
 	def edit(self):
 		obj=self.Object
 		try: obj.Proxy.dialog.hide()
-		except: pass 
+		except: pass
 		obj.Proxy.dialog=dialog(obj)
 
 	def setEdit(self,vobj,mode=0):
@@ -342,6 +342,7 @@ class ViewProvider:
 
 	def doubleClicked(self,vobj):
 		print vobj
+		print(vobj)
 		self.setEdit(vobj,1)
 
 #\endcond
@@ -363,21 +364,21 @@ class ControlPanel(PartFeature):
 		obj.addProperty("App::PropertyBool","noExecute" ,"ZZConfig")
 
 		ViewProvider(obj.ViewObject)
-		
+
 		## widget for main dialog
 		self.dialog=None
 
 
 	## create a new dialog when noExecute has changed
 	def onChanged(proxy,obj, prop):
-		if prop in ["noExecute"]: 
+		if prop in ["noExecute"]:
 			print ("onChanged",prop)
 			proxy.dialog=dialog(obj)
 
 	## lock to prevent recursion
 	def execute(proxy,obj):
 		if obj.noExecute: return
-		try: 
+		try:
 			if proxy.lock: return
 		except:
 			print("except proxy lock")
@@ -386,25 +387,25 @@ class ControlPanel(PartFeature):
 		proxy.lock=False
 
 
-	## open the dialog 
+	## open the dialog
 	def myexecute(proxy,obj):
-		try: 
+		try:
 			proxy.dialog
-		except: 
+		except:
 			proxy.dialog=dialog(obj)
 
-	## read the propertyx values from the source objects into the local property holder 
+	## read the propertyx values from the source objects into the local property holder
 	def refresh(proxy):
-		print "aktualisiere attribute"
+		print("aktualisiere attribute")
 		obj=proxy.Object
 		for propname in obj.props:
-			print obj
+			print(obj)
 			# ref holen
 			pp=obj.getPropertyByName(propname)
 			ref=obj.getPropertyByName(propname+"Source")
-			print "Source",ref.Label
+			print("Source",ref.Label)
 			aa=ref.getPropertyByName(propname)
-			print "value",aa
+			print("value",aa)
 			setattr(obj,propname,aa)
 
 
@@ -447,8 +448,7 @@ class ControlPanel(PartFeature):
 
 
 		pt=obj.getTypeIdOfProperty(propname)
-		print pt
-
+		print(pt)
 
 
 		# App::PropertyAngle
@@ -477,21 +477,26 @@ class ControlPanel(PartFeature):
 			if maxV==None: maxV=pp.Value+20
 			setattr(self.Object,propname+"Max",maxV)
 			#m=pp.Value-20*st
-			
+
 			if minV==None: minV=max(0,pp.Value-20)
 			setattr(self.Object,propname+"Min",minV)
 			setattr(self.Object,propname+"Step",st)
 		except:
 			pass
 
-		try: self.dialog.hide()
-		except: print "no dialog to hide"
-		try: self.dialog=dialog(obj);print "dialog created"
-		except: print "cannot create dialog"
+		try:
+			self.dialog.hide()
+		except:
+			print("no dialog to hide")
+		try:
+			self.dialog=dialog(obj)
+			print("dialog created")
+		except:
+			print("cannot create dialog")
 
 ##create generic panel without data,
 #
-# this is still not a useful method 
+# this is still not a useful method
 
 def run():
 	'''create a generic panel without data'''
@@ -544,7 +549,7 @@ if __name__ == '__main__':
 		m.addTarget(c,"Radius")
 #		m.addTarget(co,"Radius1")
 		m.addTarget(co,"Radius2")
-		
+
 
 		m.addTarget(co,"Height")
 		m.addTarget(b,'Length')

@@ -5,7 +5,7 @@ from PySide.QtGui import *
 
 import numpy as np
 import time
- 
+
 import FreeCAD,FreeCADGui,Part,Draft
 
 
@@ -80,15 +80,14 @@ def rowcol(w,*args):
 		print (i.row(),i.column())
 		pts.append(FreeCAD.Vector(w.data[i.row()]))
 
-	print "huhuhuhsfsdfdf u"
-	print pts
-	print "selection changed ---------------",w.scale
+	print("huhuhuhsfsdfdf u")
+	print(pts)
+	print("selection changed ---------------",w.scale)
 	w.selection.update(pts,scale=w.scale)
-	print "-----------------"
+    print("-----------------")
 
 def rowcol2(w,*args):
 	print ("2-------------------selection row/column changed")
-
 
 	print (w,args)
 	for i in w.table.selectedItems():
@@ -98,11 +97,11 @@ def rowcol2(w,*args):
 	for i in w.table.selectedItems():
 		print (i.row(),i.column())
 		pts.append(FreeCAD.Vector(w.data[i.row()]))
-	print "huhuhuhu"
-	print pts
-	print "selection changed ---------------",w.scale
+	print("huhuhuhu")
+	print(pts)
+	print("selection changed ---------------",w.scale)
 	w.selection.update(pts,scale=w.scale)
-	print "-----------------"
+    print("-----------------")
 
 def posfromsel(w):
 	t=FreeCADGui.Selection.getSelectionEx()[0]
@@ -141,15 +140,15 @@ class MyTarget():
 
 	def update(self,coor=[0,0,0],scale=1):
 		pts=[FreeCAD.Vector(tuple(c)) for c in np.array(coor)*scale]
-		try: 
+		try:
 			pol=Part.makePolygon(pts)
 			self.obj.Shape=pol
-		except: 
+		except:
 			pol=[]
 			#vts=[Part.Vertex(pp) for pp in pts]
 			#comp=Part.makeCompound(vts)
 			if len(pts)>0:
-				self.obj.Shape=Part.Vertex(pts[0]) 
+				self.obj.Shape=Part.Vertex(pts[0])
 
 	def die(self):
 		try: FreeCAD.ActiveDocument.removeObject(self.obj.Name)
@@ -169,7 +168,7 @@ def pointEditor(obj,scale=1):
 	if dt in ['BSpline','Wire','BezCurve']:
 		w.setArr=setArr
 		w.getArr=getArr
-	else: 
+	else:
 		raise Exception("Unhandled type " + dt)
 
 	w.scale=scale
@@ -181,7 +180,7 @@ def pointEditor(obj,scale=1):
 
 	w.target=MyTarget()
 	w.target.update(arr,scale)
-	
+
 	w.selection=MyTarget()
 	w.selection.obj.ViewObject.PointSize=15
 	w.selection.obj.ViewObject.PointColor=(2.,0.,0.)
@@ -194,7 +193,7 @@ def pointEditor(obj,scale=1):
 	y2=lambda: rowcol2(w)
 	w.table.currentCellChanged.connect(y2)
 	w.table.itemSelectionChanged.connect(y)
-	
+
 
 	w.table.itemSelectionChanged.connect(lambda:itemChanged(w))
 	w.table.itemChanged.connect(lambda:itemChanged(w))
@@ -227,9 +226,9 @@ def pointEditor(obj,scale=1):
 
 
 def run(scale=1):
-	print "RUN ---",scale
+    print("RUN ---",scale)
 	obj=FreeCADGui.Selection.getSelection()[0]
-	print obj
+    print(obj)
 	return pointEditor(obj,scale=scale)
 
 
@@ -240,7 +239,7 @@ def run2():
 	p3 = FreeCAD.Vector(0,2,0)
 	p4 = FreeCAD.Vector(-1,1,0)
 	p5 = FreeCAD.Vector(-1,1,3)
-	
+
 	import Draft
 	Draft.makeBSpline([p1,p2,p3,p4,p5],closed=True)
 	obj=FreeCAD.ActiveDocument.ActiveObject

@@ -15,14 +15,14 @@ myNeedle.Proxy.getExampleModel(nurbswb.needle_models.modelSpoon)
 '''
 
 import numpy as np
-
+from importlib import reload
 
 
 class model():
 
 	def __init__(self,bbl=5):
 		self.curve=[
-				[0,0,0], 
+				[0,0,0],
 				[0,299,-30],[0,300,-30],
 				[0,349,-300],[0,350,-300],
 				[0,399,-500],[0,400,-500],
@@ -301,16 +301,16 @@ class modelEd4(model):
 		self.bb=[[0,0,0],
 			[0,0,80],[0,0,100],[20,0,100],
 			[80,0,100],[100,0,100],[100,0,120],
-			
+
 			[100,0,299],[100,0,300],[99,0,300],
 			[1,0,300],[0,0,300],[0,0,301],
-			
+
 			[0,0,399],[0,0,400],[-1,0,400],
 			[-70,0,400],[-100,0,400],[-100,0,430],
-			
+
 			[-100,0,499],[-100,0,500],[-99,0,500],
 			[-40,0,500],[0,0,500],[0,0,540],
-			
+
 			[0,0,600]]
 		self.twister=[[0,0,0]]*len(self.bb)
 		self.sc=[[1,0]]*len(self.bb)
@@ -323,7 +323,7 @@ class modelSpoon(model):
 		model.__init__(self)
 		self.info='model of a half spoon'
 		self.curve=[
-				[0,0,0], 
+				[0,0,0],
 				[0,50,10],
 				[0,99,40],[0,100,40],[0,100,35],
 				[0,50,10],
@@ -373,7 +373,7 @@ class modelXY(model):
 		model.__init__(self)
 		self.info='scaling and twisting '
 		self.curve=[
-				[0,0,0], 
+				[0,0,0],
 				[0,399,0],[0,400,0],
 				[0,400,100],[0,400,101],
 				[0,0,400],
@@ -392,7 +392,7 @@ class modelX(model):
 		model.__init__(self)
 		self.info='scaling and twisting 2'
 		self.curve=[
-				[0,0,0], 
+				[0,0,0],
 				[0,299,-30],[0,300,-30],
 				[0,349,-300],[0,350,-300],
 				[0,399,-500],[0,400,-500],
@@ -518,7 +518,7 @@ class modelCarRoof(model):
 				[0,-99,0],[0,-100,0],[0,-100,1],[0,-100,40],
 				#breite kante
 				[0,-70,40],	[0,-70,35],
-				
+
 				# mittelsteg
 				[0,-10,35],
 				[0,-10,40],
@@ -526,7 +526,7 @@ class modelCarRoof(model):
 				[0,9,40],
 				[0,10,40],
 				[0,10,35],
-				
+
 				# schmale kante
 				[0,90,35],[0,90,40],
 				[0,100,40],[0,100,1],[0,100,0],[0,91,0]
@@ -544,17 +544,17 @@ class modelCarRoof(model):
 		self.bb[2]=[0,0,20]
 		self.bb[3]=[0,0,21]
 		self.sc[1]=[1,3]
-		
+
 		self.sc[5]=[1,1.8]
 		self.sc[6]=[1,1.8]
 		self.bb[5]=[0,0,160]
 		self.bb[6]=[0,0,280]
-		
+
 		self.info="roof of a car"
 
 
 
-class modelS(model): # car 
+class modelS(model): # car
 
 	def __init__(self):
 		bbl=15
@@ -564,7 +564,7 @@ class modelS(model): # car
 				[0,-199,0],[0,-200,0],[0,-200,1],[0,-200,40],
 				#breite kante
 #				[0,-70,40],	[0,-70,35],
-				
+
 				# mittelsteg
 #				[0,-10,35],
 #				[0,-10,40],
@@ -575,7 +575,7 @@ class modelS(model): # car
 				[0,150,180],
 #				[0,10,40],
 #				[0,10,35],
-				
+
 				# schmale kante
 #				[0,90,35],[0,90,40],
 				[0,200,40],[0,200,1],[0,200,0],[0,199,0]
@@ -599,7 +599,7 @@ class modelS(model): # car
 		self.bb[6]=[0,0,2000]
 		self.bb[7]=[0,0,2200]
 		self.bb[8]=[0,0,3000]
-		
+
 		self.bb[14]=[0,0,4500]
 		self.bb[13]=[0,0,4480]
 		self.bb[12]=[0,0,4460]
@@ -653,13 +653,13 @@ class modelSki(model): # Ski
 				[0,99,0],[0,100,0],[0,100,1],[0,100,19],[0,100,20],[0,99,20],
 				[0,-99,20],[0,-100,20],[0,-100,19],
 				[0,-100,1],[0,-100,0],[0,-99,0]
-				
+
 
 			]
 
 		self.bb=[[-600,0,0],[-500,0,0],[-200,0,80],[0,0,70],[200,0,80],[500,0,0],[600,0,0],[640,0,20],[660,0,80],[660,0,90]]
-		
-		
+
+
 		self.sc=[[0.5,1]]*len(self.bb)
 		self.sc[-2]=[0.15,0.7]
 		self.sc[-1]=[0.01,0.1]
@@ -677,13 +677,13 @@ class modelSki(model): # Ski
 class modelColadose(model):
 
 	def __init__(self):
-		
-		
-		
+
+
+
 		bbl=15
 		model.__init__(self)
 		self.info="coladose geknickt"
-		
+
 		self.curve=[
 				[100,0,0],[70,00,70],[0,0,100],[-70,0,70],
 				[-100,0,0],[-70,0,-70],[0,0,-100],[70,0,-70],
@@ -691,14 +691,14 @@ class modelColadose(model):
 
 		self.bb=[[0,0,30*i] for i in range(bbl)]
 		self.sc=[[1,1]]*bbl
-		for i in range(4,7): 
+		for i in range(4,7):
 			self.sc[i]=[1,0.1]
 
 		self.twister=[[90,0,0]]*bbl
-		for i in range(4,7): 
+		for i in range(4,7):
 			self.sc[i]=[1,0.3]
 			self.twister[i]=[90,0,20*i]
-		for i in range(7,bbl): 
+		for i in range(7,bbl):
 			self.sc[i]=[0.7+1.0*i/bbl,0.3+1.9*(1.0*(bbl-i)/bbl)**1.2]
 			self.twister[i]=[90,5,20*8]
 
@@ -709,21 +709,21 @@ class modelColadose(model):
 import numpy as np
 
 
-class modelK(model): 
+class modelK(model):
 
 	def __init__(self):
 		model.__init__(self)
 		self.info="hyperboloid 90 grad gedreht"
-		
-		# naeherung rippe als bspline ueber ein regelmaessiges  24-eck 
+
+		# naeherung rippe als bspline ueber ein regelmaessiges  24-eck
 		self.curve=[[100*np.sin(np.pi/24*i),100*np.cos(np.pi/24*i),0] for i in range(48)]
-		
+
 		# hoehe 500
 		self.bb=[[0,0,0],[0,0,500]]
-		
+
 		# keine skalierung
 		self.sc=[[1,1],[1,1]]
-		
+
 		#anfangsdrehung 90
 		self.twister=[[0,0,0],[0,0,90]]
 
@@ -764,7 +764,7 @@ class modelBanana(model):
 
 		# 4 edges model
 		self.curve=np.array([
-					[0,0,0], 
+					[0,0,0],
 					[60,0,0],[65,0,0],
 					[80,120,0],[77,125,0],
 					[-70,150,0],[-80,150,0],[-80,140,0], # very strong edge
@@ -835,12 +835,12 @@ class modelS(model):
 		[0.3,0.3],
 		[0.3,0.3],
 		[0.3,0.3],
-		
+
 		[0.3,0.3],
 #
 		[0.3,0.3],
 		[0.8,0.8],
-		
+
 		[1.,1.],
 		[1.,1.],
 		[1.,1.],
@@ -849,16 +849,16 @@ class modelS(model):
 		self.twister=[[0,0,0],
 		[0,0,0],
 		[0,30,0],
-		
+
 		[0,90,0],
 		[0,90,0],
 		[0,180,0],
 		[0,230,0],
-		
+
 		[0,200,0],
 		[0,180,0],
 		[0,180,0],
-		
+
 		[0,180,0],
 #
 		[0,180,0],
@@ -874,17 +874,17 @@ class modelS(model):
 		self.bb=[[0,100,0],
 			[0,100,500],
 			[0,100,800],
-			
+
 			[250,100,800],
 			[350,100,800],
 			[450,100,700],
 			[450,100,600],
-			
+
 			[250,250,450],
 			[150,250,300],
 			[0,250,200],
 			[0,250,-100],
-			
+
 #
 			[0,250,-200],
 			[0,100,-300],
@@ -893,7 +893,7 @@ class modelS(model):
 			[0,100,-0],
 
 		]
-		
+
 		self.info="self eating worm"
 		self.intervall=[0,4]
 
@@ -935,5 +935,3 @@ if __name__=='__main__':
 
 	App.activeDocument().MyNeedle.Proxy.lock=False
 	App.activeDocument().MyNeedle.Proxy.getExampleModel(modelK)
-
-

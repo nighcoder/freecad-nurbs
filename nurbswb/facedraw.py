@@ -16,8 +16,7 @@ from nurbswb.say import *
 import FreeCAD
 import sys,time
 import random
-
-
+from importlib import reload
 
 import nurbswb.isodraw
 reload(nurbswb.isodraw)
@@ -55,7 +54,7 @@ class EventFilter(QtCore.QObject):
 		self.lasttime=time.time()
 		self.lastkey='#'
 		self.colorA=1
-		self.colors=range(30)
+		self.colors=list(range(30))
 		self.pts=[]
 		self.ptsm=[]
 		self.mode='n'
@@ -75,7 +74,7 @@ class EventFilter(QtCore.QObject):
 				z == 'PySide.QtCore.QEvent.Type.User'  or \
 				z == 'PySide.QtCore.QEvent.Type.Paint' or \
 				z == 'PySide.QtCore.QEvent.Type.LayoutRequest' or\
-				z == 'PySide.QtCore.QEvent.Type.UpdateRequest'  : 
+				z == 'PySide.QtCore.QEvent.Type.UpdateRequest'  :
 			return QtGui.QWidget.eventFilter(self, o, e)
 
 		if event.type() == QtCore.QEvent.MouseButtonRelease:
@@ -84,18 +83,18 @@ class EventFilter(QtCore.QObject):
 		if event.type() == QtCore.QEvent.MouseMove:
 				(x,y)=Gui.ActiveDocument.ActiveView.getCursorPos()
 				t=Gui.ActiveDocument.ActiveView.getObjectsInfo((x,y))
-				
+
 				#---------------------
 
 				cursor=QtGui.QCursor()
 				p = cursor.pos()
 
-#				if p.x()<100 or p.y()<100: 
+#				if p.x()<100 or p.y()<100:
 #					print "jump cursor facedraw 92"
 #					cursor.setPos(p.x()+100, p.y()+100)
 				#-----------------------------------
 
-				if t<>None: # if objects are under the mouse
+				if t!=None: # if objects are under the mouse
 					for tt in t:
 						if not  hasattr(self,'objname'):
 #							print "*",tt
@@ -194,9 +193,9 @@ class EventFilter(QtCore.QObject):
 
 					elif e.key() ==  QtCore.Qt.Key_F8:
 						say("-------------8----------")
-						print self.colorA
+						print(self.colorA)
 						self.colorA =(self.colorA+1)%7
-						print self.colorA
+						print(self.colorA)
 						drawColorpath(self.pts,self.colors,self.colorA,self.drawname)
 
 #-hack
@@ -219,10 +218,10 @@ class EventFilter(QtCore.QObject):
 						return True
 					elif e.key() == QtCore.Qt.Key_Up :
 						self.mouseWheel += FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetFloat("MoveCursorStep",10)
-						self.dialog.ef_action("up",self,self.mouseWheel) 
+						self.dialog.ef_action("up",self,self.mouseWheel)
 						return True
 					elif e.key() == QtCore.Qt.Key_Down :
-						self.mouseWheel -= FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetFloat("MoveCursorStep",10) 
+						self.mouseWheel -= FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetFloat("MoveCursorStep",10)
 						self.dialog.ef_action("down",self,self.mouseWheel)
 						return True
 					elif e.key() == QtCore.Qt.Key_PageUp :
@@ -245,7 +244,7 @@ class EventFilter(QtCore.QObject):
 							drawColorpath(self.pts,self.colors,self.colorA)
 
 					else: # letter key pressed
-						
+
 						ee=e.text()
 						if len(ee)>0: r=ee[0]
 						else: r="key:"+ str(e.key())
@@ -253,7 +252,7 @@ class EventFilter(QtCore.QObject):
 						self.lastkey=e.text()
 
 						#color select for drawing
-						print "SET Color--------------",r
+						print("SET Color--------------",r)
 						if 0:
 							if r=='h':
 								self.colorA=0
@@ -332,7 +331,7 @@ class EventFilter(QtCore.QObject):
 def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 	'''draw a curve on a face and create the two subfaces defined by the curve'''
 
-	print "drawcurve"
+	print("drawcurve")
 
 	#startposition
 	wplace=wire.Placement
@@ -346,7 +345,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 
 	#pts=[p.Point for p in w.Vertexes]
 	pts=[p.Point- wpos for p in w.Vertexes]
-	
+
 #	tt=App.ActiveDocument.addObject("Part::Spline","tt")
 #	tt.Shape=Part.makePolygon(pts)
 
@@ -355,7 +354,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 
 	bs=sf
 
-	print "hacks SSetze uv, sv auf 1"
+	print("hacks SSetze uv, sv auf 1")
 	su=face.ParameterRange[1]
 	sv=face.ParameterRange[3]
 
@@ -376,7 +375,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 	bs2d = Part.Geom2d.BSplineCurve2d()
 	pts2da=[sf.parameter(p) for p in pts]
 	pts2d=[FreeCAD.Base.Vector2d(p[0],p[1]) for p in pts2da]
-	bs2d.buildFromPolesMultsKnots(pts2d,[1]*(len(pts2d)+1),range(len(pts2d)+1),True,1)
+	bs2d.buildFromPolesMultsKnots(pts2d,[1]*(len(pts2d)+1),list(range(len(pts2d)+1)),True,1)
 	e1 = bs2d.toShape(t)
 
 	sp=App.ActiveDocument.getObject(wire.Label+"_Spline")
@@ -394,10 +393,10 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 	ee.reverse()
 	splitb=[(ee,face)]
 	r2=Part.makeSplitShape(face, splitb)
-	
+
 	if hasattr(wire,"drawFace"):
 
-			try: 
+			try:
 				rc=r2[0][0]
 				rc=r[0][0]
 			except: return
@@ -415,7 +414,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 
 			#wire.ViewObject.LineColor=sp.ViewObject.ShapeColor
 			#wire.ViewObject.ShapeColor=sp.ViewObject.ShapeColor
-			print "HHHHHHHHHHHHHHHHH"
+			print("HHHHHHHHHHHHHHHHH")
 
 ## 	new wire for next drawing
 
@@ -424,7 +423,7 @@ def drawcurve(wire,face,facepos=FreeCAD.Vector()):
 def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 	'''draw a curve on a face and create the two subfaces defined by the curve'''
 
-	print "drawring"
+	print("drawring")
 
 	es=[]
 	for wireA in wires:
@@ -442,7 +441,7 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 		#pts=[p.Point for p in w.Vertexes]
 		pts=[p.Point- wpos for p in w.Vertexes]
-		
+
 		sf=t.Surface
 
 		bs=sf
@@ -452,7 +451,7 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 		pts2da=[sf.parameter(p) for p in pts[1:]]
 		pts2d=[FreeCAD.Base.Vector2d(p[0],p[1]) for p in pts2da]
-		
+
 
 		bs2d = Part.Geom2d.BSplineCurve2d()
 		bs2d.setPeriodic()
@@ -465,8 +464,8 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 
 		sp=App.ActiveDocument.getObject(wireA.Label+"_ASpline")
-		print  sp
-		print wireA.Label
+		print(sp)
+		print(wireA.Label)
 		if sp==None:
 			sp=App.ActiveDocument.addObject("Part::Spline",wireA.Label+"_Spline")
 		sp.Shape=e1_1
@@ -483,14 +482,14 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 			#pts=[p.Point for p in w.Vertexes]
 			pts=[p.Point- wpos for p in w.Vertexes]
-			
+
 			sf=t.Surface
 
 			bs=sf
 			su=bs.UPeriod()
 			sv=bs.VPeriod()
 
-			print "hacks etze uv, sv auf 1"
+			print("hacks etze uv, sv auf 1")
 			su=face.ParameterRange[1]
 			sv=face.ParameterRange[3]
 
@@ -545,8 +544,8 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 					sp=App.ActiveDocument.addObject("Part::Spline",name)
 
 				#if wire.reverseFace: sp.Shape=r2[0][0]
-				#else: 
-				
+				#else:
+
 				sp.Shape=r[0][0]
 
 				#sp.ViewObject.ShapeColor=(random.random(),random.random(),random.random())
@@ -555,7 +554,7 @@ def _drawring(name,wires,dirs,face,facepos=FreeCAD.Vector()):
 
 				#wire.ViewObject.LineColor=sp.ViewObject.ShapeColor
 				#wire.ViewObject.ShapeColor=sp.ViewObject.ShapeColor
-				print "RRRRRRRRRRRRRRRRR"
+				print("RRRRRRRRRRRRRRRRR")
 
 
 
@@ -603,24 +602,24 @@ class MyWidget(QtGui.QWidget):
 
 	def apply(self):
 		'''draw the curve and stop'''
-		try: 
-			if hasattr(self.ef,"subobj"): 
+		try:
+			if hasattr(self.ef,"subobj"):
 				drawcurve(self.ef.wire,self.ef.subobj)
 		except: sayexc2()
 		stop()
 
 	def applyandnew(self):
 		'''draw the curve and start a new curve'''
-		try: 
-			if hasattr(self.ef,"subobj"): 
+		try:
+			if hasattr(self.ef,"subobj"):
 				drawcurve(self.ef.wire,self.ef.subobj)
 		except: sayexc2()
 		self.ef.colorpathcount += 1
 		self.ef.colorA = (self.ef.colorA +1)%7
 		self.ef.pts=[]
-		
+
 		createnewwire(self)
-		
+
 		iv=App.ActiveDocument.addObject("App::InventorObject","draw_"+str(self.ef.colorpathcount)+"_")
 		self.ef.drawname=iv.Name
 
@@ -628,7 +627,7 @@ class MyWidget(QtGui.QWidget):
 		''' dummy method'''
 		ef=self.ef
 		print ("val,x,y,k",ef.mouseWheel,ef.posx,ef.posy,ef.key)
-		return 
+		return
 
 	def ef_action(self,*args):
 		''' dummy method'''
@@ -672,7 +671,7 @@ def dialog(source=None):
 
 #	poll=QtGui.QLabel("Selected  Pole:")
 
-#	dial=QtGui.QDial() 
+#	dial=QtGui.QDial()
 #	dial.setMaximum(10)
 #	dial.setNotchesVisible(True)
 #	dial.setValue(FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetInt("Cursor",0))
@@ -682,7 +681,7 @@ def dialog(source=None):
 
 	box = QtGui.QVBoxLayout()
 	w.setLayout(box)
-	
+
 	for ww in [btn,cobtn,cl] :
 		box.addWidget(ww)
 
@@ -726,15 +725,15 @@ def genbuffer(pts,color=5):
 	pts - list of points
 	colors - list of color indexes
 	'''
-	print "genbuffer",len(pts)
+	print("genbuffer",len(pts))
 
 	colix=""
 	pix=""
 	cordix=""
-	
+
 	j=-1
 	for i,p in enumerate(pts):
-		if p <>None: 
+		if p !=None:
 			j +=1
 
 #		if i>0:
@@ -745,9 +744,9 @@ def genbuffer(pts,color=5):
 			colix += " " +str(color)
 
 			pix += str(p.x)+" "+str(p.y) +" " +str(p.z)+"\n"
-#			if i>0 and pts[i-1]<>None:cordix +=  str(i-1)+" "+str(i)+" -1\n" 
-			if i>0 and pts[i-1]<>None:cordix +=  str(j-1)+" "+str(j)+" -1\n" 
-			# if i%2==1:cordix +=  str(i-1)+" "+str(i)+" -1\n" 
+#			if i>0 and pts[i-1]<>None:cordix +=  str(i-1)+" "+str(i)+" -1\n"
+			if i>0 and pts[i-1]!=None:cordix +=  str(j-1)+" "+str(j)+" -1\n"
+			# if i%2==1:cordix +=  str(i-1)+" "+str(i)+" -1\n"
 #		else:
 #			i=-1
 
@@ -762,19 +761,19 @@ def genbuffer(pts,color=5):
 		}
 		Separator {
 			VRMLGroup {
-				children 
+				children
 				VRMLShape {
-					geometry 
+					geometry
 						VRMLIndexedLineSet {
-							coord 
+							coord
 								VRMLCoordinate {
-									point 
+									point
 	'''
 
 	buff += " [" + pix + "]}\n"
 
 	buff +='''
-						color 
+						color
 							VRMLColor {
 								color [ 0 0 0, 1 0 0, 0 1 0,
 										0 0 1, 1 1 0, 0 1 1, 1 0 1 , 1 1 1,
@@ -808,12 +807,12 @@ def start(free=False):
 	'''create and initialize the event filter'''
 
 	free=True # hack
-	
+
 	ef=EventFilter()
 	ef.mouseWheel=0
 	ef.colorpathcount=0
 	ef.colorA=2
-	print "start--"
+	print("start--")
 	iv=App.ActiveDocument.addObject("App::InventorObject","draw_"+str(ef.colorpathcount)+"_")
 	ef.drawname=iv.Name
 
@@ -821,7 +820,7 @@ def start(free=False):
 			sel=Gui.Selection.getSelection()
 			fob=sel[0]
 			s=Gui.Selection.getSelectionEx()
-			print s,s[0].SubObjects
+			print(s,s[0].SubObjects)
 
 			if len(s[0].SubObjects)>0:
 				ef.subobj=s[0].SubObjects[0]
@@ -849,7 +848,7 @@ def start(free=False):
 			sayexc2("no surface selected","Select first a face you want to draw on it")
 			return
 		else:
-			print "run free----------------------"
+			print("run free----------------------")
 
 	FreeCAD.eventfilter=ef
 
@@ -918,7 +917,7 @@ def createMap(mode=''):
 
 		moa=nurbswb.isodraw.createMap(mode)
 		moa.faceObject=face
-	
+
 	return moa
 
 
@@ -936,7 +935,7 @@ def stop():
 
 	try:
 		App.ActiveDocument.removeObject(ef.rc[0].Name)
-		App.ActiveDocument.removeObject(ef.rc[1].Name) 
+		App.ActiveDocument.removeObject(ef.rc[1].Name)
 	except:
 		pass
 

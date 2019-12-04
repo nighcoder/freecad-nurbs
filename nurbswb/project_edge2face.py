@@ -27,7 +27,6 @@ def run():
 	Part.show(p)
 
 
-
 def OLDrunAll():
 
 		wires=[]
@@ -54,41 +53,41 @@ def OLDrunAll():
 		for i,w  in enumerate(wires):
 			if i==0: continue
 			w2=wsort[-1]
-			print min(
+			print(min(
 				(w.Vertexes[0].Point-w2.Vertexes[0].Point).Length,
 				(w.Vertexes[1].Point-w2.Vertexes[0].Point).Length,
 				(w.Vertexes[0].Point-w2.Vertexes[1].Point).Length,
 				(w.Vertexes[1].Point-w2.Vertexes[1].Point).Length,
-				)
+				))
 			if (w.Vertexes[0].Point-w2.Vertexes[1].Point).Length< 0.1:
 				wsort += [w]
 			elif (w.Vertexes[0].Point-w2.Vertexes[0].Point).Length< 0.1:
 				wsort += [w]
 			elif (w.Vertexes[1].Point-w2.Vertexes[1].Point).Length< 0.1:
-				print "gedreht"
+				print("gedreht")
 				w.reverse()
 				wsort += [w]
 			elif (w.Vertexes[1].Point-w2.Vertexes[0].Point).Length< 0.1:
-				print "gedreht"
+				print("gedreht")
 				w.reverse()
 				wsort += [w]
 
 			else:
-				print "Fehler"
+				print("Fehler")
 				raise Exception("Gehrte")
 
 
 		w=Part.Wire(wsort)
 		Part.show(w)
 
-		
+
 		#----------------------------------
-		
+
 #		ww=Part.__sortEdges__(wires)
 #		FreeCAD.ww=ww
 #		FreeCAD.wires=wires
 #		assert len(ww) == len(wires)
-		
+
 #		w=Part.Wire(ww)
 #		Part.show(w)
 		pts=w.discretize(200)
@@ -101,7 +100,7 @@ def runAll():
 		alls=Gui.Selection.getSelection()
 		target=alls[-1]
 		for source in alls[:-1]:
-			
+
 			pgs=[]
 			for s in source.Shape.Edges:
 
@@ -112,7 +111,7 @@ def runAll():
 #				print p.Vertexes[0].Point
 #				print p.Vertexes[1].Point
 ##				Part.show(p)
-				print "Diskret"
+				print("Diskret")
 				pgs += p.Wires[0].discretize(200)
 #				Draft.makeWire(p.Wires[0].discretize(200))
 
@@ -133,27 +132,27 @@ def runAll():
 		for i,w  in enumerate(wires):
 			if i==0: continue
 			w2=wsort[-1]
-			print min(
+			print(min(
 				(w.Vertexes[0].Point-w2.Vertexes[0].Point).Length,
 				(w.Vertexes[1].Point-w2.Vertexes[0].Point).Length,
 				(w.Vertexes[0].Point-w2.Vertexes[1].Point).Length,
 				(w.Vertexes[1].Point-w2.Vertexes[1].Point).Length,
-				)
+				))
 			if (w.Vertexes[0].Point-w2.Vertexes[1].Point).Length< 0.1:
 				wsort += [w]
 			elif (w.Vertexes[0].Point-w2.Vertexes[0].Point).Length< 0.1:
 				wsort += [w]
 			elif (w.Vertexes[1].Point-w2.Vertexes[1].Point).Length< 0.1:
-				print "gedreht"
+				print("gedreht")
 				w.reverse()
 				wsort += [w]
 			elif (w.Vertexes[1].Point-w2.Vertexes[0].Point).Length< 0.1:
-				print "gedreht"
+				print("gedreht")
 				w.reverse()
 				wsort += [w]
 
 			else:
-				print "Fehler"
+				print("Fehler")
 				raise Exception("Gehrte")
 
 			w=Part.Wire(wsort)
@@ -161,12 +160,12 @@ def runAll():
 
 
 			#----------------------------------
-			
+
 	#		ww=Part.__sortEdges__(wires)
 	#		FreeCAD.ww=ww
 	#		FreeCAD.wires=wires
 	#		assert len(ww) == len(wires)
-			
+
 	#		w=Part.Wire(ww)
 	#		Part.show(w)
 
@@ -183,12 +182,12 @@ def concatenateBSplines():
 	''' Draft BSsplines  zusammenfuegen'''
 
 	import Draft
-	
+
 	wires=[]
 	for s in Gui.Selection.getSelection():
 		wires += [s.Points]
-		print wires
-		print s.Label
+		print(wires)
+		print(s.Label)
 
 	concatenateWires(wires)
 
@@ -210,7 +209,7 @@ def concatenateWires(wires):
 
 
 	if dista == (wires[0][0]-wires[1][0]).Length or  dista == (wires[0][0]-wires[1][-1]).Length:
-		print "Drehe Start"
+		print("Drehe Start")
 		pts.reverse()
 
 	wa=pts
@@ -222,19 +221,19 @@ def concatenateWires(wires):
 				)
 		wb=w
 		if dista == (wa[-1]-w[-1]).Length:
-			print "Drehe"
+			print("Drehe")
 			wb.reverse()
 
 		pts += wb
 		wa = wb
 
-	print len(pts)
+	print(len(pts))
 
 	pts2=[]
 	for i,p in enumerate(pts):
 		if  (p-pts[i-1]).Length<0.001:
-			print "Doppel",i
-			print (p-pts[i-1]).Length
+			print("Doppel",i)
+			print((p-pts[i-1]).Length)
 		else:
 			pts2 += [p]
 
@@ -244,16 +243,12 @@ def concatenateWires(wires):
 	Draft.makeBSpline(pts2)
 
 
-
-
-
-
 import numpy as np
 
 def splitCurve():
 	# split an recombine curve
 	sw=Gui.Selection.getSelection()[0]
-	
+
 	w=sw.Shape.Edges[0]
 	#App.ActiveDocument.BSpline001.Shape
 
@@ -264,7 +259,7 @@ def splitCurve():
 	pxy=[FreeCAD.Vector(p.x,p.y,0) for p in pts]
 
 	for i in range(anz):
-		print (pts[i]-pts[i-1]).Length
+		print((pts[i]-pts[i-1]).Length)
 
 	len=round(w.Curve.length()+1)/anz
 
@@ -283,7 +278,7 @@ def combineCurve():
 	aa=Draft.makeWire(pts)
 	ptsb=aa.Shape.discretize(40)
 	Draft.makeBSpline(ptsb)
-	
+
 	for i,p in enumerate(pts):
 		if i == 0:  ptsa = []
 		else:
@@ -292,11 +287,7 @@ def combineCurve():
 			t*=10
 			n=FreeCAD.Vector(0,0,1)
 			h=t.cross(n).normalize() *10
-			
-			ptsa += [p,p+h,pts[i-1]+h,pts[i-1]-h,p-h,p] 
+
+			ptsa += [p,p+h,pts[i-1]+h,pts[i-1]-h,p-h,p]
 
 	Draft.makeWire(ptsa)
-	
-	
-
-

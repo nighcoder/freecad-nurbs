@@ -7,15 +7,14 @@
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
 
-# generates 
+# generates
 # point clouds for curvature in u/v-direction
 # face uv grid
-# group with uv - unfolder and isoline grid 
+# group with uv - unfolder and isoline grid
 
-
-from say import *
+from .say import *
 import Points
-
+from importlib import reload
 
 # test data
 # /home/thomas/Dokumente/freecad_buch/b149_unfold/m09_uvgrid_generator.fcstd"
@@ -32,11 +31,7 @@ import nurbswb.nurbs_tools
 reload (nurbswb.nurbs_tools)
 from nurbswb.nurbs_tools import kruemmung
 
-
-
 def uvmap(edges,sf,debug):
-
-
 	try: uvgrp=App.ActiveDocument.UV
 	except: uvgrp=App.ActiveDocument.addObject("App::DocumentObjectGroup","UV")
 
@@ -71,7 +66,7 @@ def uvmap(edges,sf,debug):
 
 	# genauigkeit
 	anz=10
-	
+
 	pts=[]
 	direct=[0] * len(ll)
 	e=ll[0]
@@ -118,15 +113,14 @@ def uvmap(edges,sf,debug):
 	umax=-1e+10
 	vmax=umax
 
-
 	for i,e in enumerate(ll):
 	#		print (i,e.Curve)
 			ps= e.valueAt(e.FirstParameter)
 			pe= e.valueAt(e.LastParameter)
 			#xprint (e.FirstParameter,e.LastParameter)
 			#xprint (ps,pe)
-			#xprint 
-			
+			#xprint
+
 			pl=e.discretize(anz)
 	#		Part.show(e)
 			(u,v)=sf.parameter(e.Vertexes[0].Point)
@@ -135,7 +129,6 @@ def uvmap(edges,sf,debug):
 			umax=max(umax,u)
 			vmin=min(vmin,v)
 			umin=min(umin,u)
-
 
 			(u,v)=sf.parameter(e.Vertexes[1].Point)
 			#xprint ("Ende",u,v)
@@ -158,10 +151,9 @@ def uvmap(edges,sf,debug):
 			pts += ptst
 			# Draft.makeWire(pts)
 
-
 	poly=Part.Face(Part.makePolygon(pts,True))
 
-	if debug: 
+	if debug:
 		Part.show(poly)
 		# uvgrp.addObject(App.ActiveDocument.ActiveObject)
 
@@ -173,12 +165,9 @@ def uvmap(edges,sf,debug):
 	return poly,umin,umax,vmin,vmax
 
 
-
-
-
 def genVgrid(face,sf,gridfac=10,debug=False):
 	poly=face
-	if poly == None: return 
+	if poly == None: return
 
 	try: uvgrp=App.ActiveDocument.UV
 	except: uvgrp=App.ActiveDocument.addObject("App::DocumentObjectGroup","UV")
@@ -192,7 +181,7 @@ def genVgrid(face,sf,gridfac=10,debug=False):
 	ust=gridfac*int(round(poly.BoundBox.YMax-poly.BoundBox.YMin))+2
 
 	mind=30
-	if ust <mind: ust=mind 
+	if ust <mind: ust=mind
 
 
 	yl=[]
@@ -209,20 +198,18 @@ def genVgrid(face,sf,gridfac=10,debug=False):
 	vst=19
 
 	anz1=vst
-	
+
 	kval=[]
 	kual=[]
-	
+
 	for y in yl:
 		vl=Part.makeLine((poly.BoundBox.XMin-1,y,0),(poly.BoundBox.XMax+1,y,0))
-		if debug: 
+		if debug:
 			Part.show(vl)
 			uvgrp.addObject(App.ActiveDocument.ActiveObject)
 
-
 		start=poly.BoundBox.XMin
 		ende=poly.BoundBox.XMax
-
 
 		kul=[]
 		kvl=[]
@@ -236,7 +223,6 @@ def genVgrid(face,sf,gridfac=10,debug=False):
 		kval.append(kvl)
 		kual.append(kul)
 
-
 		a=vl.distToShape(poly)
 		#xprint y,a
 		if a[0]>0.01 or  len(a[1])<2:
@@ -244,7 +230,7 @@ def genVgrid(face,sf,gridfac=10,debug=False):
 			pass
 		else:
 			anz1 += 1
-			
+
 			#xprint a[1]
 			start=a[1][0][0][0]
 			ende=a[1][-1][0][0]
@@ -289,11 +275,10 @@ def genVgrid(face,sf,gridfac=10,debug=False):
 	return rc
 
 
-
 def genUgrid(face,sf,gridfac=10,debug=False):
 	''' create u isolines '''
 	poly=face
-	if poly == None: return 
+	if poly == None: return
 
 	try: uvgrp=App.ActiveDocument.UV
 	except: uvgrp=App.ActiveDocument.addObject("App::DocumentObjectGroup","UV")
@@ -302,7 +287,7 @@ def genUgrid(face,sf,gridfac=10,debug=False):
 
 	ust=gridfac*int(round(poly.BoundBox.XMax-poly.BoundBox.XMin))+2
 	mind=30
-	if ust <mind: ust=mind 
+	if ust <mind: ust=mind
 	print ("ust",ust)
 	start=poly.BoundBox.XMin
 	ende=poly.BoundBox.XMax
@@ -318,7 +303,7 @@ def genUgrid(face,sf,gridfac=10,debug=False):
 	for ix,x in enumerate(yl):
 		vl=Part.makeLine((x,poly.BoundBox.YMin-1,0),(x,poly.BoundBox.YMax+1,0))
 
-		if debug: 
+		if debug:
 			Part.show(vl)
 			uvgrp.addObject(App.ActiveDocument.ActiveObject)
 
@@ -334,7 +319,7 @@ def genUgrid(face,sf,gridfac=10,debug=False):
 			u=x; v= start +(ende-start)*i/vst
 			ku,kv=kruemmung(sf,u,v)
 	#					if i >-10  :
-	#						if ku<>-1 and kv <>-1: 
+	#						if ku<>-1 and kv <>-1:
 #			print (u,v,ku,kv)
 			if 0: # nicht fast ebenene Flaechen
 				kupts.append(FreeCAD.Vector(u,v,10*ku))
@@ -343,16 +328,14 @@ def genUgrid(face,sf,gridfac=10,debug=False):
 				p=sf.value(u,v)
 				kupts.append(FreeCAD.Vector(p.x,p.y,10000*ku))
 				kvpts.append(FreeCAD.Vector(p.x,p.y,10000*kv))
-			
-
 
 		if a[0]>0.01 or  len(a[1])<2:
 			#yprint ("keine/zuviel  schnittpunkte x ",ix,x,len(a[1]),a[0],a)
 			if len(a[1])>2:
-				print 
+				print()
 				for p in a[1]:
-					print p[0]
-				print
+					print(p[0])
+				print()
 		else:
 				start=a[1][0][0][1]
 				ende=a[1][-1][0][1]
@@ -396,16 +379,16 @@ def genKgrid(face,umin,umax,vmin,vmax,mode,sf,gridfac=10,obj=None,debug=False):
 	ts=time.time()
 
 	poly=face
-	if poly == None: return 
+	if poly == None: return
 
 	gridz=20
 
 	sps=[]
 
 	ust=gridfac*int(round(poly.BoundBox.XMax-poly.BoundBox.XMin))+2
-	
+
 	mind=gridz
-	if ust <mind: ust=mind 
+	if ust <mind: ust=mind
 
 	ust=gridz
 	vst=gridz
@@ -461,10 +444,8 @@ def genKgrid(face,umin,umax,vmin,vmax,mode,sf,gridfac=10,obj=None,debug=False):
 			if mode == 'mean':
 				kvals.append(10*(ku+kv))
 
-
 			eu=(endex-startx)/ust/2
 			ev=(ende-start)/vst/2
-
 
 			p1=sf.value(u-eu,v-ev)
 			p2=sf.value(u-eu,v+ev)
@@ -497,14 +478,14 @@ def genKgrid(face,umin,umax,vmin,vmax,mode,sf,gridfac=10,obj=None,debug=False):
 	App.ActiveDocument.ActiveObject.ViewObject.DisplayMode = "Shaded"
 
 	te=time.time()
-	print "color time ",round(te-ts,2)
+	print("color time ",round(te-ts,2))
 
 
 def gengrid(pts,lena,direct=2):
 	''' creates a polygon grid for a point grid'''
 
 	lenb=len(pts)//lena
-	print ("erzeuge gitter",lena,"x",lenb,"punkte",len(pts)) 
+	print ("erzeuge gitter",lena,"x",lenb,"punkte",len(pts))
 	assert(lenb*lena==len(pts))
 	pols=[]
 
@@ -539,7 +520,6 @@ def gengrid(pts,lena,direct=2):
 	Part.show(com)
 
 
-
 def runobj(obj,fac=5):
 	''' run for one complete object over all of its faces'''
 
@@ -550,14 +530,14 @@ def runobj(obj,fac=5):
 	for f in obj.Shape.Faces:
 		try:
 			poly,umin,umax,vmin,vmax = uvmap(f.Edges,f.Surface,debug)
-			print "genkgrid" 
+			print("genkgrid")
 			mode= 'sumabs' # 'u','v', 'sumabs','gauss', 'mean'
 			genKgrid(poly,umin,umax,vmin,vmax,mode ,f.Surface,fac,obj,debug)
-			print "DONE stop here - no grid generation"
+			print("DONE stop here - no grid generation")
 			return
 			l1=genVgrid(poly,f.Surface,fac,debug)
 			l2=genUgrid(poly,f.Surface,fac,debug)
-			el += l1 
+			el += l1
 			el += l2
 		except:
 			sayexc()
@@ -567,17 +547,15 @@ def runobj(obj,fac=5):
 			e=e.Curve.toShape()
 		el.append(e)
 
-
 	comp=Part.makeCompound(el)
 	te=time.time()
-	print "Creation time ",round(te-ts,2)
+	print("Creation time ",round(te-ts,2))
 
 	ts=time.time()
 	Part.show(comp)
 	App.ActiveDocument.ActiveObject.ViewObject.LineColor=(random.random(),random.random(),random.random())
 	te=time.time()
-	print "Part.show time ",round(te-ts,2)
-
+	print("Part.show time ",round(te-ts,2))
 
 def runsub(f,fac=5,label="NoLAB"):
 
@@ -592,7 +570,7 @@ def runsub(f,fac=5,label="NoLAB"):
 		l1=[]
 		l1=genVgrid(poly,f.Surface,fac,debug)
 		l2=genUgrid(poly,f.Surface,fac,debug)
-		el += l1 
+		el += l1
 		el += l2
 	except:
 		sayexc()
@@ -603,23 +581,21 @@ def runsub(f,fac=5,label="NoLAB"):
 		el.append(e)
 
 	App.ActiveDocument.recompute()
-	
+
 	comp=Part.makeCompound(el)
 	te=time.time()
-	print "Creation time ",round(te-ts,2)
+	print("Creation time ",round(te-ts,2))
 
 	ts=time.time()
 	Part.show(comp)
 	App.ActiveDocument.ActiveObject.ViewObject.LineColor=(random.random(),random.random(),random.random())
 	App.ActiveDocument.ActiveObject.Label=label
 	te=time.time()
-	print "Part.show time ",round(te-ts,2)
-
+	print("Part.show time ",round(te-ts,2))
 
 
 def runSel(fac=3):
 	''' create the xxx for some selected faces or all faces of a selected part'''
-
 	if len(Gui.Selection.getSelectionEx())>0:
 		for ss in Gui.Selection.getSelectionEx():
 			subn=ss.SubElementNames
@@ -628,12 +604,11 @@ def runSel(fac=3):
 					label=ss.ObjectName + " " + subn[i] + " UVGrid "
 					print ("create  ",label, "for ",obj.Surface)
 					runsub(obj,fac,label)
-					
+
 			else:
 				print("create for all faces of the object",ss.Object.Label)
 				obj=ss.Object
 				runobj(obj,fac)
-
 
 def run():
 	runSel()

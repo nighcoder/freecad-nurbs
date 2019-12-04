@@ -32,29 +32,25 @@ if 0:
 
 
 	pts=[bc.value(k) for k in bc.getKnots()]
-	print len(pts)
+	print(len(pts))
 	Draft.makeWire(pts)
 	App.ActiveDocument.ActiveObject.Label="Knotes "+a.Label
 	App.ActiveDocument.ActiveObject.ViewObject.PointSize=10
 	App.ActiveDocument.ActiveObject.ViewObject.PointColor=(1.,0.,0.)
 
-
-
 def run():
-
-
 
 	[a]=Gui.Selection.getSelectionEx()
 	bc0=a.Object.Shape.Edge1.Curve
 	kc=len(bc0.getKnots())
 
 	for pos in range(1,kc):
-		print pos
+		print(pos)
 		#for t in (30000,40000,10000,5000,2000,1000,500,200,100,50,20,10,5,3,2,1):
-		# 1.5 und 1 gehen nicht 
+		# 1.5 und 1 gehen nicht
 		for t in (20,16,14,12,6,2,1.5,1):
 			bc=bc0.copy()
-			print "huhu"
+			print("huhu")
 			rc=bc.removeKnot(pos,0,t)
 			print (t,rc)
 			if rc:

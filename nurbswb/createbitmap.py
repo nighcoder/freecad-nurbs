@@ -8,8 +8,6 @@ App=FreeCAD
 Gui=FreeCADGui
 
 
-
-
 def qrcodeFace(message='qr',degree=2,showPoints=False,window=None):
 	# bitmuster as string
 
@@ -50,7 +48,7 @@ def qrcodeFace(message='qr',degree=2,showPoints=False,window=None):
 
 	if degree==1 or degree==0:
 		cu=int(len(pts)**0.5)
-		print cu
+		print(cu)
 
 		pts=np.array(pts)
 		pts1=pts.reshape(cu,cu,3)
@@ -130,7 +128,7 @@ def qrcodeFace(message='qr',degree=2,showPoints=False,window=None):
 		fa=App.ActiveDocument.getObject(obname)
 		if fa==None:fa=App.ActiveDocument.addObject('Part::Spline',obname)
 		fa.Label=obname+": "+message
-		fa.ViewObject.DisplayMode = u"Shaded"
+		fa.ViewObject.DisplayMode = "Shaded"
 		fa.ViewObject.hide()
 
 	try: fg=App.ActiveDocument.MyBitmap_Grid
@@ -140,7 +138,7 @@ def qrcodeFace(message='qr',degree=2,showPoints=False,window=None):
 	bv=len(kvs)
 	bu=len(kus)
 
-	if window<>None:
+	if window!=None:
 		window.progressbar.setValue(0)
 
 	if 1:
@@ -152,7 +150,7 @@ def qrcodeFace(message='qr',degree=2,showPoints=False,window=None):
 			Gui.updateGui()
 			fg.Shape=Part.Compound(sps)
 
-			if window<>None:
+			if window!=None:
 				window.progressbar.setValue(10*a/bv)
 
 
@@ -163,14 +161,14 @@ def qrcodeFace(message='qr',degree=2,showPoints=False,window=None):
 			Gui.updateGui()
 			fg.Shape=Part.Compound(sps)
 
-			if window<>None:
+			if window!=None:
 				window.progressbar.setValue(10+10*b/bu)
 
 
 	if degree>0:
 		sps=[]
 		for a in range(0,bv/d+1):
-			if window<>None:
+			if window!=None:
 				window.progressbar.setValue(100*a/(bv/d))
 			FreeCAD.Console.PrintMessage(" "+str(a))
 			for b in range(0,bu/d+1):
@@ -268,7 +266,5 @@ def dialog():
 
 
 def run():
-	print "run it"
+	print("run it")
 	rc=dialog()
-
-

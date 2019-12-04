@@ -7,7 +7,7 @@
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
 
-
+from importlib import reload
 import FreeCAD,FreeCADGui
 App=FreeCAD
 Gui=FreeCADGui
@@ -26,12 +26,12 @@ def Myarray2NurbsD3(arr,label="MyWall",degree=3,obj=None):
 
 	#degree=3
 	#degree=1
-	
+
 	udegree=degree
 	vdegree=degree
-	
+
 	if degree == 1: cylinder = False
-	
+
 	ps=[[FreeCAD.Vector(pst[v,u,0],pst[v,u,1],pst[v,u,2]) for u in range(NbUPoles)] for v in range(NbVPoles)]
 
 	kv=[1.0/(NbVPoles-3)*i for i in range(NbVPoles-2)]
@@ -42,7 +42,7 @@ def Myarray2NurbsD3(arr,label="MyWall",degree=3,obj=None):
 		mv=[2] +[1]*(NbVPoles-2) +[2]
 
 	if  NbVPoles == 2:
-		print "KKKK"
+		print("KKKK")
 		kv=[0,1]
 		mv=[2,2]
 		vdegree=1
@@ -52,12 +52,11 @@ def Myarray2NurbsD3(arr,label="MyWall",degree=3,obj=None):
 		ku=[1.0/(NbUPoles-1)*i for i in range(NbUPoles)]
 		mu=[2]+[1]*(NbUPoles-2)+[2]
 
-		# bug 
+		# bug
 		ku=[1.0/(NbUPoles)*i for i in range(NbUPoles+1)]
 		mu=[1]*(NbUPoles+1)
-		print len(ps)
-		print sum(mu)
-
+		print(len(ps))
+		print(sum(mu))
 
 
 		if degree == 1:
@@ -117,8 +116,8 @@ def toUVMesh(bs, uf=5, vf=5):
 		uc=uf*bs.NbUPoles
 		vc=vf*bs.NbVPoles
 		ss=[]
-		for x in range(uc+1): 
-			for y in range(vc+1): 
+		for x in range(uc+1):
+			for y in range(vc+1):
 				ss.append(bs.value(1.0/uc*x,1.0/vc*y))
 
 		mm=np.array(ss)[:,2].max()
@@ -128,10 +127,10 @@ def toUVMesh(bs, uf=5, vf=5):
 
 		topfaces=[]
 		x=0
-		for y in range(vc): 
+		for y in range(vc):
 			topfaces.append(((vc+1)*x+y,(vc+1)*x+y+1,len(ss)-2))
 		x=uc
-		for y in range(vc): 
+		for y in range(vc):
 			topfaces.append(((vc+1)*x+y,(vc+1)*x+y+1,len(ss)-1))
 
 #		t=Mesh.Mesh((ss,topfaces))
@@ -141,9 +140,9 @@ def toUVMesh(bs, uf=5, vf=5):
 
 
 		faces=[]
-		for x in range(uc): 
-			for y in range(vc): 
-				#if max((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y)<50000: 
+		for x in range(uc):
+			for y in range(vc):
+				#if max((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y)<50000:
 				#if len(faces)<100000:
 					faces.append(((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y))
 					faces.append(((vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y))
@@ -161,7 +160,7 @@ def toUVMesh(bs, uf=5, vf=5):
 			t=Mesh.Mesh((ss,faces))
 			Mesh.show(t)
 			App.activeDocument().ActiveObject.ViewObject.Lighting="Two side"
-			App.activeDocument().ActiveObject.ViewObject.DisplayMode = u"Wireframe"
+			App.activeDocument().ActiveObject.ViewObject.DisplayMode = "Wireframe"
 			App.activeDocument().ActiveObject.ViewObject.LineColor = (.70,.00,0.00)
 			#FreeCAD.Console.PrintMessage(str(t))
 			return App.activeDocument().ActiveObject
@@ -173,7 +172,7 @@ def toUVMesh(bs, uf=5, vf=5):
 				t=Mesh.Mesh((ss,faces[i*100000:(i+1)*100000]))
 				Mesh.show(t)
 				App.activeDocument().ActiveObject.ViewObject.Lighting="Two side"
-				App.activeDocument().ActiveObject.ViewObject.DisplayMode = u"Wireframe"
+				App.activeDocument().ActiveObject.ViewObject.DisplayMode = "Wireframe"
 				App.activeDocument().ActiveObject.ViewObject.LineColor = (.70,.00,0.00)
 				FreeCAD.Console.PrintMessage(str(t))
 
@@ -236,11 +235,6 @@ def twist(profile,twister):
 # daten aus sheet
 
 
-
-
-
-
-
 def cellname(col,row):
 	#limit to 26
 	if col>90-64:
@@ -266,19 +260,19 @@ def npa2ssa(arr,spreadsheet,c1,r1,color=None):
 		for r in range(r1,r2):
 			cn=cellname(c1,r)
 			ss.set(cn,str(arr[r-r1]))
-			if color<>None: ss.setBackground(cn,color)
+			if color!=None: ss.setBackground(cn,color)
 	else:
 		for r in range(r1,r2):
 			for c in range(c1,c2):
 				cn=cellname(c,r)
 	#			print (cn,c,r,)
 				ss.set(cn,str(arr[r-r1,c-c1]))
-				if color<>None: ss.setBackground(cn,color)
+				if color!=None: ss.setBackground(cn,color)
 
 def gendata(ss):
 	print ("gendata",ss.Label)
 
-	# Form der Nadel als Parameter 
+	# Form der Nadel als Parameter
 
 	# profil blatt
 	curve=[[0,0,0],[5,-5,10],[30,-10,-0],[20,-5,-10],[0,10,0],[-20,-5,-0],[-30,-10,0],[-5,-5,0]]
@@ -383,7 +377,7 @@ if 0 and __name__=='__main__':
 
 	App.ActiveDocument=None
 	Gui.ActiveDocument=None
-	FreeCAD.open(u"/home/thomas/Schreibtisch/nadel_daten.fcstd")
+	FreeCAD.open("/home/thomas/Schreibtisch/nadel_daten.fcstd")
 	App.setactiveDocument()("nadel_daten")
 	App.ActiveDocument=App.getDocument("nadel_daten")
 	Gui.ActiveDocument=Gui.getDocument("nadel_daten")
@@ -446,7 +440,7 @@ class Needle(PartFeature):
 
 		obj.addProperty("App::PropertyInteger","startSegment","Segment").startSegment=0
 		obj.addProperty("App::PropertyInteger","endSegment","Segment").endSegment=-1
-		
+
 		obj.addProperty("App::PropertyBool","makeSolid" ,"Base").makeSolid=True
 
 		# obj.ViewObject.LineColor=(1.0,0.0,1.0)
@@ -458,13 +452,13 @@ class Needle(PartFeature):
 		ViewProvider(obj.ViewObject)
 
 	def onDocumentRestored(self, fp):
-		print "onDocumentRestored "
-		print fp.Label
+		print("onDocumentRestored ")
+		print(fp.Label)
 		self.Object=fp
 
 
 	def onChanged(self, fp, prop):
-		
+
 		if prop == 'useSpreadsheet':
 			if fp.useSpreadsheet:
 				if fp.Spreadsheet == None:
@@ -478,7 +472,7 @@ class Needle(PartFeature):
 	def execute(proxy,obj):
 #		print("execute ")
 		if obj.noExecute: return
-		try: 
+		try:
 			if proxy.lock: return
 		except:
 			print("except proxy lock")
@@ -491,13 +485,12 @@ class Needle(PartFeature):
 
 		ss=obj.Spreadsheet
 
-
-		if obj.ribtemplateSource <> None and not obj.externSourcesOff:
+		if obj.ribtemplateSource != None and not obj.externSourcesOff:
 			cs=obj.ribtemplateSource.Shape.Edge1.Curve
 			curve=cs.getPoles()
 			cl=len(curve)
 			npa2ssa(curve,ss,2,3)
-			print "update curve",curve
+			print("update curve",curve)
 		else:
 			cl=int(ss.get('B1'))
 			curve=ssa2npa(ss,2,3,4,3+cl-1)
@@ -505,13 +498,12 @@ class Needle(PartFeature):
 				curve=list(curve)
 				curve.append(curve[1])
 
-
-		if obj.backboneSource <> None and not obj.externSourcesOff:
+		if obj.backboneSource != None and not obj.externSourcesOff:
 			cs=obj.backboneSource.Shape.Edge1.Curve
 			bb=cs.getPoles()
 			bl=len(bb)
 			npa2ssa(bb,ss,7,3)
-			print "update backbone",bb
+			print("update backbone",bb)
 
 		else:
 			bl=int(ss.get('G1'))
@@ -531,15 +523,15 @@ class Needle(PartFeature):
 		pa=bbc.LastParameter
 		ps=bbc.FirstParameter
 
-		print "-----------------------------------------------"
+		print("-----------------------------------------------")
 		for n in range(len(bb)):
 			v=ps +(pa-ps)*n/(len(bb)-1)
 			print ("!!",n,v)
-			print bbc.tangent(v)
+			print(bbc.tangent(v))
 			t=bbc.tangent(v)[0]
 			p=bbc.value(v)
-			
-			print t
+
+			print(t)
 			zarc=np.arctan2(t.y,t.x)
 			zarc *=180.0/np.pi
 			zarc=0
@@ -547,20 +539,18 @@ class Needle(PartFeature):
 			harc=np.arcsin(t.z)
 			harc *=180.0/np.pi
 
-			print twister[n]
+			print(twister[n])
 			# twister[n]=[0,0,harc]
-			
-			print twister[n]
-		print "---------------------------------------ccccccccc--------"
-		print len(twister)
-		print twister
-		print "huhu"
+
+			print(twister[n])
+		print("---------------------------------------ccccccccc--------")
+		print(len(twister))
+		print(twister)
+		print("huhu")
 		#'''
 
 
 #-----------------------------
-
-
 
 
 		poles= scale(curve,scaler)
@@ -578,7 +568,7 @@ class Needle(PartFeature):
 	def createBackbone(proxy,obj,bb):
 		if obj.Backbone == None:
 			obj.Backbone=App.activeDocument().addObject('Part::Feature','Backbone')
-		
+
 		#obj.Backbone.Shape=Part.makePolygon([FreeCAD.Vector(b) for b in bb])
 		bs=Part.BSplineCurve()
 		bs.buildFromPoles(bb)
@@ -606,7 +596,7 @@ class Needle(PartFeature):
 
 	def createMesh(proxy,obj,bs):
 			vb=True
-			if obj.Mesh <> None:
+			if obj.Mesh != None:
 				vb=obj.Mesh.ViewObject.Visibility
 				App.activeDocument().removeObject(obj.Mesh.Name)
 			obj.Mesh=toUVMesh(bs,obj.MeshUCount,obj.MeshVCount)
@@ -673,16 +663,16 @@ class Needle(PartFeature):
 			try:
 				App.activeDocument()().recompute()
 			except:
-				print "recompute jack "
+				print("recompute jack ")
 				dokname=FreeCAD.ParamGet('User parameter:Plugins/nurbs').GetString("Document","Needle")
 				App.getDocument(dokname).recompute()
 				pass
 
 	def getExampleModel(self,model):
-		print "getExampleModel"
-		print model
+		print("getExampleModel")
+		print(model)
 		m=model()
-		print model().curve
+		print(model().curve)
 		self.updateSS(m.curve,m.bb,m.sc,m.twister)
 
 	def Model(self):
@@ -720,25 +710,25 @@ class Needle(PartFeature):
 		self.table=table
 
 	def clicked(self,index):
-		print "Clicked",index
+		print("Clicked",index)
 		self.dumpix(index)
 		print (getdata(index))
 
 	def entered(self,index):
-		print "Entered"
+		print("Entered")
 		self.dumpix(index)
 
 	def pressed(self,index):
 		import nurbswb.needle_cmds
 		reload(nurbswb.needle_cmds)
 		nurbswb.needle_cmds.pressed(index,App.activeDocument().MyNeedle)
-		print "Pressed"
+		print("Pressed")
 
 	def changed(self,index):
-		print "Changed"
+		print("Changed")
 		self.dumpix(index)
 
-	def dumpix(self,index): 
+	def dumpix(self,index):
 		print ("dumpix", index.row(),index.column(),(getdata(index)))
 		self.show(getdata(index))
 
@@ -764,26 +754,22 @@ class Needle(PartFeature):
 		else: Gui.Selection.clearSelection()
 
 
-
-
-
 def importCurves(obj):
 	ss=obj.Spreadsheet
-	print ss.Label
-	if obj.ribtemplateSource <> None and not obj.externSourcesOff:
+	print(ss.Label)
+	if obj.ribtemplateSource != None and not obj.externSourcesOff:
 		cs=obj.ribtemplateSource.Shape.Edge1.Curve
 		curve=cs.getPoles()
 		cl=len(curve)
 		npa2ssa(curve,ss,2,3)
-		print "update curve",curve
+		print("update curve",curve)
 
-
-	if obj.backboneSource <> None and not obj.externSourcesOff:
+	if obj.backboneSource != None and not obj.externSourcesOff:
 		cs=obj.backboneSource.Shape.Edge1.Curve
 		bb=cs.getPoles()
 		bl=len(bb)
 		npa2ssa(bb,ss,7,3)
-		print "update backbone",bb
+		print("update backbone",bb)
 
 def createNeedle(label="MyNeedle"):
 	a=FreeCAD.activeDocument().addObject("Part::FeaturePython",label)
@@ -852,7 +838,7 @@ def startssevents2():
 	filter=SheetFilter()
 	table.installEventFilter(filter)
 	# table.removeEventFilter(filter)
- 
+
 '''
 
 
@@ -1033,14 +1019,12 @@ if  __name__=='__main__':
 
 
 		Gui.SendMsgToActiveView("ViewFit")
-		print "fertig"
-		 
+		print("fertig")
 
 
 		needle.importCurves(a)
 		needle.importCurves(b)
-		
+
 	App.activeDocument()().recompute()
 	App.activeDocument()().recompute()
 	Gui.SendMsgToActiveView("ViewFit")
-

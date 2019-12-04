@@ -1,5 +1,5 @@
 
-from say import *
+from .say import *
 import nurbswb.pyob
 import Sketcher
 
@@ -16,14 +16,14 @@ class _ViewProvider(nurbswb.pyob.ViewProvider):
 
 
 class SketchClone(nurbswb.pyob.FeaturePython):
-	'''Sketch Object with Python''' 
+	'''Sketch Object with Python'''
 
 	##\cond
 	def __init__(self, obj):
 		obj.Proxy = self
 		self.Type = self.__class__.__name__
 		self.obj2 = obj
-		_ViewProvider(obj.ViewObject) 
+		_ViewProvider(obj.ViewObject)
 	##\endcond
 
 
@@ -31,7 +31,7 @@ class SketchClone(nurbswb.pyob.FeaturePython):
 		'''run myExecute for some properties'''
 
 		if prop == 'base':
-			print "Changed Base"
+			print("Changed Base")
 			if obj.base == None:
 				return
 
@@ -39,7 +39,7 @@ class SketchClone(nurbswb.pyob.FeaturePython):
 			try: rel=obj.relation
 			except: return
 			if rel==[]:
-				rel=range(len(obj.base.Geometry))
+				rel=list(range(len(obj.base.Geometry)))
 			for i,i2 in enumerate(rel):
 				obj.addGeometry(gs[i2-1])
 
@@ -48,14 +48,14 @@ class SketchClone(nurbswb.pyob.FeaturePython):
 		''' position to parent'''
 
 		if obj.off:
-			print obj.Label + " is deactivated (off)"
+			print(obj.Label + " is deactivated (off)")
 			return 0
 
 		if obj.base == None:
 			return 0
 		rel=obj.relation
 		if rel==[]:
-			rel=range(len(obj.base.Geometry))
+			rel=list(range(len(obj.base.Geometry)))
 		count=0
 		try:
 			ts=time.time()
@@ -69,10 +69,10 @@ class SketchClone(nurbswb.pyob.FeaturePython):
 						count +=1
 						obj.movePoint(i,j,posn+obj.offset)
 						rc=obj.solve()
-						if rc <>0: print ("solve 0 rc=",rc)
+						if rc !=0: print(("solve 0 rc=",rc))
 
 			rc=obj.solve()
-			if rc <>0: print ("solve 0 rc=",rc)
+			if rc !=0: print(("solve 0 rc=",rc))
 			obj.recompute()
 			# bsk.recompute()
 		except:
@@ -92,13 +92,13 @@ class SketchClone(nurbswb.pyob.FeaturePython):
 	def execute(self, obj):
 		''' recompute sketch and than run postprocess: myExecute'''
 		if obj == None: return
-		obj.recompute() 
+		obj.recompute()
 		tsum=0
-		print ""
+		print("")
 		for i in range(10):
 			rc=self.myExecute(obj,i)
 			tsum += rc
-			if rc==0: 
+			if rc==0:
 				print ("all myExecute time",i,round(tsum,3))
 				break
 ##\endcond
@@ -115,7 +115,7 @@ def runSketchClone(name="MyCloneAndMore"):
 	obj.offset=FreeCAD.Vector(0,0,0)
 	SketchClone(obj)
 
-	obj.ViewObject.DrawStyle = u"Dashdot"
+	obj.ViewObject.DrawStyle = "Dashdot"
 	obj.ViewObject.LineColor= (1.000,0.000,0.498)
 	obj.ViewObject.LineWidth = 6
 

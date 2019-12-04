@@ -7,7 +7,7 @@
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
 
-
+from importlib import reload
 from nurbswb.spreadsheet_lib import *
 import nurbswb
 reload (spreadsheet_lib)
@@ -56,7 +56,7 @@ ys
 
 
 
-# example from numpy 
+# example from numpy
 x = np.arange(-5.00, 5.00, 0.5)
 y = np.arange(-5.00, 5.00, 0.5)
 xx, yy = np.meshgrid(x, y)
@@ -84,6 +84,3 @@ table2Nurbs(ss1,"sum of cubic x and square y")
 z=np.sin(2*xx)+yy**2*0.1
 setSpreadsheet(ss1,x,y,z)
 table2Nurbs(ss1,"sum of sin and square")
-
-
-

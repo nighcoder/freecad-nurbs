@@ -26,12 +26,12 @@ def testRandomCylinder():
 	a.base=False
 	#a.grid=False
 	a.gridCount=20
-	
+
 	ps=a.Proxy.getPoints()
-	print "points ps",len(ps)
+	print("points ps",len(ps))
 
 	if 0:
-		print "random .."
+		print("random ..")
 		ps=np.array(FreeCAD.ps).swapaxes(0,1)
 		temp,ct=ps.shape
 		ps[2] += 100*np.random.random(ct)
@@ -40,7 +40,7 @@ def testRandomCylinder():
 
 	ps=np.array(ps)
 	ps.resize(na,b,3)
-	
+
 	for k0 in range(25):
 		k=random.randint(0,na-3)
 		l=random.randint(1,b-1)
@@ -71,7 +71,7 @@ def testRandomCylinder():
 
 	a.Proxy.updatePoles()
 	a.Proxy.showGriduv()
-	
+
 	FreeCAD.a=a
 	FreeCAD.ps=ps
 

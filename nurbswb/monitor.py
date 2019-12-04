@@ -16,7 +16,7 @@ App=FreeCAD
 Gui=FreeCADGui
 
 import numpy as np
-
+from importlib import reload
 
 
 
@@ -26,9 +26,9 @@ from PySide import  QtGui,QtCore
 def run(window):
 
 	anz=int(window.anz.text())
-	print anz
+	print(anz)
 
-	print window.r.isChecked()
+	print(window.r.isChecked())
 
 	window.r.hide()
 	window.hide()
@@ -141,12 +141,12 @@ class Monitor(PartFeature):
 		obj.addProperty("App::PropertyBool","noExecute" ,"Base")
 		obj.addProperty("App::PropertyEnumeration","mode" ,"Base")
 		obj.mode=['lenght','force']
-		
+
 		ViewProvider(obj.ViewObject)
 
 	def onDocumentRestored(self, fp):
-		print "onDocumentRestored "
-		print fp.Label
+		print("onDocumentRestored ")
+		print(fp.Label)
 
 
 	def onChanged(self, fp, prop):
@@ -156,7 +156,7 @@ class Monitor(PartFeature):
 
 	def execute(proxy,obj):
 		if obj.noExecute: return
-		try: 
+		try:
 			if proxy.lock: return
 		except:
 			print("except proxy lock")
@@ -179,8 +179,8 @@ class Monitor(PartFeature):
 #			print (pts[i]-pts[i-1]).normalize().cross((pts[i+1]-pts[i]).normalize())
 #			print (pts[i]-pts[i-1]).normalize().dot((pts[i+1]-pts[i]).normalize())
 #			print ll
-#			
-			print "!! ",np.arctan2(ll,ls)*180./np.pi
+#
+			print("!! ",np.arctan2(ll,ls)*180./np.pi)
 			su += np.arctan2(ll,ls)*180./np.pi
 
 
@@ -200,7 +200,7 @@ class Monitor(PartFeature):
 		su=round(su,2)
 
 		try: proxy.dialog
-		except: 
+		except:
 			proxy.dialog=dialogForce()
 		try:
 			proxy.dialog.l.setText("Forces for " + str(obj.source.Label))
@@ -216,7 +216,7 @@ class Monitor(PartFeature):
 
 	def myexecute(proxy,obj):
 		try: proxy.dialog
-		except: 
+		except:
 			proxy.dialog=dialog()
 		try:
 			proxy.dialog.l.setText("Curve length for " + str(obj.source.Label))
@@ -226,30 +226,30 @@ class Monitor(PartFeature):
 		proxy.dialog.maxa.setText("MAX: " +str(obj.maxVal))
 		proxy.dialog.show()
 		mm=20
-		if obj.source <> None:
+		if obj.source != None:
 #			try:
-				print obj.source.Label
+				print(obj.source.Label)
 				print ("Value and interval:", round(obj.source.Shape.Edge1.Length,1),obj.minVal,obj.maxVal)
 				obj.source.ViewObject.LineColor=(1.0,1.0,1.0)
 				if obj.source.Shape.Edge1.Length<obj.minVal:
 					obj.source.ViewObject.LineColor=(0.0,.0,1.0)
 				elif obj.source.Shape.Edge1.Length>obj.minVal and obj.source.Shape.Edge1.Length<obj.minVal+mm:
 					j=1-(obj.minVal+mm-obj.source.Shape.Edge1.Length)/mm
-					print j
+					print(j)
 					j=j*0.5
 					obj.source.ViewObject.LineColor=(0.,1.0,.0)
 				elif obj.source.Shape.Edge1.Length<obj.maxVal and obj.source.Shape.Edge1.Length>obj.maxVal-mm:
 					j=(obj.maxVal-obj.source.Shape.Edge1.Length)/mm
-					print j
+					print(j)
 					j=j*0.5
 					obj.source.ViewObject.LineColor=(.0,1.0,0.)
 				elif obj.source.Shape.Edge1.Length>obj.maxVal:
 					obj.source.ViewObject.LineColor=(1.0,0.0,.0)
 				obj.val=obj.source.Shape.Edge1.Length
-				print "huhu"
+				print("huhu")
 				proxy.dialog.anz.setText("VALUE: " + str(obj.val))
 #			except:
-				print "kann nichts machen"
+				print("kann nichts machen")
 
 
 def run():
@@ -307,6 +307,3 @@ if __name__ == '__main__':
 	a.source=spline
 	a.minVal= spline.Shape.Length*0.95
 	a.maxVal= spline.Shape.Length*1.05
-
-
-

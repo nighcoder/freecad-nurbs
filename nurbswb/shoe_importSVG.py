@@ -1,7 +1,7 @@
 
 #***************************************************************************
 #*                                                                         *
-#*   Copyright (c) 2009 Yorik van Havre <yorik@uncreated.net>              * 
+#*   Copyright (c) 2009 Yorik van Havre <yorik@uncreated.net>              *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
 #*   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -337,7 +337,7 @@ def arcend2center(lastvec,currentvec,rx,ry,xrotation=0.0,correction=False):
 		'''calculate (positive and negative) possible centers for an arc in endpoint parameterization
 		see http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
 		rotation or x-axis has to be specified in radians (CCW)
-		the sweepflag is interpreted as: sweepflag <==>  arc is travelled clockwise 
+		the sweepflag is interpreted as: sweepflag <==>  arc is travelled clockwise
 		returns [(vcenter+,angle1+,angledelta+),(...-)]'''
 		#scalefacsign = 1 if (largeflag != sweepflag) else -1
 		rx = float(rx)
@@ -374,7 +374,7 @@ def arcend2center(lastvec,currentvec,rx,ry,xrotation=0.0,correction=False):
 			vcenter = m2.multiply(vcx1).add(centeroff) # Step3 F.6.5.3
 			#angle1 = Vector(1,0,0).getAngle(Vector((v1.x-vcx1.x)/rx,(v1.y-vcx1.y)/ry,0)) # F.6.5.5
 			#angledelta = Vector((v1.x-vcx1.x)/rx,(v1.y-vcx1.y)/ry,0).getAngle(Vector((-v1.x-vcx1.x)/rx,(-v1.y-vcx1.y)/ry,0)) # F.6.5.6
-			#we need the right sign for the angle 
+			#we need the right sign for the angle
 			angle1 = DraftVecUtils.angle(Vector(1,0,0),Vector((v1.x-vcx1.x)/rx,(v1.y-vcx1.y)/ry,0)) # F.6.5.5
 			angledelta = DraftVecUtils.angle(Vector((v1.x-vcx1.x)/rx,(v1.y-vcx1.y)/ry,0),Vector((-v1.x-vcx1.x)/rx,(-v1.y-vcx1.y)/ry,0)) # F.6.5.6
 			results.append((vcenter,angle1,angledelta))
@@ -404,11 +404,11 @@ class svgHandler(xml.sax.ContentHandler):
 				self.symbols = {}
 				self.currentsymbol = None
 				self.obj=obj
-				print "svgHandler",obj
+                print("svgHandler",obj)
 
 				global Part
 				import Part
-		
+
 				if gui and draftui:
 						r = float(draftui.color.red()/255.0)
 						g = float(draftui.color.green()/255.0)
@@ -425,12 +425,12 @@ class svgHandler(xml.sax.ContentHandler):
 		def format(self,obj):
 				"applies styles to passed object"
 				#if self.style and gui:
-				if gui:					
+				if gui:
 						v = obj.ViewObject
 						if self.color: v.LineColor = self.color
 						if self.width: v.LineWidth = self.width
 						if self.fill: v.ShapeColor = self.fill
-		
+
 		def startElement(self, name, attrs):
 
 				# reorganizing data into a nice clean dictionary
@@ -439,7 +439,7 @@ class svgHandler(xml.sax.ContentHandler):
 
 				FreeCAD.Console.PrintMessage('processing element %d: %s\n'%(self.count,name))
 				FreeCAD.Console.PrintMessage('existing group transform: %s\n'%(str(self.grouptransform)))
-				
+
 				data = {}
 				for (keyword,content) in list(attrs.items()):
 						#print keyword,content
@@ -478,7 +478,7 @@ class svgHandler(xml.sax.ContentHandler):
 				self.color = None
 				self.width = None
 				self.text = None
-				
+
 				if name == 'svg':
 						m=FreeCAD.Matrix()
 						if not self.disableUnitScaling:
@@ -514,7 +514,7 @@ class svgHandler(xml.sax.ContentHandler):
 							elif len(self.grouptransform)==0:
 								#fallback to 90 dpi
 								m.scale(Vector(25.4/90.0,25.4/90.0,1))
-						self.grouptransform.append(m) 
+						self.grouptransform.append(m)
 				if 'fill' in data:
 						if data['fill'][0] != 'none':
 								self.fill = getcolor(data['fill'])
@@ -544,18 +544,18 @@ class svgHandler(xml.sax.ContentHandler):
 						FreeCAD.Console.PrintMessage('name: %s\n'%pathname)
 
 				# processing paths
-				print "filter spezielle pfade ......................"
-				print self.obj.ignore
-				if pathname<>None:
+				print("filter spezielle pfade ......................")
+				print(self.obj.ignore)
+				if pathname!=None:
 					for s in self.obj.ignore:
 						print (pathname,name,s)
 						if pathname.startswith(s):
-							print ("ignore ",pathname,s) 
+							print ("ignore ",pathname,s)
 							return
-				
+
 				if name == "path":
 						FreeCAD.Console.PrintMessage('data: %s\n'%str(data))
-						
+
 						if not pathname: pathname = 'Path'
 
 						path = []
@@ -669,7 +669,7 @@ class svgHandler(xml.sax.ContentHandler):
 														midpoint = lastvec.add(chord.add(perp))
 														seg = Part.Arc(lastvec,midpoint,currentvec).toShape()
 												else:# big arc or elliptical arc
-														solution,(rx,ry) = arcend2center(lastvec,currentvec,rx,ry,math.radians(-xrotation),True) 
+														solution,(rx,ry) = arcend2center(lastvec,currentvec,rx,ry,math.radians(-xrotation),True)
 														negsol = (largeflag != sweepflag)
 														vcenter,angle1,angledelta = solution[negsol]
 														#print angle1
@@ -686,7 +686,7 @@ class svgHandler(xml.sax.ContentHandler):
 																#angledelta=(-angledelta % (math.pi *2)) # Step4
 																angle1  = angle1+angledelta
 																angledelta = -angledelta
-																#angle1 = math.pi - angle1 
+																#angle1 = math.pi - angle1
 
 														e1a = Part.Arc(e1,angle1-swapaxis*math.radians(90),\
 																angle1+angledelta-swapaxis*math.radians(90))
@@ -695,7 +695,7 @@ class svgHandler(xml.sax.ContentHandler):
 																m3=FreeCAD.Matrix()
 																m3.move(vcenter)
 																rot90=FreeCAD.Matrix(0,-1,0,0,1,0) #90
-																#swapaxism=FreeCAD.Matrix(0,1,0,0,1,0) 
+																#swapaxism=FreeCAD.Matrix(0,1,0,0,1,0)
 																if swapaxis:
 																		m3=m3.multiply(rot90)
 																m3.rotateZ(math.radians(-xrotation))
@@ -840,7 +840,7 @@ class svgHandler(xml.sax.ContentHandler):
 							data["y"] = 0
 						if ('rx' not in data or data['rx'] < 10**(-1*Draft.precision())) and \
 						   ('ry' not in data or data['ry'] < 10**(-1*Draft.precision())): #negative values are invalid
-#                        if True: 
+#                        if True:
 								p1 = Vector(data['x'],-data['y'],0)
 								p2 = Vector(data['x']+data['width'],-data['y'],0)
 								p3 = Vector(data['x']+data['width'],-data['y']-data['height'],0)
@@ -852,7 +852,7 @@ class svgHandler(xml.sax.ContentHandler):
 						else: #rounded edges
 								rx = data.get('rx')
 								ry = data.get('ry') or rx
-								rx = rx or ry 
+								rx = rx or ry
 								if rx > 2 * data['width']:
 										rx = data['width'] / 2.0
 								if ry > 2 * data['height']:
@@ -892,17 +892,17 @@ class svgHandler(xml.sax.ContentHandler):
 						if self.fill: sh = Part.Face(sh)
 						sh = self.applyTrans(sh)
 						obj = self.doc.getObject(self.obj.prefix + pathname)
-						if obj == None: 
+						if obj == None:
 							obj = self.doc.addObject("Part::Feature",self.obj.prefix +pathname)
 						pl=obj.Placement;obj.Shape = sh;obj.Placement=pl
 						self.format(obj)
 						if self.currentsymbol:
 							self.symbols[self.currentsymbol].append(obj)
-						
+
 				# processing lines
 
 				if name == "line":
-						print "####################################"
+                        print("####################################")
 						if not pathname: pathname = 'Line'
 						p1 = Vector(data['x1'],-data['y1'],0)
 						p2 = Vector(data['x2'],-data['y2'],0)
@@ -990,7 +990,7 @@ class svgHandler(xml.sax.ContentHandler):
 						sh.translate(c)
 						sh = self.applyTrans(sh)
 						obj = self.doc.getObject(self.obj.prefix + pathname)
-						if obj == None: 
+						if obj == None:
 							obj = self.doc.addObject("Part::Feature",self.obj.prefix +pathname)
 						pl=obj.Placement;obj.Shape = sh;obj.Placement=pl
 						self.format(obj)
@@ -1018,13 +1018,13 @@ class svgHandler(xml.sax.ContentHandler):
 						else:
 								if self.lastdim:
 										self.lastdim.ViewObject.FontSize = int(getsize(data['font-size']))
-										
+
 				# processing symbols
-				
+
 				if name == "symbol":
 					self.symbols[pathname] = []
 					self.currentsymbol = pathname
-					
+
 				if name == "use":
 					if "xlink:href" in data:
 						symbol = data["xlink:href"][0][1:]
@@ -1046,7 +1046,7 @@ class svgHandler(xml.sax.ContentHandler):
 							FreeCAD.Console.PrintMessage("no symbol data\n")
 
 				FreeCAD.Console.PrintMessage("done processing element %d\n"%self.count)
-				
+
 		def characters(self,content):
 				if self.text:
 						FreeCAD.Console.PrintMessage("reading characters %s\n" % content)
@@ -1083,7 +1083,7 @@ class svgHandler(xml.sax.ContentHandler):
 				for o in self.symbols[self.currentsymbol]:
 					group.addObject(o)
 				self.currentsymbol = None
-					
+
 
 		def applyTrans(self,sh):
 				if isinstance(sh,Part.Shape):
@@ -1262,7 +1262,7 @@ def export(exportList,filename):
 		else:
 			FreeCAD.Console.PrintError("The export list contains no shape\n")
 			return
-			
+
 		if svg_export_style == 0:
 			# translated-style exports get a bit of a margin
 			margin = (maxx-minx)*.01
@@ -1270,7 +1270,7 @@ def export(exportList,filename):
 			# raw-style exports get no margin
 			margin = 0
 
-		minx -= margin 
+		minx -= margin
 		maxx += margin
 		miny -= margin
 		maxy += margin
@@ -1281,7 +1281,7 @@ def export(exportList,filename):
 		# writing header
 		# we specify the svg width and height in FreeCAD's physical units (mm),
 		# and specify the viewBox so that user units maps one-to-one to mm
-		svg = pythonopen(filename,'wb') 
+		svg = pythonopen(filename,'wb')
 		svg.write('<?xml version="1.0"?>\n')
 		svg.write('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"')
 		svg.write(' "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n')
@@ -1366,7 +1366,7 @@ class ViewProvider:
 
 	def onDelete(self, obj, subelements):
 		# https://forum.freecadweb.org/viewtopic.php?f=10&t=11818
-		print "delete"
+        print("delete")
 		self.stoptimer(obj.Object)
 		return True
 
@@ -1378,8 +1378,6 @@ class ViewProvider:
 		action.triggered.connect(lambda:self.runtimer(obj.Object))
 		action = menu.addAction("Stop Observer")
 		action.triggered.connect(lambda:self.stoptimer(obj.Object))
-
-
 
 	def updatesvg(self,obj):
 		obj.filemtime=0
@@ -1394,13 +1392,10 @@ class ViewProvider:
 			obj.Proxy.myTimer.stop()
 
 
-
-
-
 from PySide import QtCore
 
 def someOtherFunction():
-	print "AAAA someother function"
+    print("AAAA someother function")
 
 
 class SVGLink(PartFeature):
@@ -1415,12 +1410,11 @@ class SVGLink(PartFeature):
 		obj.addProperty("App::PropertyStringList","ignore","Base")
 		obj.addProperty("App::PropertyFloat","filemtime","Base")
 		obj.addProperty("App::PropertyBool","sync","Base")
-		
+
 		ViewProvider(obj.ViewObject)
 		obj.ViewObject.LineColor=(0.,1.,1.)
 		obj.Proxy = self
 		self.Object=obj
-
 
 
 	def onChanged(self, obj, prop):
@@ -1429,8 +1423,8 @@ class SVGLink(PartFeature):
 
 	def someOtherFunction(self):
 		try: self.Object.Label
-		except: 
-			print "someOtherFunction not ready"
+		except:
+            print("someOtherFunction not ready")
 			return
 
 		print ("observe",self.Object.Label,self.Object.filename)
@@ -1463,12 +1457,8 @@ class SVGLink(PartFeature):
 #					else: print ("ignore ", obj2.Name,obj.prefix+"MAP_w")
 
 
-
-
-
-
 def create_svglink():
-	print "erzeuge svg datei link"
+    print("erzeuge svg datei link")
 	b=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","My_SVG_Link")
 	SVGLink(b)
 	b.prefix="A_"
@@ -1477,8 +1467,6 @@ def create_svglink():
 	b.filename="/home/thomas/Schreibtisch/aaa.svg"
 	#b.Proxy.runTimer()
 	return b
-
-
 
 
 def export_svg():
@@ -1492,20 +1480,20 @@ def export_svg():
 	fn="/tmp/export.svg"
 	import time
 	fn='/tmp/export_'+str(time.time())+".svg"
-	print fn
+	print(fn)
 
-	print __objs__
+	print(__objs__)
+
 	importSVG.export(__objs__,fn)
 
 	del __objs__
-
 
 
 def import_svg():
 
 	import importSVG
 	App=FreeCAD
-	importSVG.insert(u"/home/thomas/Schreibtisch/aaa.svg", App.ActiveDocument.Name)
+	importSVG.insert("/home/thomas/Schreibtisch/aaa.svg", App.ActiveDocument.Name)
 #	b=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","My_SVG_Link")
 #	SVGLink(b)
 #	insertA(u"/home/thomas/Schreibtisch/xx.svg", App.ActiveDocument.Name)

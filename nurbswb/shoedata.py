@@ -3,7 +3,7 @@
 # (c) microelly
 #
 
-print "shoedata version 0.92"
+print("shoedata version 0.92")
 
 ## shoeAdam ist das erste Schuh-Modell
 #
@@ -12,7 +12,7 @@ print "shoedata version 0.92"
 #
 # Backbone, Twister und Scaler werden wie bei Needle verwendet.
 #
-  
+
 
 class shoeAdam():
 	''' the first shoe model a
@@ -21,12 +21,12 @@ class shoeAdam():
 ##\cond
 
 	# backbone (red line)
-	bbps=[ 
+	bbps=[
 			[280,0,11+9], #  not used
 			[260,0,11+3], #  outside
 
 			[250,0,11], # top
-			[218,0,4], # st 
+			[218,0,4], # st
 
 			[168,0,0], # joint j
 			[132,0,6], # girth
@@ -38,7 +38,7 @@ class shoeAdam():
 			[35,0,18], #  leg
 			[20,0,19], #  leg
 
-			[5,0,20], #  inner back end 
+			[5,0,20], #  inner back end
 			[0,0,20], #  back end heel
 		]
 
@@ -50,7 +50,7 @@ class shoeAdam():
 			[10,0,-16,12], # vorspitze
 			[22,0,-25+10,14],# spizte fuss
 			[29,0,-20,16],
-			[40,0,-40,22], # sp == einschnitt, zehengelenk? 
+			[40,0,-40,22], # sp == einschnitt, zehengelenk?
 			[42,0,-48,42], # joint J3
 			[35,0,-43,58], # waist
 			[32,0,-38,67], # girth
@@ -70,7 +70,7 @@ class shoeAdam():
 	# drehwinkel der rippen gedrehter joint
 	twister= [[0,0,0]]*4 + [[0,30,-10]]+[[0,30,0]]*3 + [[0,25,0]] + [[0,20,0]]+ [[0,10,0]]*4
 
-	sc= [[1,1]]*14 
+	sc= [[1,1]]*14
 
 
 
@@ -79,7 +79,7 @@ class shoeAdam():
 # show loft of the profiles
 showlofts=False
 
-# show scaled models 
+# show scaled models
 showscales=False
 scaleIn=0.98
 scaleOut=1.02

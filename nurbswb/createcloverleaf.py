@@ -15,7 +15,7 @@ def showdialog(title="Fehler",text="Schau in den ReportView fuer mehr Details",d
 	msg.setIcon(QtGui.QMessageBox.Warning)
 	msg.setText(text)
 	msg.setWindowTitle(title)
-	if detail<>None:   msg.setDetailedText(detail)
+	if detail!=None:   msg.setDetailedText(detail)
 	msg.exec_()
 
 
@@ -52,11 +52,11 @@ def run():
 	for i,p in enumerate(pts):
 		sk.addGeometry(Part.Circle(App.Vector(int(round(p.x)),int(round(p.y)),0),App.Vector(0,0,1),10),True)
 		if 0:
-			#if i == 1: sk.addConstraint(Sketcher.Constraint('Radius',0,10.000000)) 
-			if i>0: sk.addConstraint(Sketcher.Constraint('Equal',0,i)) 
+			#if i == 1: sk.addConstraint(Sketcher.Constraint('Radius',0,10.000000))
+			if i>0: sk.addConstraint(Sketcher.Constraint('Equal',0,i))
 		else:
 			radius=2.0
-			sk.addConstraint(Sketcher.Constraint('Radius',i,radius)) 
+			sk.addConstraint(Sketcher.Constraint('Radius',i,radius))
 			sk.renameConstraint(i, 'Weight ' +str(i+1))
 
 
@@ -81,20 +81,20 @@ def run():
 
 
 	App.activeDocument().recompute()
-	
-	sk.addConstraint(Sketcher.Constraint('Symmetric',0,3,2,3,1,3)) 
+
+	sk.addConstraint(Sketcher.Constraint('Symmetric',0,3,2,3,1,3))
 	App.activeDocument().recompute()
 
 
-	sk.addConstraint(Sketcher.Constraint('Symmetric',4,3,6,3,5,3)) 
+	sk.addConstraint(Sketcher.Constraint('Symmetric',4,3,6,3,5,3))
 	App.activeDocument().recompute()
 
 
-	sk.addConstraint(Sketcher.Constraint('Symmetric',8,3,10,3,9,3)) 
+	sk.addConstraint(Sketcher.Constraint('Symmetric',8,3,10,3,9,3))
 	App.activeDocument().recompute()
 
 
-	sk.addConstraint(Sketcher.Constraint('Symmetric',12,3,14,3,13,3)) 
+	sk.addConstraint(Sketcher.Constraint('Symmetric',12,3,14,3,13,3))
 	App.activeDocument().recompute()
 
 
@@ -102,15 +102,15 @@ def run():
 	lb=sk.addGeometry(Part.LineSegment(App.Vector(100,-100,0),App.Vector(100,100,0)),False)
 	lc=sk.addGeometry(Part.LineSegment(App.Vector(100,100,0),App.Vector(-100,100,0)),False)
 	ld=sk.addGeometry(Part.LineSegment(App.Vector(-100,100,0),App.Vector(-100,-100,0)),False)
-	 
-	 
-	sk.addConstraint(Sketcher.Constraint('Coincident',la,2,lb,1)) 
-	sk.addConstraint(Sketcher.Constraint('Coincident',lb,2,lc,1)) 
-	sk.addConstraint(Sketcher.Constraint('Coincident',lc,2,ld,1)) 
-	sk.addConstraint(Sketcher.Constraint('Coincident',ld,2,la,1)) 
+
+
+	sk.addConstraint(Sketcher.Constraint('Coincident',la,2,lb,1))
+	sk.addConstraint(Sketcher.Constraint('Coincident',lb,2,lc,1))
+	sk.addConstraint(Sketcher.Constraint('Coincident',lc,2,ld,1))
+	sk.addConstraint(Sketcher.Constraint('Coincident',ld,2,la,1))
 
 	for l in [la,lb,lc,ld]:
-		sk.toggleConstruction(l) 
+		sk.toggleConstruction(l)
 
 	sk.addConstraint(Sketcher.Constraint('Coincident',1,3,lc,1))
 	sk.addConstraint(Sketcher.Constraint('Coincident',5,3,lb,1))
@@ -123,29 +123,24 @@ def run():
 
 
 	sk.addGeometry(Part.LineSegment(App.Vector(-100,-100,0),App.Vector(100,-100,0)),False)
-	sk.addConstraint(Sketcher.Constraint('Coincident',21,1,10,3)) 
-	sk.addConstraint(Sketcher.Constraint('Coincident',21,2,8,3)) 
-	sk.toggleConstruction(21) 
+	sk.addConstraint(Sketcher.Constraint('Coincident',21,1,10,3))
+	sk.addConstraint(Sketcher.Constraint('Coincident',21,2,8,3))
+	sk.toggleConstruction(21)
 
 	sk.addGeometry(Part.LineSegment(App.Vector(100,-100,0),App.Vector(100,100,0)),False)
-	sk.addConstraint(Sketcher.Constraint('Coincident',22,1,6,3)) 
-	sk.addConstraint(Sketcher.Constraint('Coincident',22,2,4,3)) 
-	sk.toggleConstruction(22) 
+	sk.addConstraint(Sketcher.Constraint('Coincident',22,1,6,3))
+	sk.addConstraint(Sketcher.Constraint('Coincident',22,2,4,3))
+	sk.toggleConstruction(22)
 
 	sk.addGeometry(Part.LineSegment(App.Vector(100,100,0),App.Vector(-100,100,0)),False)
-	sk.addConstraint(Sketcher.Constraint('Coincident',23,1,0,3)) 
-	sk.addConstraint(Sketcher.Constraint('Coincident',23,2,2,3)) 
-	sk.toggleConstruction(23) 
+	sk.addConstraint(Sketcher.Constraint('Coincident',23,1,0,3))
+	sk.addConstraint(Sketcher.Constraint('Coincident',23,2,2,3))
+	sk.toggleConstruction(23)
 
 
 
 
 	sk.addGeometry(Part.LineSegment(App.Vector(-100,100,0),App.Vector(-100,-100,0)),False)
-	sk.addConstraint(Sketcher.Constraint('Coincident',24,1,14,3)) 
-	sk.addConstraint(Sketcher.Constraint('Coincident',24,2,12,3)) 
-	sk.toggleConstruction(24) 
-
-
-
-
-
+	sk.addConstraint(Sketcher.Constraint('Coincident',24,1,14,3))
+	sk.addConstraint(Sketcher.Constraint('Coincident',24,2,12,3))
+	sk.toggleConstruction(24)

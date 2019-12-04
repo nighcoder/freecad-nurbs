@@ -1,6 +1,7 @@
 
 # from say import *
 import FreeCAD,FreeCADGui,Sketcher,Part
+from importlib import reload
 
 App = FreeCAD
 Gui = FreeCADGui
@@ -73,11 +74,11 @@ def fold(obj):
 
 
 	#print track.Edges
-	
+
 	tps=track.discretize(count)
 #	aa=App.ActiveDocument.addObject("Part::Feature","aa")
 #	aa.Shape= Part.makePolygon(tps)
-	
+
 	col2=[]
 	for p in tps:
 			v=curve.parameter(p)
@@ -86,7 +87,7 @@ def fold(obj):
 			n=t[0].cross(FreeCAD.Vector(0,0,1))
 			polg=Part.makePolygon([p+10000*n,p-10000*n])
 			col2 += [polg]
-			
+
 			ss=bs.makeParallelProjection(polg,FreeCAD.Vector(0,0,1))
 			sps=[v.Point for v in ss.Vertexes]
 			#print sps
@@ -108,7 +109,7 @@ def fold(obj):
 
 	comp=[]
 	for i,p in enumerate(ptsa):
-		if ptsa[i]<>ptsb[i]:
+		if ptsa[i]!=ptsb[i]:
 			pol=Part.makePolygon([ptsa[i],ptsb[i]])
 			comp.append(pol)
 	segments.Shape=Part.Compound(comp)

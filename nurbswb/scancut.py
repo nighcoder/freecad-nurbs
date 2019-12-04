@@ -23,7 +23,7 @@ def showdialog(title="Fehler",text="Schau in den ReportView fuer mehr Details",d
 	msg.setIcon(QtGui.QMessageBox.Warning)
 	msg.setText(text)
 	msg.setWindowTitle(title)
-	if detail<>None:   msg.setDetailedText(detail)
+	if detail!=None:   msg.setDetailedText(detail)
 	msg.exec_()
 
 
@@ -42,7 +42,7 @@ def run1(z0,mesh,plane,showpointsmap=True,showmedianfilter=True):
 
 	color=(random.random(),random.random(),random.random())
 
-	
+
 	pl=plane.Placement
 	plst=" Base:" + str(pl.Base) +" Rot Euler:" + str(pl.Rotation.toEuler())
 	plinv=pl.inverse()
@@ -61,7 +61,7 @@ def run1(z0,mesh,plane,showpointsmap=True,showmedianfilter=True):
 	#pts2a=[FreeCAD.Vector(p.x,p.y,0) for p in pts2 if zmin<=p.z and p.z<=zmax]
 
 	pts2a=[FreeCAD.Vector(round(p.x),round(p.y),round(p.z)) for p in pts2 if round(p.z)==z0]
-	
+
 	if len(pts2a)==0: return
 
 	p2=Points.Points(pts2a)
@@ -82,7 +82,7 @@ def run1(z0,mesh,plane,showpointsmap=True,showmedianfilter=True):
 	#	print np.arctan2(vm.x,vm.y)
 		aps[np.arctan2(vm.x,vm.y)]=v
 
-	kaps=aps.keys()
+	kaps=list(aps.keys())
 	kaps.sort()
 	ptss=[aps[k] for k in kaps]
 	print ("lens ",len(ptss),len(pts2a))
@@ -95,8 +95,8 @@ def run1(z0,mesh,plane,showpointsmap=True,showmedianfilter=True):
 	tt=path.swapaxes(0,1)
 	y1 = sp.signal.medfilt(tt[1],f)
 	y0 = sp.signal.medfilt(tt[0],f)
-	#l5=[FreeCAD.Vector(p) for p in np.array([tt[0],y1,tt[2]]).swapaxes(0,1)] 
-	l5=[FreeCAD.Vector(p) for p in np.array([y0,y1,tt[2]]).swapaxes(0,1)] 
+	#l5=[FreeCAD.Vector(p) for p in np.array([tt[0],y1,tt[2]]).swapaxes(0,1)]
+	l5=[FreeCAD.Vector(p) for p in np.array([y0,y1,tt[2]]).swapaxes(0,1)]
 
 	if 0 and showmedianfilter:
 		Draft.makeWire(l5)

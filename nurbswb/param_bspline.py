@@ -11,11 +11,11 @@
 import FreeCAD, Part, FreeCADGui
 
 def printinfo(sp):
-		print "\n" *2
-		print "degree ",sp.Degree, " continuity ", sp.Continuity
-		print "count poles ", len(sp.getPoles())
-		print "knots ", sp.KnotSequence
-		print "weights ",sp.getWeights()
+		print("\n" *2)
+		print("degree ",sp.Degree, " continuity ", sp.Continuity)
+		print("count poles ", len(sp.getPoles()))
+		print("knots ", sp.KnotSequence)
+		print("weights ",sp.getWeights())
 
 
 class PartFeature:
@@ -52,14 +52,14 @@ class MyBSpline(PartFeature):
 		if fp.mode=="poles":
 			sp.buildFromPoles(pts)
 		elif fp.mode=="interpolate":
-			if fp.InitialTangent.Length<>0 and fp.FinalTangent.Length<>0: 
+			if fp.InitialTangent.Length!=0 and fp.FinalTangent.Length!=0:
 				sp.interpolate(pts,InitialTangent=fp.InitialTangent,FinalTangent=fp.FinalTangent)
 			elif 1:
 				# tangenten an einzelne Punkte
 				Tangents=[]
 				Tangentflags=[]
 				tt=fp.Tangents
-				print tt
+				print(tt)
 				for i,p in enumerate(pts):
 					try:
 				#		print  str(tt[i])
@@ -71,7 +71,7 @@ class MyBSpline(PartFeature):
 						Tangents.append(v)
 						Tangentflags.append(str(fp.TangentFlags[i]) == '1')
 					except:
-						print "Fehler Tangenten Vektor ", i+1
+						print("Fehler Tangenten Vektor ", i+1)
 						Tangents.append(FreeCAD.Vector(1,0,0))
 						Tangentflags.append(0)
 				try:
@@ -83,7 +83,7 @@ class MyBSpline(PartFeature):
 
 		elif fp.mode=="approximate":
 			paramtype=fp.paramtype
-			if paramtype<>'Default':
+			if paramtype!='Default':
 				sp.approximate(Points=pts,ParamType=paramtype,DegMax=3)
 			else:
 				sp.approximate(pts)
@@ -92,12 +92,12 @@ class MyBSpline(PartFeature):
 
 
 	def onChanged(self, fp, prop):
-		if prop=="wire" and fp.wire <> None:
+		if prop=="wire" and fp.wire != None:
 			sp=self.recompute(fp)
 			fp.Shape=sp.toShape()
 
 	def execute(self, fp):
-		if  fp.wire <> None:
+		if  fp.wire != None:
 			sp=self.recompute(fp)
 			fp.Shape=sp.toShape()
 
@@ -127,7 +127,7 @@ def runtest():
 		FreeCAD.newDocument("Unbenannt")
 		FreeCAD.setActiveDocument("Unbenannt")
 		FreeCAD.ActiveDocument=FreeCAD.getDocument("Unbenannt")
-	
+
 	points=[FreeCAD.Vector(-30,0.0,0.0),FreeCAD.Vector(-20,30,0.0),FreeCAD.Vector(20,40,0.0),
 		FreeCAD.Vector(40,-20,0.0),FreeCAD.Vector(150,-20,0.0),FreeCAD.Vector(190,80,0.0)]
 
@@ -141,16 +141,12 @@ def runtest():
 	FreeCAD.activeDocument().recompute()
 	FreeCADGui.SendMsgToActiveView("ViewFit")
 
-	
-print "bspline 2 loaded"
+print("bspline 2 loaded")
 
 if __name__=='__main__':
 
 	runtest()
 
 
-
 def run():
 	runtest()
-
-

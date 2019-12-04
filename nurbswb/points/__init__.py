@@ -5,12 +5,11 @@ Gui = FreeCADGui
 
 import numpy as np
 import time
-
+from importlib import reload
 
 import Draft, Part
 import Mesh
 Gui=FreeCADGui
-
 
 import numpy as np
 import random
@@ -19,26 +18,25 @@ import time
 # point limbach oberfrohna
 # http://www.landesvermessung.sachsen.de/inhalt/produkte/dhm/dgm/dgm_download.html
 
-# utm 56.373500, 34.32500 
+# utm 56.373500, 34.32500
 # lat lon 50.865968,12.772980
 
 # bayern bruck
 # 48.0211686,11.905581
 # https://www.ldbv.bayern.de
 
-
 def toUVMesh(bs, uf=5, vf=5):
-		print "los"
+		print("los")
 		uc=uf*bs.NbUPoles
 		vc=vf*bs.NbVPoles
 		ss=[]
-		for x in range(uc+1): 
-			for y in range(vc+1): 
+		for x in range(uc+1):
+			for y in range(vc+1):
 				ss.append(bs.value(1.0/uc*x,1.0/vc*y))
 
 		randfaces=[]
 		for x in [0,uc]:
-			for y in range(vc+1): 
+			for y in range(vc+1):
 				randfaces += [(len(ss),len(ss)+1,len(ss)+2),(len(ss)+2,len(ss)+1,len(ss)+3)]
 				vek=bs.value(1.0/uc*x,1.0/vc*y)
 				ss.append (vek)
@@ -46,7 +44,7 @@ def toUVMesh(bs, uf=5, vf=5):
 				ss.append (veks)
 
 		for y in [0,vc]:
-			for x in range(uc+1): 
+			for x in range(uc+1):
 				randfaces += [(len(ss),len(ss)+1,len(ss)+2),(len(ss)+2,len(ss)+1,len(ss)+3)]
 				vek=bs.value(1.0/uc*x,1.0/vc*y)
 				ss.append (vek)
@@ -72,48 +70,43 @@ def toUVMesh(bs, uf=5, vf=5):
 		App.ActiveDocument.ActiveObject.ViewObject.Lighting="Two side"
 
 		faces=[]
-		for x in range(uc): 
-			for y in range(vc): 
-				#if max((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y)<50000: 
+		for x in range(uc):
+			for y in range(vc):
+				#if max((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y)<50000:
 				#if len(faces)<100000:
 					faces.append(((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y))
 					faces.append(((vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y))
 
-		print "hu"
+		print("hu")
 		# print ss
 		# print faces
 		FreeCAD.Console.PrintMessage(str(("size of the mesh:",uc,vc))+"\n")
 		FreeCAD.Console.PrintMessage(str(("number of points" ,len(ss)))+"\n")
 		FreeCAD.Console.PrintMessage(str(("faces:",len(faces)))+"\n")
-
-
 		t=Mesh.Mesh((ss,faces+faces1))
 		#t=Mesh.Mesh((ss,faces))
 		Mesh.show(t)
 		App.ActiveDocument.ActiveObject.ViewObject.Lighting="Two side"
-		App.ActiveDocument.ActiveObject.ViewObject.DisplayMode = u"Wireframe"
+		App.ActiveDocument.ActiveObject.ViewObject.DisplayMode = "Wireframe"
 		FreeCAD.Console.PrintMessage(str(t))
-
-
 		print (uc,vc)
 		return t
 
-
 def PointarrayToMesh(par, uf=5, vf=5,h=1100):
-		print "los"
+		print("los")
 		uc,vc,_=par.shape
-		uc -= 1 
+		uc -= 1
 		vc -= 1
 		print (uc,vc)
 		ss=[]
-		for x in range(uc+1): 
-			for y in range(vc+1): 
+		for x in range(uc+1):
+			for y in range(vc+1):
 				ss.append(FreeCAD.Vector(par[x,y]))
 
 		randfaces=[]
 		if 10:
 			for x in [0,uc]:
-				for y in range(vc+1): 
+				for y in range(vc+1):
 					randfaces += [(len(ss),len(ss)+1,len(ss)+2),(len(ss)+2,len(ss)+1,len(ss)+3)]
 					vek=FreeCAD.Vector(par[x,y])
 					ss.append (vek)
@@ -121,7 +114,7 @@ def PointarrayToMesh(par, uf=5, vf=5,h=1100):
 					ss.append (veks)
 
 			for y in [0,vc]:
-				for x in range(uc+1): 
+				for x in range(uc+1):
 					randfaces += [(len(ss),len(ss)+1,len(ss)+2),(len(ss)+2,len(ss)+1,len(ss)+3)]
 					vek=par[x,y]
 					vek=FreeCAD.Vector(par[x,y])
@@ -149,14 +142,14 @@ def PointarrayToMesh(par, uf=5, vf=5,h=1100):
 		# App.ActiveDocument.ActiveObject.ViewObject.Lighting="Two side"
 
 		faces=[]
-		for x in range(uc): 
-			for y in range(vc): 
-				#if max((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y)<50000: 
+		for x in range(uc):
+			for y in range(vc):
+				#if max((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y)<50000:
 				#if len(faces)<100000:
 					faces.append(((vc+1)*x+y,(vc+1)*x+y+1,(vc+1)*(x+1)+y))
 					faces.append(((vc+1)*x+y+1,(vc+1)*(x+1)+y+1,(vc+1)*(x+1)+y))
 
-		print "hu"
+		print("hu")
 		# print ss
 		# print faces
 		FreeCAD.Console.PrintMessage(str(("size of the mesh:",uc,vc))+"\n")
@@ -170,7 +163,6 @@ def PointarrayToMesh(par, uf=5, vf=5,h=1100):
 		#App.ActiveDocument.ActiveObject.ViewObject.DisplayMode = u"Wireframe"
 		FreeCAD.Console.PrintMessage(str(t))
 
-
 		print (uc,vc)
 		return t
 
@@ -179,30 +171,21 @@ if 0:
 
 	# bs=App.ActiveDocument.Shape.Shape.Face1.Surface
 
-	print bs
-
+	print(bs)
 	t=toUVMesh(bs, uf=10, vf=10)
-
-
-	print "dine"
-	print t
-
-
-
+	print("dine")
+	print(t)
 
 def machFlaeche(psta,ku=None,objName="XXd",degree=3):
 		NbVPoles,NbUPoles,_t1 =psta.shape
-
 
 		ps=[[FreeCAD.Vector(psta[v,u,0],psta[v,u,1],psta[v,u,2]) for u in range(NbUPoles)] for v in range(NbVPoles)]
 
 #		kv=[1.0/(NbVPoles-3)*i for i in range(NbVPoles-2)]
 #		if ku==None: ku=[1.0/(NbUPoles-3)*i for i in range(NbUPoles-2)]
 
-
 		kv=[1.0/(NbVPoles-degree)*i for i in range(NbVPoles-degree+1)]
 		if ku==None: ku=[1.0/(NbUPoles-degree)*i for i in range(NbUPoles-degree+1)]
-
 
 #		mv=[4] +[1]*(NbVPoles-4) +[4]
 #		mu=[4]+[1]*(NbUPoles-4)+[4]
@@ -213,7 +196,6 @@ def machFlaeche(psta,ku=None,objName="XXd",degree=3):
 #		print len(ku)
 #		print len(mu)
 #		print mu
-
 
 		bs=Part.BSplineSurface()
 		bs.buildFromPolesMultsKnots(ps, mv, mu, kv, ku, False, False ,degree,degree)
@@ -228,20 +210,14 @@ def machFlaeche(psta,ku=None,objName="XXd",degree=3):
 
 		return bs
 
-
-
-
 def createAll(mode="all",obj=None,dimU=500,dimV=500,
 				ua=10,sizeU=100,va=10,sizeV=100,
 				socketheight=10,saxonyflag=True,rowselector='',center=False,scale=1,
-				createpart=False,createsurface=True 
+				createpart=False,createsurface=True
 			):
 
-
-
-
 #	obj=App.ActiveDocument.Points
-	print obj.Points.BoundBox.Center
+	print(obj.Points.BoundBox.Center)
 	# center=False
 
 	if center:
@@ -253,7 +229,6 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 
 	p=obj.Points.Points
 
-
 	if center:
 		p=np.array(obj.Points.Points)- obj.Points.BoundBox.Center
 
@@ -262,12 +237,10 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 #	if mode<>"all":
 #		return
 
-
 	zmin *=scale
 	zmax *=scale
 	socketheight *= scale
 	p=[pp*scale for pp in p]
-
 
 	pa2=np.array(p).reshape(dimU,dimV,3)
 
@@ -275,14 +248,14 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 #	a=0
 #	for i in range(dimU):
 #		if pa2[i][0][0]<>a:
-#			pa3 += [pa2[i]] 
+#			pa3 += [pa2[i]]
 #			print pa2[i][0][0]-a
-#		
+#
 #		print pa2[i][0]
 #		a= pa2[i][0][0]
 
 	# andere variante
-	
+
 	if saxonyflag:
 		pa3=[]
 		pmin=[]
@@ -293,37 +266,34 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 			if i%4==3:
 				pmax += [pa2[i]]
 			if i%2==0:
-				pa3 += [pa2[i]] 
-			
+				pa3 += [pa2[i]]
 
 	else:
 		p3=p2
 	pa4=np.array(pa3)
 	pa4.shape
-	
+
 	if 0: # auswertung der anderen baender
 		pmin=np.array(pmin)
-		print pmin.shape
+		print(pmin.shape)
 		pmax=np.array(pmax)
-		print pmax.shape
+		print(pmax.shape)
 		comp=[]
 		for i in range(124):
 			for j in range(500):
 				if i<4 and j<4:
-					print [pmin[i+1],j,pmax[i,j]]
+					print([pmin[i+1],j,pmax[i,j]])
 				a=FreeCAD.Vector(pmin[i+1,j])
 				b=FreeCAD.Vector(pmax[i,j])
-				if a<>b:
+				if a!=b:
 					if b.z<a.z: a,b=b,a
 					comp += [ Part.makePolygon([a,a+(b-a)*10])]
-					
 
-		print len(comp)
+
+		print(len(comp))
 		Part.show(Part.Compound(comp))
 
-
 #	return
-
 
 	if 0:
 		ta=time.time()
@@ -339,7 +309,6 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 		tc-tb
 		td-tc
 
-
 	#ss=PointarrayToMesh(pa4)
 
 	if mode=='mesh':
@@ -349,7 +318,7 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 			ss=PointarrayToMesh(pa4,h=zmin)
 
 		tb=time.time()
-		print "create meshes all", tb-ta
+		print("create meshes all", tb-ta)
 
 		ta=time.time()
 		#ss=PointarrayToMesh(pa4)
@@ -359,37 +328,34 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 			ss=PointarrayToMesh(pa4[ua:ua+sizeU,va:va+2*sizeV],h=zmin-socketheight)
 
 		tb=time.time()
-		print "create meshes sub ", tb-ta
+		print("create meshes sub ", tb-ta)
 		#return
 
-
 #	if not createsurface: return
-
 
 	if mode=='part' or mode=='nurbs':
 		#create nurbs face
 		tb=time.time()
 		bs=machFlaeche(pa4[ua:ua+sizeU,va:va+2*sizeV])
 		tc=time.time()
-		print "create surf 200 x 200 ", tc-tb
+		print("create surf 200 x 200 ", tc-tb)
 
 		if 0:
 			tb=time.time()
 			bs=machFlaeche(pa4,degree=3)
 			tc=time.time()
-			print "create surf all ", tc-tb
+			print("create surf all ", tc-tb)
 
 
 #	if not createpart: return
 	if not mode=='part': return
-
 
 	#create side faces
 	ff=App.ActiveDocument.ActiveObject
 	be=[]
 	faces=[ff.Shape.Face1]
 	for i,e in enumerate(ff.Shape.Face1.Edges):
-		print e
+		print(e)
 		pa=e.Vertexes[0].Point
 		pe=e.Vertexes[-1].Point
 
@@ -412,7 +378,7 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 		Part.show(e)
 		App.activeDocument().recompute()
 		eB=App.ActiveDocument.ActiveObject
-		
+
 		rf=FreeCAD.ActiveDocument.addObject('Part::RuledSurface', 'Ruled Surface')
 		rf.Curve1=(eA,['Edge1'])
 		rf.Curve2=(eB,['Edge1'])
@@ -425,7 +391,6 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 	rf.Curve2=(be[1],['Edge1'])
 	App.activeDocument().recompute()
 	faces += [rf.Shape.Face1]
-
 
 	#create shell and solid
 	_=Part.Shell(faces)
@@ -447,17 +412,12 @@ def createAll(mode="all",obj=None,dimU=500,dimV=500,
 
 	tc-tb
 
-
 # createAll()
-
-
 
 if 1:
 		import nurbswb.miki
 		reload(nurbswb.miki)
 		rc=nurbswb.miki.runtest()
-		
-
 
 layout2='''
 VerticalLayoutTab:
@@ -470,7 +430,6 @@ VerticalLayoutTab:
 			setText:"***   N U R B S  YYY XX  E D I T O R   ***"
 '''
 
-
 layout2='''
 MainWindow:
 
@@ -482,21 +441,21 @@ MainWindow:
 
 		HorizontalLayout:
 			QtGui.QCheckBox:
-				id: 'createpart' 
+				id: 'createpart'
 				setText: 'Create Part Solid'
 				setChecked: False
 
 			QtGui.QCheckBox:
-				id: 'createsurface' 
+				id: 'createsurface'
 				setText: 'Create Surface'
 				setChecked: False
 
 			QtGui.QCheckBox:
-				id: 'center' 
+				id: 'center'
 				setText: 'Origin to Center Bound Box'
 				setChecked: True
 			QtGui.QCheckBox:
-				id: 'saxony' 
+				id: 'saxony'
 				setText: 'Saxon data format'
 				setChecked: True
 			QtGui.QLabel:
@@ -581,10 +540,7 @@ MainWindow:
 			QtGui.QPushButton:
 				setText: "Close"
 				clicked.connect: app.close
-
 '''
-
-
 
 class MyApp(object):
 
@@ -599,10 +555,8 @@ class MyApp(object):
 		#self.root.ids['vd'].setMaximum(self.obj.Object.nNodes_v-2)
 
 	def run(self,mode='all'):
-
 		print ("run",mode,self.obj.Label)
 #		return
-
 		createAll(
 			mode,
 			self.obj,
@@ -622,7 +576,6 @@ class MyApp(object):
 			self.root.ids['createsurface'].isChecked(),
 		)
 
-
 	def createPart(self):
 		self.run('part')
 
@@ -632,18 +585,11 @@ class MyApp(object):
 	def createNurbs(self):
 		self.run('nurbs')
 
-
-
-
-
 	def close(self):
 		for w in FreeCAD.w5: w.hide()
 		FreeCAD.w5=[]
 
-
 def mydialog(obj):
-
-
 	import nurbswb.miki as miki
 	reload (nurbswb.miki)
 
@@ -662,8 +608,6 @@ def mydialog(obj):
 
 	return miki
 
-
-
 def runA():
 	try:
 		obj=Gui.Selection.getSelection()[0]
@@ -671,13 +615,7 @@ def runA():
 		obj=App.ActiveDocument.Points
 	mydialog(obj)
 
-
-
-
-#-------------------------glaetten 
-
-
-
+#-------------------------glaetten
 
 import random
 import Points,Draft
@@ -688,7 +626,7 @@ def init(d):
 	anze=80
 	la=[random.random() for l in range(anzp)]
 	a=10
-	
+
 	if 1:
 		pts=[FreeCAD.Vector(100*x+a*(random.random()-0.5),50*x+a*(random.random()-0.5),0) for x in la]
 		pts += [FreeCAD.Vector(100*random.random(),150*random.random()-50,0) for x in range(anze)]
@@ -703,16 +641,12 @@ def init(d):
 		for ii in range(anze):
 			x=random.random()
 			pts += [FreeCAD.Vector(100*x,80*random.random()+160+50*np.sin(5.0*np.pi*x),0)]
-
-
 	# polare Transformation
-	
+
 	ptsp=[FreeCAD.Vector(p.y*np.cos(p.x*np.pi*0.02),p.y*np.sin(p.x*np.pi*0.02),0) for p in pts]
 	Points.show(Points.Points(ptsp))
 	App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(.0,0.,1.)
 	App.ActiveDocument.ActiveObject.ViewObject.PointSize=4
-
-
 
 	Points.show(Points.Points(pts))
 	App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(1.0,0.,0.)
@@ -724,8 +658,6 @@ def init(d):
 	return pts
 
 def run(pts,loop,d,dd,outliner=True):
-
-
 	pts2=np.array(pts)
 
 	start=0
@@ -746,7 +678,7 @@ def run(pts,loop,d,dd,outliner=True):
 			fak=1-abs(xp-x)/d
 			wv +=  fak
 			yv +=  fak*y
-		if wv<>0:
+		if wv!=0:
 			yn=yv/wv
 		else: continue
 
@@ -755,19 +687,16 @@ def run(pts,loop,d,dd,outliner=True):
 			wv=0
 			for i in range(start,end+1):
 				x,y,z=pts2[i]
-				
+
 				if abs(y-yn)>dd:
 					print ("outliner",loop,xp,i,y-yn)
 				else:
 					fak=1-abs(xp-x)/d
 					wv +=  fak
 					yv +=  fak*y
-		if wv<>0:
+		if wv!=0:
 			yn=yv/wv
 			pts3 += [FreeCAD.Vector(xp,yn,0)]
-
-
-
 	Points.show(Points.Points(pts3))
 	App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(0.5+0.5*random.random(),0.5+0.5*random.random(),0.5+0.5*random.random())
 
@@ -776,12 +705,10 @@ def run(pts,loop,d,dd,outliner=True):
 	Points.show(Points.Points(ptsp))
 	App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(0.5+0.5*random.random(),0.5+0.5*random.random(),0.5+0.5*random.random())
 
-
-
 	return pts3,ptsp
 
 def  results(ptsa,ptsb):
-	ptsa= filter(lambda x: x[0] <=100, ptsa)
+	ptsa= [x for x in ptsa if x[0] <=100]
 
 	bc=Part.BSplineCurve()
 	bc.approximate(ptsa,DegMin=1,DegMax=3,Tolerance=0.3)
@@ -805,7 +732,6 @@ def  results(ptsa,ptsb):
 
 	cwk.Shape=bc.toShape()
 
-
 	_=App.activeDocument().recompute()
 	cww.ViewObject.LineColor=(1.,1.,0.)
 	cww.ViewObject.LineWidth=7
@@ -813,14 +739,12 @@ def  results(ptsa,ptsb):
 	cwk.ViewObject.LineColor=(1.,1.,0.)
 	cwk.ViewObject.LineWidth=7
 
-
-	print "Poles:",bc.NbPoles
+	print("Poles:",bc.NbPoles)
 
 def runC():
 	d=5
 	pts=init(d)
 	FreeCAD.pts=pts
-
 
 def runD():
 	d=5
@@ -834,7 +758,6 @@ def runD():
 
 	results(ptsa,ptsb)
 
-
 def runE():
 	import time
 	d=5
@@ -847,4 +770,3 @@ def runE():
 		print ("loop",i,(time.time()-timea)/len(ptsa)*1000)
 
 	results(ptsa,ptsb)
-

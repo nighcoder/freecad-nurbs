@@ -5,10 +5,10 @@ SketcherObjectPython example oo
 for Offset curve generation
 <A HREF="http://www.freecadbuch.de/doku.php?id=blog">FreeCAD Buch</A>
 
-''' 
+'''
 
 
-# <A HREF="http://www.freecadbuch.de/doku.php?id=blog">FreeCAD Buch 2</A> 
+# <A HREF="http://www.freecadbuch.de/doku.php?id=blog">FreeCAD Buch 2</A>
 # Author  microelly
 # Warning huhuwas
 # weiter
@@ -22,7 +22,7 @@ for Offset curve generation
 
 #pylint: disable=W0312,W0232,R0903
 
-from say import *
+from .say import *
 import nurbswb.pyob
 
 ##\cond
@@ -44,7 +44,7 @@ class _ViewProvider(nurbswb.pyob.ViewProvider):
 ## Two Offset curves for a Bspline defined by a Sketcher interpolation polygon
 
 class OffsetSpline(nurbswb.pyob.FeaturePython):
-	'''Sketch Object with Python''' 
+	'''Sketch Object with Python'''
 
 	##\cond
 	def __init__(self, obj, icon='/home/thomas/.FreeCAD/Mod/freecad-nurbs/icons/draw.svg'):
@@ -52,13 +52,13 @@ class OffsetSpline(nurbswb.pyob.FeaturePython):
 		self.Type = self.__class__.__name__
 		self.obj2 = obj
 		self.aa = None
-		_ViewProvider(obj.ViewObject, icon) 
+		_ViewProvider(obj.ViewObject, icon)
 
 	##\endcond
 
 	def onChanged(proxy,obj,prop):
 		'''run myExecute for property prop: "ofin" and "ofout"'''
-		if prop not in ["ofin","ofout"]: return 
+		if prop not in ["ofin","ofout"]: return
 		proxy.myExecute(obj)
 
 
@@ -77,17 +77,17 @@ class OffsetSpline(nurbswb.pyob.FeaturePython):
 		bc=Part.BSplineCurve()
 		bc.interpolate(pts)
 		bc.setPeriodic()
-		
+
 		name=obj.Name
 
 		fa=App.ActiveDocument.getObject(name+"_spline")
 		if fa==None:
 			fa=App.ActiveDocument.addObject('Part::Spline',name+"_spline")
-		
+
 		fa.Shape=bc.toShape()
 		fa.ViewObject.LineColor=(.0,1.0,.0)
 
-		if obj.ofout<>0:
+		if obj.ofout!=0:
 			ofs=App.ActiveDocument.getObject(name+"_offOut")
 			if ofs==None: ofs=App.ActiveDocument.addObject("Part::Offset2D",name+"_offOut")
 			ofs.Source = fa
@@ -95,7 +95,7 @@ class OffsetSpline(nurbswb.pyob.FeaturePython):
 			ofs.Value = obj.ofout
 			ofs.recompute()
 
-		if obj.ofin<>0:
+		if obj.ofin!=0:
 			ofsi=App.ActiveDocument.getObject(name+"_offIn")
 			if ofsi==None: ofsi=App.ActiveDocument.addObject("Part::Offset2D",name+"_offIn")
 			ofsi.Source = fa
@@ -114,7 +114,7 @@ class OffsetSpline(nurbswb.pyob.FeaturePython):
 
 #---------------------
 class Ufo(nurbswb.pyob.FeaturePython):
-	'''a mirgrationtest class''' 
+	'''a mirgrationtest class'''
 
 	##\cond
 	def __init__(self, obj, icon='/home/thomas/.FreeCAD/Mod/freecad-nurbs/icons/draw.svg'):
@@ -122,12 +122,12 @@ class Ufo(nurbswb.pyob.FeaturePython):
 		self.Type = self.__class__.__name__
 		self.obj2 = obj
 		self.aa = None
-		_ViewProvider(obj.ViewObject, icon) 
+		_ViewProvider(obj.ViewObject, icon)
 
 	##\endcond
 
 	def onChanged(proxy,obj,prop):
-		print "ufo changed"
+		print("ufo changed")
 		return
 #		'''run myExecute for property prop: "ofin" and "ofout"'''
 #		if prop not in ["ofin","ofout"]: return
@@ -135,7 +135,7 @@ class Ufo(nurbswb.pyob.FeaturePython):
 
 
 	def myExecute(proxy,obj):
-		print "ufo my execute "
+		print("ufo my execute ")
 		return
 		#	ofsi.recompute()
 
@@ -178,7 +178,7 @@ def runOffsetSpline(name="MyOffSp"):
 
 #
 #
-# 
+#
 #
 
 
@@ -218,7 +218,7 @@ import time
 ## A (topological) 2D tree with special connecting methods to combine trees to larger tree
 
 class Star(nurbswb.pyob.FeaturePython):
-	'''Sketch Object with Python''' 
+	'''Sketch Object with Python'''
 
 	##\cond
 	def __init__(self, obj, icon='/home/thomas/.FreeCAD/Mod/freecad-nurbs/icons/draw.svg'):
@@ -226,14 +226,14 @@ class Star(nurbswb.pyob.FeaturePython):
 		self.Type = self.__class__.__name__
 		self.obj2 = obj
 		self.aa = None
-		_ViewProvider(obj.ViewObject, icon) 
+		_ViewProvider(obj.ViewObject, icon)
 
 	##\endcond
 
 	def onChanged(proxy,obj,prop):
 		'''run myExecute for property prop: relativePosition and vertexNumber'''
 
-		if prop in ["parent","relativePosition","VertexNumber","tangentCond","tangentInverse","tangentCond"]: 
+		if prop in ["parent","relativePosition","VertexNumber","tangentCond","tangentInverse","tangentCond"]:
 			proxy.myExecute(obj)
 
 
@@ -245,14 +245,13 @@ class Star(nurbswb.pyob.FeaturePython):
 		if obj.parent == None: return
 
 		relpos=FreeCAD.Placement(obj.relativePosition)
-		
-		if obj.tangentCond <>0 and obj.VertexNumber <> 0:
+
+		if obj.tangentCond !=0 and obj.VertexNumber != 0:
 			rc=dirs(obj.parent,obj.VertexNumber-1)
-			
+
 			if obj.tangentCond > len(rc): obj.tangentCond =len(rc)
 			if obj.tangentCond < 0: obj.tangentCond = 0
-
-			print "genutzer Winkel ", rc[obj.tangentCond-1] *180/np.pi
+			print("genutzer Winkel ", rc[obj.tangentCond-1] *180/np.pi)
 			if obj.tangentInverse:
 				relpos.Rotation.Angle += np.pi + rc[obj.tangentCond-1]
 			else:
@@ -278,7 +277,7 @@ class Star(nurbswb.pyob.FeaturePython):
 import Sketcher
 
 def runStar(name="MyStar"):
-	'''runStar(name="Sole with borders"): 
+	'''runStar(name="Sole with borders"):
 		creates a Star/Tree with 5 lines (3 leafs)
 	'''
 
@@ -292,28 +291,28 @@ def runStar(name="MyStar"):
 
 	# add some data
 	obj.addGeometry(Part.LineSegment(App.Vector(0.000000,0.000000,0),App.Vector(100.,0.,0)),False)
-	obj.addConstraint(Sketcher.Constraint('Coincident',-1,1,0,1)) 
+	obj.addConstraint(Sketcher.Constraint('Coincident',-1,1,0,1))
 	App.ActiveDocument.recompute()
 	App.ActiveDocument.recompute()
 
 	obj.addGeometry(Part.LineSegment(App.Vector(100.,0,0),App.Vector(200.,100.,0)),False)
-	obj.addConstraint(Sketcher.Constraint('Coincident',0,2,1,1)) 
+	obj.addConstraint(Sketcher.Constraint('Coincident',0,2,1,1))
 	App.ActiveDocument.recompute()
 	App.ActiveDocument.recompute()
 
 	obj.addGeometry(Part.LineSegment(App.Vector(200.,100.,0),App.Vector(200.,200.,0)),False)
-	obj.addConstraint(Sketcher.Constraint('Coincident',1,2,2,1)) 
+	obj.addConstraint(Sketcher.Constraint('Coincident',1,2,2,1))
 	App.ActiveDocument.recompute()
 	App.ActiveDocument.recompute()
 
 
 	obj.addGeometry(Part.LineSegment(App.Vector(100.,0,0),App.Vector(200.,-200.,0)),False)
-	obj.addConstraint(Sketcher.Constraint('Coincident',0,2,3,1)) 
+	obj.addConstraint(Sketcher.Constraint('Coincident',0,2,3,1))
 	App.ActiveDocument.recompute()
 	App.ActiveDocument.recompute()
 
 	obj.addGeometry(Part.LineSegment(App.Vector(200.,-200.,0),App.Vector(40.,-300.,0)),False)
-	obj.addConstraint(Sketcher.Constraint('Coincident',3,2,4,1)) 
+	obj.addConstraint(Sketcher.Constraint('Coincident',3,2,4,1))
 	App.ActiveDocument.recompute()
 	App.ActiveDocument.recompute()
 
@@ -322,13 +321,13 @@ def runStar(name="MyStar"):
 	obj.ViewObject.PointColor=(1.0,0.,0.)
 	obj.ViewObject.PointSize=8
 	obj.ViewObject.LineWidth=4
-	
+
 	obj.addGeometry(Part.Circle(App.Vector(0.0,0.00,0),App.Vector(0,0,1),20),False)
-	obj.addConstraint(Sketcher.Constraint('Coincident',5,3,-1,1)) 
+	obj.addConstraint(Sketcher.Constraint('Coincident',5,3,-1,1))
 	App.ActiveDocument.recompute()
 	App.ActiveDocument.recompute()
 	App.activeDocument().recompute()
-	
+
 	obj.VertexNumber=3
 	#obj.parent=App.ActiveDocument.getObject('MyStar')
 

@@ -18,11 +18,11 @@ import sys,traceback,random,os
 
 import Points
 import nurbswb
-
+from importlib import reload
 
 global __dir__
 __dir__ = os.path.dirname(nurbswb.__file__)
-print __dir__
+print(__dir__)
 
 App=FreeCAD
 
@@ -35,7 +35,7 @@ FreeCADGui.runCommand("Draft_ToggleGrid")
 # @param pl - Placement of the cutting plane
 # @param pts - points of the pointcloud
 # @param showpoints - display the point sets
-# @param showwire - create a wire which approximates the point set 
+# @param showwire - create a wire which approximates the point set
 # @param showxywire - create a wire which approximates the point set as mapping in the xy-plane
 # @param showxypoints - display the mapping of the point sets into the xy-plane
 #
@@ -87,7 +87,7 @@ def displayCut(label,pl,pts,showpoints=True,showwire=False,showxypoints=False,sh
 
 
 	# if no points found - create an empty point set
-	if len(pts2a)==0: 
+	if len(pts2a)==0:
 
 		if showxypoints:
 			Points.show(Points.Points([]))
@@ -129,7 +129,7 @@ def displayCut(label,pl,pts,showpoints=True,showwire=False,showxypoints=False,sh
 	#	print np.arctan2(vm.x,vm.y)
 		aps[np.arctan2(vm.x,vm.y)]=v
 
-	kaps=aps.keys()
+	kaps=list(aps.keys())
 	kaps.sort()
 	ptss=[aps[k] for k in kaps]
 
@@ -141,7 +141,7 @@ def displayCut(label,pl,pts,showpoints=True,showwire=False,showxypoints=False,sh
 	tt=path.swapaxes(0,1)
 	y1 = sp.signal.medfilt(tt[1],f)
 	y0 = sp.signal.medfilt(tt[0],f)
-	l5=[FreeCAD.Vector(p) for p in np.array([y0,y1,tt[2]]).swapaxes(0,1)] 
+	l5=[FreeCAD.Vector(p) for p in np.array([y0,y1,tt[2]]).swapaxes(0,1)]
 
 	if showxywire:
 		Draft.makeWire(l5)
@@ -185,9 +185,9 @@ def displayCut(label,pl,pts,showpoints=True,showwire=False,showxypoints=False,sh
 def run(model='shoeAdam', point_cloud='shoe_last_scanned',showpoints=True,showxywire=True,showxypoints=True):
 	''' create slices of the pointcloud near the ribs '''
 
-	try: 
+	try:
 		FreeCAD.ActiveDocument.getObject(point_cloud)
-	except: 
+	except:
 		Points.insert(__dir__+"/../testdata/"+point_cloud+".asc","Shoe")
 
 
@@ -225,7 +225,7 @@ def run(model='shoeAdam', point_cloud='shoe_last_scanned',showpoints=True,showxy
 	clo=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","clones2")
 
 	for i,p in enumerate(jj):
-		
+
 		# move the sketches into the ribs folders
 		grp=FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroup","GRP "+str(i+1))
 		try:
@@ -236,7 +236,7 @@ def run(model='shoeAdam', point_cloud='shoe_last_scanned',showpoints=True,showxy
 		except:
 			pass
 
-		# place a clone of the ribs into the 3D space 
+		# place a clone of the ribs into the 3D space
 		try:
 			grp.addObject(jj[i])
 			obj=App.ActiveDocument.getObject('rib_'+str(i+1))
@@ -251,4 +251,3 @@ def run(model='shoeAdam', point_cloud='shoe_last_scanned',showpoints=True,showxy
 	for i in App.ActiveDocument.Objects: i.ViewObject.hide()
 	for i in [App.ActiveDocument.shoe_last_scanned] + App.ActiveDocument.clones2.OutList + App.ActiveDocument.ScanpointsSource.OutList:
 		i.ViewObject.show()
-

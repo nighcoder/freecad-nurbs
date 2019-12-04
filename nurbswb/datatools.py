@@ -6,7 +6,7 @@ an example is the dynamic offset node which controls the offset by a floatlist
 
 
 
-from say import *
+from .say import *
 import nurbswb.pyob
 
 ## A list for Floats
@@ -18,7 +18,7 @@ class FloatList(nurbswb.pyob.FeaturePython):
 	def __init__(self, obj):
 		obj.Proxy = self
 		self.Type = self.__class__.__name__
-		nurbswb.pyob.ViewProvider(obj.ViewObject) 
+		nurbswb.pyob.ViewProvider(obj.ViewObject)
 
 
 	def onChanged(proxy,obj,prop):
@@ -28,11 +28,11 @@ class FloatList(nurbswb.pyob.FeaturePython):
 			data=[]
 			for i in range(obj.size):
 				data.append(getattr(obj, "val%03d" % (i)))
-			print data
+			print(data)
 			obj.datalist=data
 
 		if prop=='factor': # scale to the new factor
-			try: 
+			try:
 				oldfactor=proxy.oldfactor
 				for i in range(obj.size):
 					s=getattr(obj, "val%03d" % (i))
@@ -50,14 +50,14 @@ class FloatList(nurbswb.pyob.FeaturePython):
 
 
 ## create a FloatList node
-# 
+#
 # *Properties*
 #
 #  - **size** - length of the list (default 12,hiddeen)
-#  - **factor** - to scale the values (default 10) 
+#  - **factor** - to scale the values (default 10)
 #  - **val001 ... val999**
 #  - **datalist**  - all values as list (hidden)
-# 
+#
 # @image html plane.svg
 #
 # example to use  DynaOffset
@@ -78,10 +78,10 @@ def createFloatlist(name="Floatlist"):
 	for i in range(obj.size):
 		obj.addProperty("App::PropertyFloat", "val%03d" % (i), "Values")
 		setattr(obj, "val%03d" % (i),obj.factor/2)
-	
-	obj.setEditorMode("datalist", 2) 
-	obj.setEditorMode("size", 2) 
-	obj.setEditorMode("Placement", 2) 
+
+	obj.setEditorMode("datalist", 2)
+	obj.setEditorMode("size", 2)
+	obj.setEditorMode("Placement", 2)
 
 	FloatList(obj)
 	obj.Proxy.onChanged(obj,"val")

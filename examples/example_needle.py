@@ -1,3 +1,4 @@
+from importlib import reload
 def test1():
 
 # test aus parametern
@@ -42,7 +43,6 @@ def test1():
 	'''
 	a.useSpreadsheet=True
 
-
 	ss=a.Spreadsheet
 	needle.gendata(ss)
 
@@ -54,13 +54,10 @@ def test1():
 	vp=needle.ViewProvider(a.ViewObject)
 	App.activeDocument().recompute()
 
-
-
 	# zweiter koerper
 
 	b=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","MyNeedle")
 	bn=needle.Needle(b)
-
 
 	'''
 	b.useBackbone=True
@@ -70,7 +67,6 @@ def test1():
 	'''
 	b.useSpreadsheet=True
 
-
 	# b.Spreeadsheet=App.activeDocument().addObject('Spreadsheet::Sheet','huhu')
 	bss=b.Spreadsheet
 	needle.gendata(bss)
@@ -79,23 +75,16 @@ def test1():
 	b.backboneSource=App.ActiveDocument.BSpline003
 	App.activeDocument().recompute()
 
-
 	vp=needle.ViewProvider(b.ViewObject)
 
-
 	Gui.SendMsgToActiveView("ViewFit")
-	print "fertig"
-	 
-
+	print("fertig")
 
 	needle.importCurves(a)
 	needle.importCurves(b)
 
 	App.activeDocument().recompute()
 	App.activeDocument().recompute()
-
-
-
 
 if 1:
 
@@ -121,6 +110,3 @@ if 1:
 
 	App.activeDocument().recompute()
 	Gui.SendMsgToActiveView("ViewFit")
-
-
-

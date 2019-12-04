@@ -4,12 +4,12 @@ modes are ["poleGrid","isoGrid","Surface"]
 '''
 
 
-from say import *
+from .say import *
 import nurbswb.pyob
 
 
 ## The Helper can display a Poles Grid, iso-Curve Grid or single isocurves as parametric Part::FeaturePython objects
- 
+
 
 class Helper(nurbswb.pyob.FeaturePython):
 
@@ -76,8 +76,8 @@ class Helper(nurbswb.pyob.FeaturePython):
 
 		comp=Part.Compound(sss)
 		self.obj2.Shape=comp
-		print comp
-		print sss
+		print(comp)
+		print(sss)
 		return comp
 
 	def create_curve(self):
@@ -107,7 +107,7 @@ class Helper(nurbswb.pyob.FeaturePython):
 
 
 
-## The ViewProviderHelper uses updateData to recreate the shape 
+## The ViewProviderHelper uses updateData to recreate the shape
 
 
 class ViewProviderHelper(nurbswb.pyob.ViewProvider):
@@ -175,7 +175,7 @@ class ViewProviderHelper(nurbswb.pyob.ViewProvider):
 		if prop == "Shape": return
 		if prop == "Placement": return
 		pm=fp.Placement
-		if fp.source<>None:
+        if fp.source!=None:
 			#say("VO updateData " + prop)
 			#say((fp,fp.source,fp.mode))
 			try:
@@ -186,10 +186,10 @@ class ViewProviderHelper(nurbswb.pyob.ViewProvider):
 				elif mode == "isoGrid":
 					#fp.Shape=App.ActiveDocument.Torus.Shape
 					#fp.Shape=fp.source.Proxy.create_grid_shape()
-					print "update isogrid"
+                    print("update isogrid")
 					fp.Proxy.create_knotes_shape2()
 				elif mode == "uIso" or mode == "vIso":
-					print "create Curve"
+                    print("create Curve")
 					fp.Proxy.create_curve()
 				else:
 					# fp.Shape=App.ActiveDocument.Cylinder.Shape

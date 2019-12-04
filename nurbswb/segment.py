@@ -7,7 +7,7 @@
 
 ##\cond
 
-from say import *
+from .say import *
 import nurbswb.pyob
 
 
@@ -41,7 +41,7 @@ class Segment(nurbswb.pyob.FeaturePython):
 	##\endcond
 
 	## Die Properties umin, umax, vmin, vmax werden als Nummern der begrenzenden Knoten interpretiert
-	# 
+	#
 
 
 	def execute(self, obj):
@@ -126,10 +126,10 @@ class NurbsTrafo(nurbswb.pyob.FeaturePython):
 				y=np.array(poles)
 				poles2=np.concatenate([y[k:],y[:k]])
 
-			print poles2
+			print(poles2)
 			FreeCAD.poles2=poles
-			print ku
-			print kv
+			print(ku)
+			print(kv)
 
 			bs2=Part.BSplineSurface()
 			bs2.buildFromPolesMultsKnots(poles2,
@@ -218,7 +218,7 @@ class FineSegment(nurbswb.pyob.FeaturePython):
 
 			if obj.umin<0: obj.umin=0
 			if obj.vmin<0: obj.vmin=0
-			
+
 			if obj.umax>obj.factor: obj.umax=obj.factor
 			if obj.vmax>obj.factor: obj.vmax=obj.factor
 			if obj.umin>obj.umax: obj.umin=obj.umax
@@ -231,7 +231,7 @@ class FineSegment(nurbswb.pyob.FeaturePython):
 
 			if bs.isVPeriodic() and not vmax< bs.getVKnots()[-1]:
 				vmax=bs.getVKnots()[-1]
-# geht so nicht: 
+# geht so nicht:
 #				obj.vmax=int(round(vmax*obj.factor,0))
 
 			if bs.isUPeriodic() and not umax< bs.getUKnots()[-1]:
@@ -256,11 +256,10 @@ class FineSegment(nurbswb.pyob.FeaturePython):
 
 			uks=bs.getUKnots()
 			if umin<uks[0]: umin=uks[0]
-			
+
 #			print ("interval",umin,umax,vmin,vmax)
 			bs.segment(umin,umax,vmin,vmax)
 			obj.Shape=bs.toShape()
-
 
 
 def createFineSegment(name="MyFineSegment"):
@@ -271,12 +270,11 @@ def createFineSegment(name="MyFineSegment"):
 	return ffobj
 
 
-
 def runsegment():
 	'''Anwendungsfall fuer die Gui.Selection wird ein Segment erzeugt'''
 
 	source=None
-	if len( Gui.Selection.getSelection())<>0:
+	if len( Gui.Selection.getSelection())!=0:
 		source=Gui.Selection.getSelection()[0]
 	s=createSegment()
 	s.source=source
@@ -287,7 +285,7 @@ def runfinesegment():
 	'''Anwendungsfall fuer die Gui.Selection wird ein FineSegement erzeugt'''
 
 	source=None
-	if len( Gui.Selection.getSelection())<>0:
+	if len( Gui.Selection.getSelection())!=0:
 		source=Gui.Selection.getSelection()[0]
 	s=createFineSegment()
 	s.source=source
@@ -296,7 +294,7 @@ def runnurbstrafo():
 	'''Anwendungsfall fuer die Gui.Selection wird ein NurbsTrafo erzeugt'''
 
 	source=None
-	if len( Gui.Selection.getSelection())<>0:
+	if len( Gui.Selection.getSelection())!=0:
 		source=Gui.Selection.getSelection()[0]
 	s=createNurbsTrafo()
 	s.source=source
@@ -322,4 +320,3 @@ if __name__ == '__main__':
 
 
 ##\endcond
-

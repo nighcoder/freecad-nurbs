@@ -46,9 +46,9 @@ class FeaturePython:
 		if prop.startswith('_show'):
 			mode= 0 if getattr(obj,prop) else 2
 			for pn in obj.PropertiesList:
-				if obj.getGroupOfProperty(pn).replace(' ','')==prop[5:] and pn<>prop:
+				if obj.getGroupOfProperty(pn).replace(' ','')==prop[5:] and pn!=prop:
 					obj.setEditorMode(pn,mode)
-				if obj.getGroupOfProperty(pn).startswith('~') and obj.getGroupOfProperty(pn).replace(' ','')[1:]==prop[5:] and pn<>prop:
+				if obj.getGroupOfProperty(pn).startswith('~') and obj.getGroupOfProperty(pn).replace(' ','')[1:]==prop[5:] and pn!=prop:
 					obj.setEditorMode(pn,mode)
 			return
 
@@ -96,7 +96,7 @@ class ViewProvider:
 		if icon==None:
 			icon= 'freecad-nurbs/icons/BB.svg'
 		if icon.startswith('/'): ic= self.icon
-		else: ic= FreeCAD.ConfigGet("UserAppData") +'/Mod/' + icon 
+		else: ic= FreeCAD.ConfigGet("UserAppData") +'/Mod/' + icon
 
 		obj.addProperty("App::PropertyString",'icon').icon=ic
 
@@ -123,17 +123,17 @@ class ViewProvider:
 		for prop in  s.PropertiesList:
 			if s.getTypeIdOfProperty(prop) in ['App::PropertyLink']:
 				v=s.getPropertyByName(prop)
-				if v <>None:
+				if v !=None:
 					rc += [v]
 			elif s.getTypeIdOfProperty(prop) in ['App::PropertyLinkList']:
 				v=s.getPropertyByName(prop)
-				if len(v) <> 0:
+				if len(v) != 0:
 					rc += v
 		return rc
 
 	def recompute(self):
 		obj=self.Object
-		print "Recompute ",obj.Label
+		print("Recompute ",obj.Label)
 		obj.Proxy.myOnChanged(obj,"_recompute_")
 
 	def setupContextMenu(self, obj, menu):
@@ -148,7 +148,7 @@ class ViewProvider:
 
 	def setEdit(self,vobj,mode=0):
 		#self.createDialog()
-		print "huhu"
+		print("huhu")
 		try:
 			self.edit()
 #			print "ha 2"
@@ -171,40 +171,26 @@ class ViewProvider:
 #		return False
 #		return True
 
-
-
-
 ##\endcond
 
-
-
-
-
-
-
-
-
-
-# proxies for the python objects 
+# proxies for the python objects
 #
 def _Sketch(FeaturePython):
 
 	def __init__(self,obj):
-		print "huhu"
+		print("huhu")
 		FeaturePython.__init__(self, obj)
 		obj.Proxy = self
 		self.Type = self.__class__.__name__
 		self.obj2 = obj
-		print "!!",obj.Label
+		print("!!",obj.Label)
 
 def _Sheet(FeaturePython):
 
 	def __init__(self,obj):
 		FeaturePython.__init__(self, obj)
 
-
-
-# anwendungsklassen 
+# anwendungsklassen
 
 
 def Sketch(name='MySketch'):
@@ -229,4 +215,3 @@ def Spreadsheet(name='MySketch'):
 
 #a=Sketch()
 #b=Spreadsheet()
-

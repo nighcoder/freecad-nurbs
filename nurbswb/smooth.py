@@ -12,7 +12,7 @@ import FreeCAD,FreeCADGui
 App=FreeCAD
 Gui=FreeCADGui
 
-
+from importlib import reload
 from PySide import QtCore,QtGui
 from pivy import coin
 import numpy as np
@@ -50,17 +50,13 @@ class ViewProvider:
 		self.Object=obj
 
 	def onDelete(self, obj, subelements):
-		print "on Delete "
+		print("on Delete ")
 		return True
 
 	def onChanged(self, obj, prop):
-			print "onchange",prop
-
-
-
+			print("onchange",prop)
 
 #---------------------
-
 
 def runtaubin(obj):
 	try:
@@ -79,12 +75,11 @@ def runtaubin(obj):
 	else:
 		try: pts=obj.Wire.Shape.discretize(obj.discretizeCount)
 		except: pts=obj.Wire.Shape.Wire1.discretize(obj.discretizeCount)
-	
-	
+
 	qts=np.array(pts)
 
 	for j in range(obj.count):
-		
+
 		a=len(pts)
 		if j%2==0:
 			f=0.01*obj.pf
@@ -111,11 +106,9 @@ def runtaubin(obj):
 		else:
 			obj.Shape=Part.BSplineCurve(pp).toShape()
 	else:
-		obj.Shape=Part.makePolygon(pp)		
+		obj.Shape=Part.makePolygon(pp)
 
 #	App.activeDocument().recompute()
-
-
 
 
 class Taub(PartFeature):
@@ -127,20 +120,18 @@ class Taub(PartFeature):
 		obj.addProperty("App::PropertyInteger","count").count=40
 		obj.addProperty("App::PropertyInteger","start").start=1
 		obj.addProperty("App::PropertyInteger","end").end=0
-	
+
 		obj.addProperty("App::PropertyLink","Wire")
 		obj.addProperty("App::PropertyBool","createBSpline","smooth")
 		obj.addProperty("App::PropertyBool","closeBSpline","smooth")
 		obj.addProperty("App::PropertyInteger","discretizeCount").discretizeCount=30
-		
-		
-	
-	def onChanged(self, obj, prop):
-			print "onchange--",prop
-			if prop in ["pf","pf2",'count','discretizeCount','start','end','createBSpline']:
-				print "Aktualisierebn"
-				runtaubin(obj)
 
+
+	def onChanged(self, obj, prop):
+			print("onchange--",prop)
+			if prop in ["pf","pf2",'count','discretizeCount','start','end','createBSpline']:
+				print("Aktualisierebn")
+				runtaubin(obj)
 
 
 def smoothWire(sel=None,name=None):
@@ -149,7 +140,7 @@ def smoothWire(sel=None,name=None):
 	a=FreeCAD.ActiveDocument.addObject("Part::FeaturePython",name)
 	Taub(a,"Smooth")
 	#a.Wire=App.ActiveDocument.DWire
-	if sel <>None:
+	if sel !=None:
 		a.Wire=sel
 	else:
 		try: a.Wire=Gui.Selection.getSelection()[0]
@@ -161,7 +152,6 @@ def smoothWire(sel=None,name=None):
 	a.ViewObject.PointSize=6
 	a.ViewObject.LineWidth=1
 	runtaubin(a)
-
 
 # 3D smooth
 import Mesh
@@ -176,7 +166,6 @@ def run3D(self,mobj):
 	except:
 		return
 
-
 	mobj.Source.ViewObject.hide()
 #	obj=App.ActiveDocument.copyObject(App.ActiveDocument.K147909)
 #	obj.ViewObject.hide()
@@ -188,10 +177,10 @@ def run3D(self,mobj):
 
 	if 1:
 		i=mobj.Iterations
-		print "iterations ",i
-		print mobj.Lambda
-		print "------------------"
-		
+		print("iterations ",i)
+		print(mobj.Lambda)
+		print("------------------")
+
 		m.smooth(Method="Taubin",Iteration=i,Lambda=mobj.Lambda*0.01,Micro=mobj.Micro*0.01)
 #		import Mesh
 		#	App.ActiveDocument.ActiveObject.ViewObject.hide()
@@ -219,12 +208,11 @@ class TaubM(PartFeature):
 
 
 	def onChanged(self, obj, prop):
-			print "onchange",prop
+			print("onchange",prop)
 			if prop in ['Iterations','Lambda','Micro']:
 				run3D(self,obj)
 
 
-	
 def smoothMesh():
 	a=FreeCAD.ActiveDocument.addObject("Mesh::FeaturePython","Meshsmooth")
 	TaubM(a,"Smooth")
@@ -234,11 +222,7 @@ def smoothMesh():
 	ViewProvider(a.ViewObject)
 	run3D(None,a)
 
-
 #---------------
-
-
-
 
 def splitMesh():
 	ribc=40
@@ -248,9 +232,9 @@ def splitMesh():
 
 	rstep=10
 	rstep=10
-	ribrange=range(ribc)
-	ribrange=range(1,25)
-	
+	ribrange=list(range(ribc))
+	ribrange=list(range(1,25))
+
 	#ribrange=[13,14,15,16,17]
 
 	#ribrange=[10]
@@ -291,9 +275,6 @@ def splitMesh():
 		Gui.Selection.addSelection(plane)
 		Gui.Selection.addSelection(s)
 
-
-
-
 		'''
 		plane.Placement.FreeCAD.z =   s.Mesh.BoundBox.ZMax
 
@@ -318,8 +299,6 @@ def splitMesh():
 			ptsw=[v.Point for v in rc.Shape.Wires[0].Vertexes]
 			# Draft.MakeBSpline(ptsw)
 
-
-
 		rc=App.ActiveDocument.ActiveObject
 		rc.Label="Section y="+ str(pos)
 		rc.ViewObject.LineColor=(0.3,0.3,1.0)
@@ -340,15 +319,12 @@ def splitMesh():
 #		ribs +=[sk]
 
 
-
-
-
 	if 0:
 		if len(ribrange)>1:
 			loft=App.ActiveDocument.addObject('Part::Loft','Loft')
 			loft.Sections=ribs
 			loft.ViewObject.Transparency=70
-			loft.ViewObject.DisplayMode = u"Shaded"
+			loft.ViewObject.DisplayMode = "Shaded"
 			for r in ribs:
 				r.ViewObject.hide()
 
@@ -375,14 +351,14 @@ def splitMesh():
 					mj=(p-p0).Length
 					ij=i
 			pps2=pps[ij:] +pps[:ij]
-			
+
 
 			p0=pps[ij]
 			if (pps2[1]-p1).Length>(pps2[-1]-p1).Length:
 				pps2.reverse()
 
 			p1=pps2[1]
-			ptsb += [pps2]	
+			ptsb += [pps2]
 			print ij
 		'''
 
@@ -393,7 +369,7 @@ def splitMesh():
 		p1=p0
 		zmax=0
 		import Draft
-		print "umsortieren"
+		print("umsortieren")
 		for pts in ptsa:
 			ij=0
 			mj=10**10
@@ -408,12 +384,12 @@ def splitMesh():
 
 
 			if (pps2[1].z-pps2[0].z)<=0:
-				print "!!"
+				print("!!")
 				pps2.reverse()
 
 			p1=pps2[1]
 			ptsb += [pps2]
-			print ij
+			print(ij)
 			rcc=Draft.makeWire(pps2)
 
 			pos=pts[0][1]
@@ -421,24 +397,17 @@ def splitMesh():
 				FreeCAD.Rotation(FreeCAD.Vector(1.000,0.000,0.000),90.000))
 			plane.Placement=pm
 
-
-			import sketch_to_bezier
+			from . import sketch_to_bezier
 			reload (sketch_to_bezier)
 			sk=sketch_to_bezier.createBezierSketch(name="Arc",source=rcc)
 			sk.Placement=pm
 			ribs +=[sk]
 
-
-
-
-
-
 		if 0:
-
 			ptsb=np.array(ptsb).swapaxes(0,1)
 
 			for pix in pixl:
-				print pix
+				print(pix)
 				pts=ptsb[pix*10]
 				ij=0
 				mj=10**10
@@ -446,13 +415,12 @@ def splitMesh():
 				_=Draft.makeWire(pps)
 				ribs2 += [_]
 
-
 	if 0:
 		if len(ribrange)>1:
 			loft=App.ActiveDocument.addObject('Part::Loft','LoftYY')
 			loft.Sections=ribs
 			loft.ViewObject.Transparency=70
-			loft.ViewObject.DisplayMode = u"Shaded"
+			loft.ViewObject.DisplayMode = "Shaded"
 			for r in ribs:
 				r.ViewObject.hide()
 
@@ -475,8 +443,6 @@ def sliceMeshbySketch():
 	except:
 		DatumPlane=sk
 
-
-
 	import Mesh
 	import Draft
 
@@ -487,22 +453,20 @@ def sliceMeshbySketch():
 
 	cs = mesh.crossSections([(ddA,ddB)],0.01)
 	ptsW=[FreeCAD.Vector(p) for p in cs[0][0]]
-	print len(ptsW)
+	print(len(ptsW))
 	import Draft
 	pol=Part.makePolygon(ptsW)
 	ptsW=pol.discretize(20)
-	
+
 	rcc=Draft.makeWire(ptsW)
 
 	if 0:
-		import sketch_to_bezier
+		from . import sketch_to_bezier
 		reload (sketch_to_bezier)
 		sk=sketch_to_bezier.createBezierSketch(name="Arc",source=rcc)
 
 	s.ViewObject.hide()
 	DatumPlane.ViewObject.hide()
-
-
 
 #--------------------------------
 
@@ -519,15 +483,10 @@ def distanceCurves():
 	ls=0
 	for p,q in zip(ptsa,ptsb):
 		ls += (p-q).Length
-	
+
 	print ("Distance ",a.Label,b.Label,ls/anz)
 
-
-
 #---------------------
-
-
-
 
 ## create the inventor string for the colored wire
 
@@ -547,7 +506,7 @@ def genbuffer(pts,color=0):
 			#	colix += " "+str(colors[i])
 			colix += " "+str(color)
 		pix += str(p.x)+" "+str(p.y) +" " +str(p.z)+"\n"
-		if i>0:cordix +=  str(i-1)+" "+str(i)+" -1\n" 
+		if i>0:cordix +=  str(i-1)+" "+str(i)+" -1\n"
 
 	buff ='''#Inventor V2.1 ascii
 	Separator {
@@ -559,19 +518,19 @@ def genbuffer(pts,color=0):
 		}
 		Separator {
 			VRMLGroup {
-				children 
+				children
 				VRMLShape {
-					geometry 
+					geometry
 						VRMLIndexedLineSet {
-							coord 
+							coord
 								VRMLCoordinate {
-									point 
+									point
 	'''
 
 	buff += " [" + pix + "]}\n"
 
 	buff +='''
-						color 
+						color
 							VRMLColor {
 								color [ 0 0 0, 1 0 0, 0 1 0,
 										0 0 1, 1 1 0, 0 1 1, 1 0 1 , 1 1 1,
@@ -600,5 +559,3 @@ def drawtracks(ptsa,ptsb,name='ColorPath'):
 		ls += [p,p+(q-p)*20,p]
 
 	iv.Buffer=genbuffer(ls,8)
-
-

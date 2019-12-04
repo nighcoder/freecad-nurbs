@@ -7,15 +7,12 @@
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
 
-
-
 import FreeCAD,FreeCADGui
 App=FreeCAD
 Gui=FreeCADGui
 
 from PySide import QtGui
 import Part,Mesh,Draft,Points
-
 
 import numpy as np
 import random
@@ -24,8 +21,7 @@ import os, nurbswb
 
 global __dir__
 __dir__ = os.path.dirname(nurbswb.__file__)
-print __dir__
-
+print(__dir__)
 
 class PartFeature:
 	def __init__(self, obj):
@@ -46,7 +42,6 @@ class PartFeature:
 	def __setstate__(self,state):
 		return None
 
-
 class ViewProvider:
 	def __init__(self, obj):
 		obj.Proxy = self
@@ -58,7 +53,6 @@ class ViewProvider:
 	def __setstate__(self,state):
 		return None
 
-
 def createShape(obj,force=False):
 
 	poles=obj.source.Shape.Face1.Surface.getPoles()
@@ -68,7 +62,6 @@ def createShape(obj,force=False):
 	du=3
 	dv=3
 
-
 	if 1:
 		dd=2
 		l=pts[0].copy()
@@ -76,8 +69,8 @@ def createShape(obj,force=False):
 
 		if obj.westSeam:
 			seam=obj.westSeam
-			print "Seam.....WEST........."
-			print seam
+			print("Seam.....WEST.........")
+			print(seam)
 			tvs=[]
 			for i in range(30):
 				n="t"+str(i)
@@ -86,23 +79,23 @@ def createShape(obj,force=False):
 			tvs=np.array(tvs)
 			tvs *= obj.tangentFactor
 			for i in range(l.shape[0]):
-				print l[i]
+				print(l[i])
 				l[i,2] += tvs[i,2]
 				l[i,0] += tvs[i,0]
 				l[i,1] += tvs[i,1]
 				l2[i,2] -= tvs[i,2]
 				l2[i,0] -= tvs[i,0]
 				l2[i,1] -= tvs[i,1]
-				print l[i]
+				print(l[i])
 
 		r=pts[-1].copy()
 		r2=pts[-1].copy()
 
 		if obj.eastSeam:
 			seam=obj.eastSeam
-			print "Seam.......EAST......."
+			print("Seam.......EAST.......")
 			tvs=[]
-			print l.shape
+			print(l.shape)
 			for i in range(30):
 				n="t"+str(i)
 				tvs.append(getattr(seam,n))
@@ -122,30 +115,28 @@ def createShape(obj,force=False):
 
 	pts2=pts2.swapaxes(0,1)
 
-	if 0 or obj.nordSeam<>None or  obj.southSeam<>None:
+	if 0 or obj.nordSeam!=None or  obj.southSeam!=None:
 		#----------- nord und sued
 
 		pts=pts2.copy()
-
 
 		dd=2
 		l=pts[0].copy()
 		l2=pts[0].copy()
 
-
 		if obj.nordSeam:
 			seam=obj.nordSeam
-			print "Seam......NORD........"
-			print seam
+			print("Seam......NORD........")
+			print(seam)
 			tvs=[]
 			for i in range(30):
 				n="t"+str(i)
 				tvs.append(getattr(seam,n))
-			print tvs
+			print(tvs)
 			tvs=np.array(tvs)
 			tvs *= obj.tangentFactor
 			for i in range(l.shape[0]-8):
-				print l[i+2]
+				print(l[i+2])
 				l[i+4,2] += tvs[i,2]
 				l[i+4,0] += tvs[i,0]
 				l[i+4,1] += tvs[i,1]
@@ -160,7 +151,7 @@ def createShape(obj,force=False):
 
 		if obj.southSeam:
 			seam=obj.southSeam
-			print "Seam.......South......."
+			print("Seam.......South.......")
 			tvs=[]
 			for i in range(30):
 				n="t"+str(i)
@@ -179,7 +170,6 @@ def createShape(obj,force=False):
 
 		#--------------------------
 
-
 	(cv,cu,_x) =pts2.shape
 
 	print ("XXXXXXXXXXXXXXXXXXXXXXX shape",cv,cu)
@@ -187,16 +177,15 @@ def createShape(obj,force=False):
 	kvs=[1.0/(cv-dv)*i for i in range(cv-dv+1)]
 	kus=[1.0/(cu-du)*i for i in range(cu-du+1)]
 
-	print len(kvs)
+	print(len(kvs))
 #	print len(kus)
 #	kvs=[-1,-0.6,-0.4,-0.2]+ obj.source.Shape.Face1.Surface.getVKnots() +[1.2,1.4,1.6,1.8]
 # knotenvektor stimmt nicht .#+#
 	kvs=obj.source.Shape.Face1.Surface.getVKnots()
 #	kus=[-1]+ obj.source.Shape.Face1.Surface.getUKnots() +[1.5]
 
-	print len(kvs)
-	print obj.source.Shape.Face1.Surface.getVKnots()
-
+	print(len(kvs))
+	print(obj.source.Shape.Face1.Surface.getVKnots())
 
 	mv=[dv+1]+[1]*(cv-dv-1)+[dv+1]
 	mu=[du+1]+[1]*(cu-du-1)+[du+1]
@@ -207,8 +196,6 @@ def createShape(obj,force=False):
 				False,False,
 				dv,du,
 			)
-
-
 #	bs.segment(kvs[1],kvs[-2],kus[1],kus[-2])
 
 #	bs.segment(kvs[1],kvs[-2],kus[2],kus[-2])
@@ -225,24 +212,21 @@ def createShape(obj,force=False):
 #	fa.Shape=bs.toShape()
 #	fa.ViewObject.ControlPoints=True
 
-
 	if 0:
-		print "tangenten links"
-		print pts[0]-l
+		print("tangenten links")
+		print(pts[0]-l)
 
-		print "kurve links"
-		print pts[0]
-
-
-		print "tangenten rechts"
-		print pts[-1]-r
-		print "kurve rechts"
-		print pts[-1]
+		print("kurve links")
+		print(pts[0])
 
 
+		print("tangenten rechts")
+		print(pts[-1]-r)
+		print("kurve rechts")
+		print(pts[-1])
 
 	if 0 and FreeCAD.tangentsleft == [] and obj.tangentsleft==[] and force:
-		print "create tangents"
+		print("create tangents")
 		for i in range(cu):
 			t=Draft.makeWire([FreeCAD.Vector(pts[0,i]),FreeCAD.Vector(l[i])])
 			t.ViewObject.LineColor=(1.0,1.,0.)
@@ -254,26 +238,25 @@ def createShape(obj,force=False):
 			t.ViewObject.LineWidth=10
 			t.Label="Tangent right " + str(i+1)
 	else:
-		if obj.tangentsleft <> []:
-			print "setze tvektoren neu"
+		if obj.tangentsleft != []:
+			print("setze tvektoren neu")
 			for i in range(cu):
 				obj.tangentsleft[i].Start=FreeCAD.Vector(pts[0,i])
 				obj.tangentsleft[i].End=FreeCAD.Vector(l[i])
 				obj.tangentsleft[i].Proxy.execute(obj.tangentsleft[i])
 
-
 	obj.Shape=bs.toShape()
+	print("tangenten linksAA")
+	print(obj.tangentsleft)
 	print "tangenten linksAA"
 	print obj.tangentsleft
 	hp=App.ActiveDocument.getObject(obj.Name+"BS")
-	print hp
+	print(hp)
 	if hp == None:
 		hp=App.ActiveDocument.addObject('Part::Spline',obj.Name+"BS")
 
 	hp.Shape=bs.toShape()
-	print "2kkoay"
-
-
+	print("2kkoay")
 
 class TangentFace(PartFeature):
 	def __init__(self, obj):
@@ -292,18 +275,16 @@ class TangentFace(PartFeature):
 		obj.addProperty("App::PropertyBool","flipNorthB","Base")
 		obj.addProperty("App::PropertyBool","flipSouthB","Base")
 		obj.addProperty("App::PropertyBool","swap","Base")
-		
+
 		obj.addProperty("App::PropertyLinkList","tangentsleft","Base")
 		obj.addProperty("App::PropertyFloat","tangentFactor","Base").tangentFactor=1.0
 
 		ViewProvider(obj.ViewObject)
 
-
-
 	def xexecute(proxy,obj):
 #		print("execute ")
 #		if obj.noExecute: return
-		try: 
+		try:
 			if proxy.lock: return
 		except:
 			print("except proxy lock")
@@ -313,14 +294,12 @@ class TangentFace(PartFeature):
 		proxy.lock=False
 
 
-
-
 	def execute(proxy,obj):
-		print "myexecute tanface"
+		print("myexecute tanface")
 		if hasattr(obj,"westSeam"):
-			print "run proxy seam"
+			print("run proxy seam")
 			createShapeV2(obj)
-		print "done myex"
+		print("done myex")
 
 	def onChanged(self, obj, prop):
 		if prop in ['factorA','factorB','displayShape','flipEast','flipWest']:
@@ -337,7 +316,7 @@ class Seam(PartFeature):
 		obj.addProperty("App::PropertyBool","fillCorner","Base")
 		obj.addProperty("App::PropertyBool","linear","Base")
 		obj.addProperty("App::PropertyBool","reversecut","Base")
-		
+
 #		obj.addProperty("App::PropertyInteger","tCount","Base").tCount=30
 #		obj.addProperty("App::PropertyInteger","index","Base").index=0
 #		obj.addProperty("App::PropertyVector","V","Base").V.z=1
@@ -351,7 +330,6 @@ class Seam(PartFeature):
 		obj.displayShape="OutSeam"
 		ViewProvider(obj.ViewObject)
 
-
 	def onChanged(self, obj, prop):
 		if prop in ['factorA','factorB','factorC','displayShape','sourceFlip','sourceSwap','linear','V','P']:
 			self.execute(obj)
@@ -359,14 +337,13 @@ class Seam(PartFeature):
 			pass
 
 	def execute(proxy,obj):
-
-		if obj.source<>None:
+		if obj.source!=None:
 			print("execute ")
 			try:
 				sf=obj.source.Shape.Face1.Surface
 				sf.getPoles
 			except:
-				print "konvertiere zu nurbs"
+				print("konvertiere zu nurbs")
 				ff=obj.source.Shape.Face1.toNurbs()
 				sf=ff.Face1.Surface
 
@@ -508,16 +485,11 @@ class Seam(PartFeature):
 
 			obj.Shape=bs.toShape()
 
-
-
-
 def createTangentFace():
 	b=FreeCAD.activeDocument().addObject("Part::FeaturePython","MyTangentFace")
 	bn=FilledFace(b)
 
-
 if __name__=='__main__':
-
 
 	#create the test faces
 
@@ -527,8 +499,8 @@ if __name__=='__main__':
 	dv=3
 
 	pts=np.zeros(cu*cv*3).reshape(cu,cv,3)
-	for u in range(cu): pts[u,:,0]=10*u 
-	for v in range(cv): pts[:,v,1]=10*v 
+	for u in range(cu): pts[u,:,0]=10*u
+	for v in range(cv): pts[:,v,1]=10*v
 
 	pts[4,4,2]=40
 	pts[1,2,2]=-80
@@ -556,13 +528,12 @@ if __name__=='__main__':
 	fa.ViewObject.ShapeColor=(1.0,1.0,0.6)
 	source=fa
 
-
 	try: fa2=App.ActiveDocument.targetE
 	except: fa2=App.ActiveDocument.addObject('Part::Spline','targetE')
 
 	pts=np.zeros(cu*cv*3).reshape(cu,cv,3)
 	for u in range(cu): pts[u,:,0]=10*u +50
-	for v in range(cv): pts[:,v,1]=10*v 
+	for v in range(cv): pts[:,v,1]=10*v
 	bs.buildFromPolesMultsKnots(pts,mv,mu,kvs,kus,
 				False,False,
 				dv,du,
@@ -578,7 +549,7 @@ if __name__=='__main__':
 	except: fa3=App.ActiveDocument.addObject('Part::Spline','targetN')
 
 	pts=np.zeros(cu*cv*3).reshape(cu,cv,3)
-	for u in range(cu): pts[u,:,0]=10*u 
+	for u in range(cu): pts[u,:,0]=10*u
 	for v in range(cv): pts[:,v,1]=10*v +50
 	bs.buildFromPolesMultsKnots(pts,mv,mu,kvs,kus,
 				False,False,
@@ -593,7 +564,7 @@ if __name__=='__main__':
 	except: fa4=App.ActiveDocument.addObject('Part::Spline','targetW')
 	pts=np.zeros(cu*cv*3).reshape(cu,cv,3)
 	for u in range(cu): pts[u,:,0]=10*u -50
-	for v in range(cv): pts[:,v,1]=10*v 
+	for v in range(cv): pts[:,v,1]=10*v
 	bs.buildFromPolesMultsKnots(pts,mv,mu,kvs,kus,
 				False,False,
 				dv,du,
@@ -603,8 +574,6 @@ if __name__=='__main__':
 	fa4.ViewObject.ControlPoints=True
 	fa4.ViewObject.ShapeColor=(1.0,.6,1.0)
 	'''
-
-
 
 if __name__ == '__main__':
 	# create the segment for tangents
@@ -627,7 +596,6 @@ if __name__ == '__main__':
 	kn.vmax=100
 	kn.vmin=99
 
-
 	ks= nurbswb.segment.createFineSegment()
 	ks.source=App.ActiveDocument.source
 	ks.Label="SeamBase S"
@@ -647,13 +615,11 @@ if __name__ == '__main__':
 	sseam=FreeCAD.activeDocument().addObject("Part::FeaturePython","SeamS")
 	Seam(sseam)
 
-
-	# seams aus streifen berechnen 
+	# seams aus streifen berechnen
 	poles=ke.Shape.Face1.Surface.getPoles()
 	for i,p in enumerate(poles[0]):
 		v=poles[0][i]-poles[1][i]
 		setattr(wseam,"t"+str(i),v*5)
-
 
 	poles=kw.Shape.Face1.Surface.getPoles()
 	for i,p in enumerate(poles[0]):
@@ -670,7 +636,6 @@ if __name__ == '__main__':
 		v=poles[0][i]-poles[1][i]
 		setattr(sseam,"t"+str(i),FreeCAD.Vector(v)*5)
 
-
 	# seams von segmenten abhaengig machen
 	eseam.source=ke
 	nseam.source=kn
@@ -678,7 +643,6 @@ if __name__ == '__main__':
 	sseam.source=ks
 	sseam.sourceSwap=True
 	wseam.source=kw
-
 
 	b=FreeCAD.activeDocument().addObject("Part::FeaturePython","MyTangentialFace")
 	bn=TangentFace(b)
@@ -689,8 +653,6 @@ if __name__ == '__main__':
 	b.source=fa2
 	createShape(b,force=True)
 
-
-
 	# some placements to see the tangent effect
 	if 0:
 		b2=Draft.clone(b)
@@ -700,21 +662,17 @@ if __name__ == '__main__':
 		b3.Placement.Base.x=-50
 		b3.Placement.Base.y=50
 
-
 		b3=Draft.clone(b)
 		b3.Placement.Base.x=-50
 		b3.Placement.Base.y=-50
 
-
 		ss=Draft.clone(source)
 		ss.Placement.Base.x=50
 		ss.Placement.Base.y=50
 
-
 		ss=Draft.clone(source)
 		ss.Placement.Base.x=-50
 		ss.Placement.Base.y=50
-
 
 		ss=Draft.clone(source)
 		ss.Placement.Base.x=50
@@ -723,13 +681,8 @@ if __name__ == '__main__':
 		ss=Draft.clone(source)
 		ss.Placement.Base.x=-50
 		ss.Placement.Base.y=-50
-
-
 
 	App.activeDocument().recompute()
-
-
-
 
 	# quality check
 	c1=App.ActiveDocument.source.Shape.Edge3.Curve
@@ -742,13 +695,9 @@ if __name__ == '__main__':
 		assert (p-a2[i]).Length <1e-9
 
 
-
-
-
 def runseam():
-
 	source=None
-	if len( Gui.Selection.getSelection())<>0:
+	if len( Gui.Selection.getSelection())!=0:
 		source=Gui.Selection.getSelection()[0]
 	s=FreeCAD.activeDocument().addObject("Part::FeaturePython","SeamW")
 	Seam(s)
@@ -757,11 +706,10 @@ def runseam():
 		s.endPlane=Gui.Selection.getSelection()[1]
 	except: pass
 
-
 def runtangentsurface():
 
 	source=None
-	if len( Gui.Selection.getSelection())<>0:
+	if len( Gui.Selection.getSelection())!=0:
 		source=Gui.Selection.getSelection()[0]
 	b=FreeCAD.activeDocument().addObject("Part::FeaturePython","MyTangentialFace")
 	TangentFace(b)
@@ -770,8 +718,6 @@ def runtangentsurface():
 #	b.nordSeam=App.ActiveDocument.SeamW005
 #	b.southSeam=App.ActiveDocument.SeamW008
 	b.source=source
-
-
 
 
 import FreeCAD,Part
@@ -783,13 +729,13 @@ def machFlaeche(psta,ku=None,closed=False,bs=None,swap=False):
 		degree=3
 
 		if 0:
-			print "bs-dump: v"
-			print bs.VDegree
-			print bs.getVMultiplicities()
-			print bs.getVKnots()
-			print bs.getWeights()[0:4][0:4]
-			print bs.getPoles()[0:2][0:2]
-			print np.array(bs.getPoles()).shape
+			print("bs-dump: v")
+			print(bs.VDegree)
+			print(bs.getVMultiplicities())
+			print(bs.getVKnots())
+			print(bs.getWeights()[0:4][0:4])
+			print(bs.getPoles()[0:2][0:2])
+			print(np.array(bs.getPoles()).shape)
 
 		ps=[[FreeCAD.Vector(psta[v,u,0],psta[v,u,1],psta[v,u,2]) for u in range(NbUPoles)] for v in range(NbVPoles)]
 
@@ -808,14 +754,12 @@ def machFlaeche(psta,ku=None,closed=False,bs=None,swap=False):
 
 		mu=[4,4]
 #		mu=[4]+[1]*(NbUPoles-4)+[4]
-		ku=range(len(mu))
-
+		ku=list(range(len(mu)))
 
 		if closed:
 			ku=[1.0/(NbUPoles+1)*i for i in range(NbUPoles+1)]
 			mu=[1]*(NbUPoles+1)
 
-		
 		if bs == None:
 			pass
 		else:
@@ -840,57 +784,53 @@ def machFlaeche(psta,ku=None,closed=False,bs=None,swap=False):
 		return bs2
 
 
-
-
-
 import numpy as np
 
-print "temp module"
+print("temp module")
 
 def createShapeV2(obj):
 	if not obj.swap:
-		if obj.westSeam<>None and obj.eastSeam <> None:
-			print obj.westSeam.Label
+		if obj.westSeam!=None and obj.eastSeam != None:
+			print(obj.westSeam.Label)
 			sfw=obj.westSeam.Shape.Face1.Surface
-			print sfw.NbVPoles
-			print sfw.NbUPoles
-			
+			print(sfw.NbVPoles)
+			print(sfw.NbUPoles)
+
 			ptsw=sfw.getPoles()
 
 
-			print obj.eastSeam.Label
+			print(obj.eastSeam.Label)
 			sfe=obj.eastSeam.Shape.Face1.Surface
-			print sfe.NbVPoles
-			print sfe.NbUPoles
+			print(sfe.NbVPoles)
+			print(sfe.NbUPoles)
 			ptse=sfe.getPoles()
-			
+
 			if obj.flipWest:
 				ptsw=np.flipud(ptsw)
 			if obj.flipEast:
 				ptse=np.flipud(ptse)
 
 			poles=np.concatenate([ptsw,ptse])
-			
+
 			closed=sfw.isUClosed()
 #			closed=True
-			print "-------------------------"
+			print("-------------------------")
 			bs=machFlaeche(poles,closed=closed)
 			obj.Shape=bs.toShape()
 
 	else:
-		if obj.nordSeam<>None and obj.southSeam <> None:
+		if obj.nordSeam!=None and obj.southSeam != None:
 			sfw=obj.nordSeam.Shape.Face1.Surface
-			print sfw.NbVPoles
-			print sfw.NbUPoles
+			print(sfw.NbVPoles)
+			print(sfw.NbUPoles)
 
 			ptsw=sfw.getPoles()
 
-
 			sfe=obj.southSeam.Shape.Face1.Surface
-			print sfe.NbVPoles
-			print sfe.NbUPoles
+			print(sfe.NbVPoles)
+			print(sfe.NbUPoles)
 			ptse=sfe.getPoles()
-			
+
 			if obj.flipNorth:
 				ptsw=np.flipud(ptsw)
 			if obj.flipSouth:
@@ -901,15 +841,13 @@ def createShapeV2(obj):
 			if obj.flipSouthB:
 				ptse=np.fliplr(ptse)
 
-
 		poles=np.concatenate([ptsw,ptse])
 		#losed=sfw.isClosed()
 		closed=sfw.isUClosed()
 #		closed=True
 		bs=machFlaeche(poles,closed=closed)
 		obj.Shape=bs.toShape()
-	print "fertig"
-
+	print("fertig")
 
 '''
 def createShapeV2(obj):
@@ -920,13 +858,9 @@ def createShapeV2(obj):
 	nurbswb.temp.run(obj)
 '''
 
-
-
-
 '''
 surface wb erzeugen flaeche
 
 App.ActiveDocument.addObject("Surface::Extend","Surface002")
 App.ActiveDocument.Surface002.Face = (App.ActiveDocument.Fillet001,["Face3"])
-
 '''

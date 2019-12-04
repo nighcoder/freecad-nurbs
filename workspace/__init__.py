@@ -7,8 +7,6 @@
 #-- GNU Lesser General Public License (LGPL)
 #-------------------------------------------------
 
-
-
 import FreeCAD,FreeCADGui
 App=FreeCAD
 Gui=FreeCADGui
@@ -24,8 +22,7 @@ import os, nurbswb
 
 global __dir__
 __dir__ = os.path.dirname(nurbswb.__file__)
-print __dir__
-
+print(__dir__)
 
 class PartFeature:
 	def __init__(self, obj):
@@ -46,7 +43,6 @@ class PartFeature:
 	def __setstate__(self,state):
 		return None
 
-
 class ViewProvider:
 	def __init__(self, obj):
 		obj.Proxy = self
@@ -61,28 +57,27 @@ class ViewProvider:
 	def onChanged(self, fp, prop):
 		print ("onChanged",prop)
 
-
 class ViewProviderSL(ViewProvider):
 
 	def onChanged(self, obj, prop):
 		print ("onChanged X",prop)
 		if obj.Visibility:
 			ws=WorkSpace(obj.Object.workspace)
-			print ws
+			print(ws)
 			jj=ws.dok.getObject(obj.Object.source.Name)
-			print jj,jj.Name
+			print(jj,jj.Name)
 			jj.ViewObject.show()
-			
+
 		else:
 			ws=WorkSpace(obj.Object.workspace)
-			print ws
+			print(ws)
 			jj=ws.dok.getObject(obj.Object.source.Name)
-			print jj
+			print(jj)
 			jj.ViewObject.hide()
-		print "done"
+		print("done")
 
 	def onDelete(self, obj, subelements):
-		print "on Delete Sahpelink"
+		print("on Delete Sahpelink")
 		print ("from", obj.Object.workspace,obj.Object.Label,obj.Object.Name)
 		try: _= App.getDocument(obj.Object.workspace)
 		except:	return True
@@ -94,18 +89,12 @@ class ViewProviderSL(ViewProvider):
 			print (s,obj.Object.Name)
 			if obj.Object.Label.startswith(s):
 				ws.dok.removeObject(jj.Name)
-				print "gguutt"
+				print("gguutt")
 				return True
 
-
-
-
-
-
 class ShapeLink(PartFeature):
-
 	def __init__(self,obj,sobj,dokname):
-		print "create shape link"
+		print("create shape link")
 		PartFeature.__init__(self,obj)
 		obj.addProperty("App::PropertyLink","source","Base")
 		obj.addProperty("App::PropertyBool","nurbs","Base")
@@ -113,15 +102,14 @@ class ShapeLink(PartFeature):
 		obj.addProperty("App::PropertyFloat","umax","Base")
 		obj.addProperty("App::PropertyFloat","vmax","Base")
 		obj.addProperty("App::PropertyString","workspace","Base")
-		
+
 		obj.umax=1.0
 		obj.vmax=1.0
 		obj.source=sobj
 		obj.workspace=dokname
 		obj.gridcount=20
-		
-		ViewProviderSL(obj.ViewObject)
 
+		ViewProviderSL(obj.ViewObject)
 
 	def execute(proxy,obj):
 		if not obj.ViewObject.Visibility:
@@ -130,28 +118,28 @@ class ShapeLink(PartFeature):
 		print ("update shape",obj.source.Name,obj.workspace,obj.gridcount)
 
 		tw=WorkSpace(obj.workspace)
-		print "!!",tw
-		print tw.dok
+		print("!!",tw)
+		print(tw.dok)
 		target=tw.dok.getObject(obj.source.Name)
-		print target
+		print(target)
 		if target==None:
 			tw.addObject2(obj.source,obj.gridcount)
-		print target
+		print(target)
 		if obj.nurbs:
-			print "nurbs surface"
+			print("nurbs surface")
 			target.Shape=obj.source.Shape.toNurbs()
 
 			cs=[]
 			count=obj.gridcount
 			#f=obj.source.Shape.Face1.toNurbs()
 			#f=f.Face1.Surface
-			
+
 			for ff in obj.source.Shape.Faces:
-				print "Face",ff
+				print("Face",ff)
 				f2=ff.toNurbs()
 				cs.append(f2)
 				f=f2.Face1.Surface
-				
+
 				for ui in range(count+1):
 						cs.append(f.uIso(obj.umax/count*ui).toShape())
 				for vi in range(count+1):
@@ -159,16 +147,10 @@ class ShapeLink(PartFeature):
 			target.Shape=Part.Compound(cs)
 			FreeCAD.cs=cs
 		else:
-			print "no nurbs"
+			print("no nurbs")
 			target.Shape=obj.source.Shape
 		tw.recompute()
-		print "act dok ",App.ActiveDocument.Label
-
-
-
-
-
-
+		print("act dok ",App.ActiveDocument.Label)
 
 class ViewProviderWSL(ViewProvider):
 
@@ -182,13 +164,10 @@ class ViewProviderWSL(ViewProvider):
 			ws.hide()
 
 	def onDelete(self, obj, subelements):
-		print "on Delete"
+		print("on Delete")
 		App.closeDocument(obj.Object.workspace)
 		#return False
 		return(True)
-
-
-
 
 class WSLink(PartFeature):
 
@@ -198,7 +177,6 @@ class WSLink(PartFeature):
 		obj.workspace=dokname
 		ViewProviderWSL(obj.ViewObject)
 
-
 	def execute(proxy,obj):
 		if obj.ViewObject.Visibility:
 			ws=WorkSpace(obj.workspace)
@@ -207,12 +185,7 @@ class WSLink(PartFeature):
 			ws=WorkSpace(obj.workspace)
 			ws.hide()
 
-
-
-
 class WorkSpace():
-
-
 	def __init__(self, name):
 		try:lidok= App.getDocument(name)
 		except:	lidok=App.newDocument(name)
@@ -254,30 +227,26 @@ class WorkSpace():
 		mdiarea=mw.findChild(QtGui.QMdiArea)
 
 		sws=mdiarea.subWindowList()
-		print "windows ..."
+		print("windows ...")
 		for w2 in sws:
-			print str(w2.windowTitle())
+			print(str(w2.windowTitle()))
 			s=str(w2.windowTitle())
 			if s == self.name + '1 : 1[*]':
-				print "gefundne"
+				print("gefundne")
 				return w2
-		print self.name + '1:1[*]'
-
+		print(self.name + '1:1[*]')
 
 	def _haha(self):
 		pass
 
-
-
-
 def createLink(obj,dokname="Linkdok"):
 	ad=App.ActiveDocument
-	print ad.Name
+	print(ad.Name)
 
 	lidok= WorkSpace(dokname)
 	link=lidok.addObject2(obj)
 	lidok.recompute()
-	
+
 	bares=obj.Document.addObject("Part::FeaturePython","Base Link "+obj.Label)
 	bares.Label=obj.Label+"@"+dokname
 
@@ -291,7 +260,6 @@ def createWsLink(dokname="Linkdok"):
 	bares=ad.addObject("Part::FeaturePython","WS "+dokname+"")
 	WSLink(bares,dokname)
 	return bares
-
 
 def createws():
 	''' aus dem menue aufgerufen '''
@@ -312,7 +280,6 @@ def createlink():
 	App.ActiveDocument=App.getDocument(ad)
 	Gui.ActiveDocument=Gui.getDocument(ad)
 	App.ActiveDocument.recompute()
-
 
 #---------------------------------
 '''
@@ -339,13 +306,12 @@ testme()
 
 def huhu():
 	pass
-	
+
 def __haha():
 	pass
 
-
 if __name__ == '__main__':
-	
+
 	if App.ActiveDocument== None:
 		App.newDocument("Unnamed")
 		App.setActiveDocument("Unnamed")
@@ -359,7 +325,6 @@ if __name__ == '__main__':
 	cc=App.ActiveDocument.addObject("Part::Cylinder","Cylinder")
 
 	App.ActiveDocument.recompute()
-
 
 	wl=createWsLink("Shoe")
 	App.ActiveDocument=ad
