@@ -217,7 +217,7 @@ class _Command2():
 			Gui.doCommand("import " + modul)
 			Gui.doCommand("import " + self.lmod)
 			#Gui.doCommand("reload(" + self.lmod + ")") # Does not work in Python3
-			docstring = "print;print " + re.sub(r'\(.*\)', '.__doc__', self.command) # This is buggy
+			docstring = "print();print( " + re.sub(r'\(.*\)', '.__doc__', self.command) + " )" # This is buggy
 
 			Gui.doCommand(docstring)
 			Gui.doCommand(self.command)

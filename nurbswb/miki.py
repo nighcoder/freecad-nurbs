@@ -45,7 +45,7 @@ def ComboViewShowWidget(widget,tabMode=False):
 	tab.addTab(widget,"Nurbs WB")
 	tab.setCurrentIndex(2)
 
-    print("ComboViewShowWidget done")
+	print("ComboViewShowWidget done")
 
 
 def creatorFunction(name):
@@ -89,7 +89,7 @@ def  fv2(name="vertical",title=''):
 #	w=MyDockWidget(t,"Reconstruction WB")
 	w=MyWidget(t,"Reconstruction WB")
 
-    if title !='': w.setWindowTitle(title)
+	if title !='': w.setWindowTitle(title)
 
 
 	w.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
@@ -110,7 +110,7 @@ def  fv(name="vertical",title=''):
 
 ###	w.setStyleSheet("QWidget { font: bold 18px;color:brown;border-style: outset;border-width: 3px;border-radius: 10px;border-color: blue;}")
 
-    if title !='': w.setWindowTitle(title)
+	if title !='': w.setWindowTitle(title)
 
 	layout = QtGui.QVBoxLayout()
 	layout.setAlignment(QtCore.Qt.AlignTop)
@@ -133,7 +133,7 @@ def  fv3(name="vertical",title=''):
 	w=QtGui.QWidget()
 #	w.setStyleSheet("QWidget { font: bold 18px;color:brown;border-style: outset;border-width: 3px;border-radius: 10px;border-color: blue;}")
 
-    if title !='': w.setWindowTitle(title)
+	if title !='': w.setWindowTitle(title)
 
 	layout = QtGui.QVBoxLayout()
 	layout.setAlignment(QtCore.Qt.AlignTop)
@@ -162,7 +162,7 @@ def  fh(name="horizontal",title=''):
 	#pB.setStyleSheet("QWidget { font: bold 18px;color:red;border-style: outset;border-width: 3px;border-radius: 10px;border-color: blue;}")
 	#layout.addWidget(pB)
 
-    if title !='': w.setWindowTitle(title)
+	if title !='': w.setWindowTitle(title)
 	#w.show()
 	#ComboViewShowWidget(w,False)
 	w.layout=layout
@@ -361,7 +361,7 @@ class Miki():
 
 				res=re.search("\s*(\S):\s*([^:]\S.*)",st)
 				if res:
-                    print(app)
+					print(app)
 					r=[l,line,parent,"att val",res.group(1),eval(res.group(2))]
 					if res.group(1) =='Name':
 #						print "setze Namen von parent"
@@ -387,7 +387,7 @@ class Miki():
 			print()
 			print("lines parsed ...")
 			for r in rs:
-                    print(r)
+				print(r)
 			if  len(self.anchors.keys()) >0:
 				print()
 				print("Anchors ....")
@@ -434,7 +434,7 @@ class Miki():
 						l.append(None)
 					l.append(h)
 					self.objects.append(h)
-            if  l[2] != 0:
+			if  l[2] != 0:
 				if l[4]=='Name': continue
 				if l[3]=='obj' or  l[3]=='anchor':
 					parent=self.lines[l[2]][7]
@@ -480,7 +480,7 @@ class Miki():
 						elif cn=='str':
 							ex="parent."+l[4]+"='"+v+"'"
 						else:
-                            print("nicht implementierter typ")
+							print("nicht implementierter typ")
 							ex=''
 #						print "!!! *!!** "+ex
 						exec(ex)
@@ -514,7 +514,7 @@ class Miki():
 						elif cn=='str':
 							ex="parent."+l[4]+"='"+v+"'"
 						else:
-                            print("nicht implementierter typ")
+							print("nicht implementierter typ")
 							ex=''
 #						ex="parent."+l[4]+"="+str(v)
 #						print "*** "+ex
@@ -549,17 +549,17 @@ class Miki():
 					elif cn=='str':
 						ex="parent."+l[4]+"='"+v+"'"
 					else:
-                        print("nicht implementierter typ")
+						print("nicht implementierter typ")
 						ex=''
 #					print "//*** "+ex
 					exec(ex)
 #					print parent
-        print("Ende build")
+		print("Ende build")
 
 
 	def showSo(self):
 		for l in self.lines:
-            if  l[2] == 0 and l[0] !=-1:
+			if  l[2] == 0 and l[0] !=-1:
 #					print l
 					if len(l)<7:
 						continue
@@ -574,7 +574,7 @@ class Miki():
 
 	def showSo2(self,dokname):
 		for l in self.lines:
-            if  l[2] == 0 and l[0] !=-1:
+			if  l[2] == 0 and l[0] !=-1:
 #					print l
 					r=l[7]
 #					print r
@@ -615,7 +615,7 @@ class Miki():
 			except:
 				p.children=[c]
 			return
-        print(p)
+		print(p)
 		try:
 			if str(p.TypeId)=='Part::MultiFuse':
 				z=p.Shapes
@@ -662,21 +662,21 @@ class Miki():
 		return rl
 
 	def report(results=[]):
-        print("Results ...")
+	        print("Results ...")
 		for r in results:
-            print(r)
+			print(r)
 			if r.__class__.__name__.startswith('So'):
 				sg = FreeCADGui.ActiveDocument.ActiveView.getSceneGraph()
 				sg.addChild(r)
 
-        print("Data ...")
+		print("Data ...")
 		for ob in self.objects:
-            print(ob)
+			print(ob)
 
-        print(self.anchors)
+		print(self.anchors)
 
 		for r in self.roots():
-            print(r)
+			print(r)
 
 ################
 
