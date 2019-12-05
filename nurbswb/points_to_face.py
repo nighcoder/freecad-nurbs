@@ -1006,7 +1006,7 @@ def run_spherepnp(): # pn p
 		(p2-p1)[0], (p2-p1)[1], (p2-p1)[2], 0]).reshape(4,4)
 
 	b = np.array([p1[0],p1[1],p1[2],0.5*(p2.Length**2-p1.Length**2)]);
- 	s=np.zeros(4)
+	s=np.zeros(4)
 	AI=inv(A)
 	for i in range(4):
 		for j in range(4):

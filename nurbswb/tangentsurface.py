@@ -248,8 +248,8 @@ def createShape(obj,force=False):
 	obj.Shape=bs.toShape()
 	print("tangenten linksAA")
 	print(obj.tangentsleft)
-	print "tangenten linksAA"
-	print obj.tangentsleft
+	print("tangenten linksAA")
+	print(obj.tangentsleft)
 	hp=App.ActiveDocument.getObject(obj.Name+"BS")
 	print(hp)
 	if hp == None:

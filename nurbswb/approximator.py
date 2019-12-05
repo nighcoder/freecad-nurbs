@@ -2006,7 +2006,7 @@ class Ribface(FeaturePython):
 		obj.addProperty("App::PropertyFloat","factor").factor=10
 
 	def execute(self,obj):
- 		ss=obj.ribs
+		ss=obj.ribs
 		extraknots=[]
 		for kk in obj.extraKnots:
 			extraknots += [[float(k) for k in kk.split()]]

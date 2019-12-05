@@ -33,6 +33,7 @@ import nurbswb.configuration
 import os
 import re
 from importlib import reload
+
 global __dir__
 __dir__ = os.path.dirname(nurbswb.__file__)
 
@@ -215,8 +216,8 @@ class _Command2():
 				modul = self.name
 			Gui.doCommand("import " + modul)
 			Gui.doCommand("import " + self.lmod)
-			Gui.doCommand("reload(" + self.lmod + ")")
-			docstring = "print;print " + re.sub(r'\(.*\)', '.__doc__', self.command)
+			#Gui.doCommand("reload(" + self.lmod + ")") # Does not work in Python3
+			docstring = "print;print " + re.sub(r'\(.*\)', '.__doc__', self.command) # This is buggy
 
 			Gui.doCommand(docstring)
 			Gui.doCommand(self.command)
@@ -270,7 +271,7 @@ class _Command():
 			else: modul=self.name
 			FreeCADGui.doCommand("import " + modul)
 			FreeCADGui.doCommand("import "+self.lmod)
-			FreeCADGui.doCommand("reload("+self.lmod+")") # This does not work in Python3 
+			#FreeCADGui.doCommand("reload("+self.lmod+")") # This does not work in Python3
 			FreeCADGui.doCommand(self.command)
 		#FreeCAD.ActiveDocument.commitTransaction()
 		if FreeCAD.ActiveDocument is not None:

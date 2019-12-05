@@ -2403,7 +2403,7 @@ def SurfaceEditor():
 			tt=time.time()
 			obj.ViewObject.hide()
 			obj.Shape=self.Shape
-			print "savetime hidden ",time.time()-tt
+			print ("savetime hidden ",time.time()-tt)
 			tt=time.time()
 			obj.ViewObject.show()
 			obj.Shape=self.Shape

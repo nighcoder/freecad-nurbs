@@ -139,7 +139,7 @@ class EventFilter(QtCore.QObject):
 						if r=='*':
 							Gui.activeDocument().ActiveView.fitAll()
 							return True
- 						if r in ['l','r','h','x','y','z','n','t','b']:
+						if r in ['l','r','h','x','y','z','n','t','b']:
 							self.key=str(r)
 							self.mode=str(r)
 							FreeCAD.ParamGet('User parameter:Plugins/nurbs').SetString("editorKey",self.key)
