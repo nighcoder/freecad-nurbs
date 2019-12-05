@@ -101,7 +101,7 @@ def runA(model=None):
 		App.activeDocument().recompute()
 
 		import nurbswb.sole_models
-		reload(nurbswb.sole_models)
+		reload(nurbswb.sole_models) # This fails in Python3
 		model=nurbswb.sole_models.model()
 
 	if 0: # "punktelisten anzeigen"

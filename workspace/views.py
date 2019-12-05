@@ -96,7 +96,7 @@ class ViewProviderH2:
 			if obj==None: return
 			print("onchange H2",prop)
 			if prop=="Visibility" and not obj.Visibility:
-				print "close it"
+				print("close it")
 				try:
 					_=obj.Object.Proxy.v
 					obj.Object.Proxy.v.close()
@@ -510,7 +510,7 @@ def updatencontenth2(viewer,obja,objb,objs,fp,clearSel=True,fit=True):
 	marker = coin.SoSeparator()
 
 	for objx in objs+[obja]:
-		print("run 0",objx.Label
+		print("run 0",objx.Label)
 		node= objx.ViewObject.RootNode
 
 		if fp.A_DisplayMode==0:

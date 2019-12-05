@@ -270,7 +270,7 @@ class _Command():
 			else: modul=self.name
 			FreeCADGui.doCommand("import " + modul)
 			FreeCADGui.doCommand("import "+self.lmod)
-			FreeCADGui.doCommand("reload("+self.lmod+")")
+			FreeCADGui.doCommand("reload("+self.lmod+")") # This does not work in Python3 
 			FreeCADGui.doCommand(self.command)
 		#FreeCAD.ActiveDocument.commitTransaction()
 		if FreeCAD.ActiveDocument is not None:

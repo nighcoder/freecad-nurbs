@@ -1550,7 +1550,7 @@ def testRandomSphere():
 		for j in range(rj):
 			ps[k+j][l][2] += 1*random.random()
 		if k0%1000==0:
-			print k0
+			print (k0)
 			Gui.updateGui()
 
 
@@ -1618,7 +1618,7 @@ def testRandomTorus():
 	a.base=False
 	#a.grid=False
 	a.gridCount=20
-	
+
 	ps=a.Proxy.getPoints()
 	print("points ps",len(ps))
 

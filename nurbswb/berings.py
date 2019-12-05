@@ -2031,7 +2031,7 @@ def BSplineToBezierCurve():
 				poles += pp[1:]
 			if i>1:
 				if (poles[-1]-pp[-1]).Length <0.1:
-					print "drehen 2"
+					print("drehen 2")
 					pp=pp[::-1]
 				poles += pp[1:]
 
