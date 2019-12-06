@@ -1436,7 +1436,7 @@ def SurfaceEditor():
 
 		def flattenregion(self):
 			for s in self.multiface.selection:
-			print(s)
+				print(s)
 
 			flattenRegion(self.multiface.selection)
 
