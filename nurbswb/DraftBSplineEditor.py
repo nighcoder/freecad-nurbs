@@ -101,7 +101,7 @@ def rowcol2(w,*args):
 	print(pts)
 	print("selection changed ---------------",w.scale)
 	w.selection.update(pts,scale=w.scale)
-    print("-----------------")
+	print("-----------------")
 
 def posfromsel(w):
 	t=FreeCADGui.Selection.getSelectionEx()[0]
