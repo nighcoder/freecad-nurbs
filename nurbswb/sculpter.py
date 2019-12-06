@@ -328,9 +328,8 @@ class EventFilter(QtCore.QObject):
 							Gui.activeDocument().ActiveView.fitAll()
 							return True
 
- 						if r in ['a','b','c']:
-
-								print ("KEY pressed ----------------------",r)
+						if r in ['a','b','c']:
+							print ("KEY pressed ----------------------",r)
 
 				except:
 					sayexc()

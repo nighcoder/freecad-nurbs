@@ -404,7 +404,7 @@ class svgHandler(xml.sax.ContentHandler):
 				self.symbols = {}
 				self.currentsymbol = None
 				self.obj=obj
-                print("svgHandler",obj)
+				print("svgHandler",obj)
 
 				global Part
 				import Part

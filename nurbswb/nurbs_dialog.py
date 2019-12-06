@@ -503,7 +503,7 @@ class MyApp(object):
 
 	def relativeMode(self):
 		print("RELATVE MODE")
-		print self.root.ids['relativemode'].isChecked()
+		print(self.root.ids['relativemode'].isChecked())
 		if self.root.ids['relativemode'].isChecked():
 			print(self.root.ids['relativemode'].isChecked())
 #			try: self.root.ids['updateRelative'].show()

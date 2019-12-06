@@ -175,7 +175,7 @@ class ViewProviderHelper(nurbswb.pyob.ViewProvider):
 		if prop == "Shape": return
 		if prop == "Placement": return
 		pm=fp.Placement
-        if fp.source!=None:
+		if fp.source!=None:
 			#say("VO updateData " + prop)
 			#say((fp,fp.source,fp.mode))
 			try:
@@ -186,10 +186,10 @@ class ViewProviderHelper(nurbswb.pyob.ViewProvider):
 				elif mode == "isoGrid":
 					#fp.Shape=App.ActiveDocument.Torus.Shape
 					#fp.Shape=fp.source.Proxy.create_grid_shape()
-                    print("update isogrid")
+					print("update isogrid")
 					fp.Proxy.create_knotes_shape2()
 				elif mode == "uIso" or mode == "vIso":
-                    print("create Curve")
+					print("create Curve")
 					fp.Proxy.create_curve()
 				else:
 					# fp.Shape=App.ActiveDocument.Cylinder.Shape

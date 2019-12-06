@@ -474,7 +474,7 @@ def createheel():
 		Gui.activeDocument().activeView().viewAxonometric()
 		Gui.SendMsgToActiveView("ViewFit")
 
-		print("okay"
+		print("okay")
 
 ## create sole and infrastructure models
 def run():

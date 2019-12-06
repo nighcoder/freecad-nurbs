@@ -341,7 +341,6 @@ class ViewProvider:
 		return False
 
 	def doubleClicked(self,vobj):
-		print vobj
 		print(vobj)
 		self.setEdit(vobj,1)
 

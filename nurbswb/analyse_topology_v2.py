@@ -92,10 +92,10 @@ def loadModel(s):
 
 		print ("addedge",points[i1],points[i2])
 		ge=g.add_edge(points[i1],points[i2],
-			weight=round(e.Length,2),
-			vector=p2-p1,
-			fcedge=e # the real edge
-			)
+			  weight=round(e.Length,2),
+			  vector=p2-p1,
+			  fcedge=e # the real edge
+			  )
 
 	# calculate some topological/metrical information for the vertexes
 
@@ -224,10 +224,10 @@ def getkeyg(g,n):
 
 
 	return (
-		len(g.node[n]['fdirs'])+100*len(g.node[n]['edirs']),
-		round(FreeCAD.Vector(ptokey(v2fs)).Length,2),
-		round(FreeCAD.Vector(ptokey(v2es)).Length,2)
-		)
+			len(g.node[n]['fdirs'])+100*len(g.node[n]['edirs']),
+			round(FreeCAD.Vector(ptokey(v2fs)).Length,2),
+			round(FreeCAD.Vector(ptokey(v2es)).Length,2)
+			)
 #---------------------------------------------------------------------------------
 
 def createKeys():
@@ -360,7 +360,7 @@ def runAna(model,silent=False):
 
 	print("NodesA",g.nodes())
 	mp=createFaceMidPointmodel(model)
-	print("NodesB",g.nodes()
+	print("NodesB",g.nodes())
 	loadModel(mp)
 
 	print("Model ",mp.Label)
@@ -431,6 +431,7 @@ def runAna(model,silent=False):
 		# print ns
 		if not silent:
 			displayNB(ns)
+
 			App.ActiveDocument.ActiveObject.Label="Top Quality"
 			App.ActiveDocument.ActiveObject.ViewObject.LineColor=(
 					random.random(),random.random(),random.random())
@@ -577,16 +578,16 @@ def displayVertexStore():
 		#print j
 		vs=FreeCAD.PT[j]
 		for v in vs:
-				if str(v[1]) =='----': continue
-				k=v[3]
-				count +=1
-				try:
-					keys[k] += 1
-					keyd[k] += [(j,v[:-2])]
-					# print v
-				except:
-					keys[k]=1
-					keyd[k] = [(j,v[:-2])]
+			if str(v[1]) =='----': continue
+			k=v[3]
+			count +=1
+			try:
+				keys[k] += 1
+				keyd[k] += [(j,v[:-2])]
+				# print v
+			except:
+				keys[k]=1
+				keyd[k] = [(j,v[:-2])]
 	pts=[]
 	for k in keys:
 		if keys[k]>1:
@@ -722,7 +723,7 @@ def Test4():
 
 	uniqs=getUniques(keys)
 	print("uniques start ")
-	print(uniq
+	print(uniq)
 
 	for n in uniqs:
 		g.node[n]['upath']=[n]
@@ -768,11 +769,11 @@ def Test4():
 
 	ups=[]
 	for n in uniqs:
-			ups.append(FreeCAD.Vector(g.node[n]['vector']))
+		ups.append(FreeCAD.Vector(g.node[n]['vector']))
 
 	Points.show(Points.Points(ups))
 	App.ActiveDocument.ActiveObject.ViewObject.ShapeColor=(
-		random.random(),random.random(),random.random())
+			random.random(),random.random(),random.random())
 	App.ActiveDocument.ActiveObject.ViewObject.PointSize= 10
 
 	App.ActiveDocument.ActiveObject.Label="Eindeutige Punkte"

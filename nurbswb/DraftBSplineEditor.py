@@ -84,7 +84,7 @@ def rowcol(w,*args):
 	print(pts)
 	print("selection changed ---------------",w.scale)
 	w.selection.update(pts,scale=w.scale)
-    print("-----------------")
+	print("-----------------")
 
 def rowcol2(w,*args):
 	print ("2-------------------selection row/column changed")
