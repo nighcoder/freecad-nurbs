@@ -902,7 +902,7 @@ class svgHandler(xml.sax.ContentHandler):
 				# processing lines
 
 				if name == "line":
-                        print("####################################")
+						print("####################################")
 						if not pathname: pathname = 'Line'
 						p1 = Vector(data['x1'],-data['y1'],0)
 						p2 = Vector(data['x2'],-data['y2'],0)
@@ -1366,7 +1366,7 @@ class ViewProvider:
 
 	def onDelete(self, obj, subelements):
 		# https://forum.freecadweb.org/viewtopic.php?f=10&t=11818
-        print("delete")
+		print("delete")
 		self.stoptimer(obj.Object)
 		return True
 
@@ -1395,7 +1395,7 @@ class ViewProvider:
 from PySide import QtCore
 
 def someOtherFunction():
-    print("AAAA someother function")
+	print("AAAA someother function")
 
 
 class SVGLink(PartFeature):
@@ -1424,7 +1424,7 @@ class SVGLink(PartFeature):
 	def someOtherFunction(self):
 		try: self.Object.Label
 		except:
-            print("someOtherFunction not ready")
+			print("someOtherFunction not ready")
 			return
 
 		print ("observe",self.Object.Label,self.Object.filename)
@@ -1458,7 +1458,7 @@ class SVGLink(PartFeature):
 
 
 def create_svglink():
-    print("erzeuge svg datei link")
+	print("erzeuge svg datei link")
 	b=FreeCAD.ActiveDocument.addObject("Part::FeaturePython","My_SVG_Link")
 	SVGLink(b)
 	b.prefix="A_"
