@@ -226,9 +226,9 @@ def pointEditor(obj,scale=1):
 
 
 def run(scale=1):
-    print("RUN ---",scale)
+	print("RUN ---",scale)
 	obj=FreeCADGui.Selection.getSelection()[0]
-    print(obj)
+	print(obj)
 	return pointEditor(obj,scale=scale)
 
 
