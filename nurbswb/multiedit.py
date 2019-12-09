@@ -1728,7 +1728,7 @@ def SurfaceEditor():
 #							vv=rot.multVec(vv)
 					polesb[u,v] +=  movb
 					print (u,v)
-					print "result abb",polesb[uia,via]
+					print ("result abb",polesb[uia,via])
 				print("hu-------------------")
 
 				print("result _b",polesb[uib,vib])
